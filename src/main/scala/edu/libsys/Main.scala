@@ -17,27 +17,36 @@ object Main {
       .appName("BookStatistics")
       .getOrCreate()
     //load data
-    val item = spark.sparkContext.textFile("/home/spark/Project/data/csv/item.csv")
-    val lend_hist = spark.sparkContext.textFile("/home/spark/Project/data/csv/lend_hist.csv")
+    val items = spark.sparkContext.textFile("/home/spark/Project/data/csv/item.csv")
+    val histRecords = spark.sparkContext.textFile("/home/spark/Project/data/csv/lend_hist.csv")
     //cache data
-    item.cache()
-    lend_hist.cache()
+    items.cache()
+    histRecords.cache()
     //test
-    val histRecord = parseHistRecord(lend_hist.first())
+
 
     //stop
     spark.stop()
   }
 
-  //parse String to histRecord
+  //parse String to HistRecord
   def parseHistRecord(line: String) = {
     //replace """(comma)
     val pieces = line.replaceAll("\"", "").split(",")
-    println(line.replaceAll("\"", ""))
     val cert_id = pieces(0).toInt
     val time = pieces(1)
     val record_no = pieces(2).toInt
     val call_no = pieces(3)
     HistRecord(cert_id, time, record_no, call_no)
+  }
+
+  //parse String to Item
+  def parseItem(line: String) = {
+    //replace """(comma)
+    val pieces = line.replaceAll("\"", "").split(",")
+    val prop_no = pieces(0).toInt
+    val record_no = pieces(1).toInt
+    val count = pieces(2).toInt
+    Item(prop_no, record_no, count)
   }
 }
