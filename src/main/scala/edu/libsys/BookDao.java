@@ -1,9 +1,5 @@
 package edu.libsys;
 
-/**
- * Created by spark on 3/9/17.
- */
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
