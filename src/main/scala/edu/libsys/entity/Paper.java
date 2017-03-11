@@ -15,6 +15,16 @@ public class Paper {
     private int disLikeCount;
     private int site;
 
+    public Paper(String id, String title, String searchWord, String source, String url, String intro, int site) {
+        this.id = id;
+        this.title = title;
+        this.searchWord = searchWord;
+        this.source = source;
+        this.url = url;
+        this.intro = intro;
+        this.site = site;
+    }
+
     public String getId() {
         return id;
     }
@@ -88,7 +98,7 @@ public class Paper {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("id: %s, title: %s, searchWord: %s, source: %s, url: %s, likeCount: %s, disLikeCount: %s",
                 String.valueOf(id), title, searchWord, source, url, String.valueOf(likeCount), String.valueOf(disLikeCount));
     }

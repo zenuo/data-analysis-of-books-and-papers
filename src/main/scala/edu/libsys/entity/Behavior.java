@@ -12,6 +12,14 @@ public class Behavior {
     private String time;
     private String content;
 
+    public Behavior(int user_id, int item_id, int type, String time, String content) {
+        this.user_id = user_id;
+        this.item_id = item_id;
+        this.type = type;
+        this.time = time;
+        this.content = content;
+    }
+
     public int getUser_id() {
         return user_id;
     }

@@ -10,6 +10,14 @@ public class User {
     private String email;
     private String passwd;
 
+    public User(int id, String name, int type, String email, String passwd) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.email = email;
+        this.passwd = passwd;
+    }
+
     public int getId() {
         return id;
     }

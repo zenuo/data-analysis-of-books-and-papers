@@ -1,4 +1,4 @@
-package edu.libsys;
+package edu.libsys.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +10,6 @@ public class Util {
         System.out.println(l);
         System.out.println(Time.timestampToString(l));
     }
-
 }
 
 class Time {
