@@ -11,16 +11,19 @@ import com.google.common.hash.PrimitiveSink;
 
 import java.io.*;
 
-public class RemoveDuplicateIndexTerm {
+public class RemoveDuplicateLine {
     public static void main(String[] args) {
-        RemoveDuplicateIndexTerm rdi = new RemoveDuplicateIndexTerm();
+        RemoveDuplicateLine rdl = new RemoveDuplicateLine();
         StringFunnel stringFunnel = new StringFunnel();
+        //the capability of BloomFilter
         long expectedInsertions = 3264062;
         BloomFilter<String> bloomFilter = BloomFilter.create(stringFunnel, expectedInsertions);
+        //config files
+        String oldFileName = "/home/spark/Project/data/txt/id_indexTerm.txt";
+        String newFileName = "/home/spark/Project/data/txt/new-id_indexTerm.txt";
         try {
             //traversal file
-            String oldFileName = "/home/spark/Project/data/txt/indexTerm.txt";
-            String newFileName = "/home/spark/Project/data/txt/new-indexTerm.txt";
+
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(oldFileName), "UTF-8"));
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFileName, true), "utf-8"));
             String s = null;
@@ -37,8 +40,16 @@ public class RemoveDuplicateIndexTerm {
     }
 }
 
+//for create BloomFilter of String
 class StringFunnel implements Funnel<String> {
     public void funnel(String string, PrimitiveSink primitiveSink) {
         primitiveSink.putUnencodedChars(string);
+    }
+}
+
+//for create BloomFilter of Integer
+class IntegerFunnel implements Funnel<Integer> {
+    public void funnel(Integer integer, PrimitiveSink primitiveSink) {
+        primitiveSink.putInt(integer);
     }
 }

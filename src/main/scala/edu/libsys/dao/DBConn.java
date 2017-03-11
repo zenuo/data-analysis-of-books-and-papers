@@ -26,7 +26,7 @@ public class DBConn {
         dbConn.close();
     }
 
-    //constructor; connect to db
+    //constructor
     public DBConn() {
         if (conn == null) {
             try {

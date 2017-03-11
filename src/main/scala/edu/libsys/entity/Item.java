@@ -7,8 +7,8 @@ public class Item {
     private int propId;
     private int marcRecId;
     private int lendCount;
-    private int likeCount;
-    private int disLikeCount;
+    private int likeCount = 0;
+    private int disLikeCount = 0;
 
     public int getPropId() {
         return propId;
@@ -49,5 +49,14 @@ public class Item {
 
     public void setDisLikeCount(int disLikeCount) {
         this.disLikeCount = disLikeCount;
+    }
+
+    @Override
+    public String toString() {
+        return "propId: " + String.valueOf(propId)
+                + ", marcRecId: " + String.valueOf(marcRecId)
+                + ", lendCount: " + String.valueOf(lendCount)
+                + ", likeCount: " + String.valueOf(lendCount)
+                + ", dislikeCount: " + String.valueOf(disLikeCount);
     }
 }

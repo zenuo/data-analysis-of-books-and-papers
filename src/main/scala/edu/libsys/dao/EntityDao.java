@@ -38,6 +38,4 @@ public class EntityDao {
         }
     }
 
-
-    //private void saveItemInto
 }

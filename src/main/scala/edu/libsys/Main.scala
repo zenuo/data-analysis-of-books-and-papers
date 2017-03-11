@@ -6,11 +6,13 @@ import edu.libsys.entity.LendRecord;
 
 object Main {
 
+  /*
   //lend record
   case class LendRecord(cert_id: Int, time: String, marc_rec_id: Int, call_no: String)
 
   //item
   case class Item(prop_id: Int, marc_rec_id: Int, count: Int)
+  */
 
   //main method
   def main(args: Array[String]): Unit = {
@@ -44,7 +46,7 @@ object Main {
     val time = pieces(1)
     val marc_rec_id = pieces(2).toInt
     val call_no = pieces(3)
-    LendRecord(cert_id, time, marc_rec_id, call_no)
+    new LendRecord(cert_id, time, marc_rec_id, call_no)
   }
 
   //parse String to Item
@@ -54,6 +56,6 @@ object Main {
     val prop_id = pieces(0).toInt
     val marc_rec_id = pieces(1).toInt
     val count = pieces(2).toInt
-    Item(prop_id, marc_rec_id, count)
+    new Item(prop_id, marc_rec_id, count)
   }
 }

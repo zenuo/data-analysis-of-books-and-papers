@@ -3,6 +3,7 @@ package edu.libsys.entity;
 /**
  * Created by spark on 3/11/17.
  */
+
 public class Paper {
     private String id;
     private String title;
@@ -12,6 +13,7 @@ public class Paper {
     private String intro;
     private int likeCount;
     private int disLikeCount;
+    private int site;
 
     public String getId() {
         return id;
@@ -75,5 +77,24 @@ public class Paper {
 
     public void setDisLikeCount(int disLikeCount) {
         this.disLikeCount = disLikeCount;
+    }
+
+    public int getSite() {
+        return site;
+    }
+
+    public void setSite(int site) {
+        this.site = site;
+    }
+
+    @Override
+    public String toString(){
+        return "id: " + String.valueOf(id)
+                + ", title: " + title
+                + ", searchWord: " + searchWord
+                + ", source: " + source
+                + ", url: " + url
+                + ", likeCount: " + String.valueOf(likeCount)
+                + ", disLikeCount: " + String.valueOf(disLikeCount);
     }
 }
