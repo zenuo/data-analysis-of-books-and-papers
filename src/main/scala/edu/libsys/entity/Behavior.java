@@ -7,7 +7,7 @@ public class Behavior {
     private int user_id;
     private int item_id;
     private int type;
-    //like : 1
+    //like : 0
     //dislike : 1
     private String time;
     private String content;

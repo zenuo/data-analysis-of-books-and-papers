@@ -89,12 +89,7 @@ public class Paper {
 
     @Override
     public String toString(){
-        return "id: " + String.valueOf(id)
-                + ", title: " + title
-                + ", searchWord: " + searchWord
-                + ", source: " + source
-                + ", url: " + url
-                + ", likeCount: " + String.valueOf(likeCount)
-                + ", disLikeCount: " + String.valueOf(disLikeCount);
+        return String.format("id: %s, title: %s, searchWord: %s, source: %s, url: %s, likeCount: %s, disLikeCount: %s",
+                String.valueOf(id), title, searchWord, source, url, String.valueOf(likeCount), String.valueOf(disLikeCount));
     }
 }

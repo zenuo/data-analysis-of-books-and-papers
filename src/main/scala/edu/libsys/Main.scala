@@ -1,8 +1,6 @@
 package edu.libsys
 
 import org.apache.spark.sql.SparkSession
-import edu.libsys.entity.Item;
-import edu.libsys.entity.LendRecord;
 
 object Main {
 
@@ -36,26 +34,5 @@ object Main {
   //
   def itemCountStats(): Unit = {
 
-  }
-
-  //parse String to LendRecord
-  def parseLendRecord(line: String) = {
-    //replace """(comma)
-    val pieces = line.replaceAll("\"", "").split(",")
-    val cert_id = pieces(0).toInt
-    val time = pieces(1)
-    val marc_rec_id = pieces(2).toInt
-    val call_no = pieces(3)
-    new LendRecord(cert_id, time, marc_rec_id, call_no)
-  }
-
-  //parse String to Item
-  def parseItem(line: String) = {
-    //replace """(comma)
-    val pieces = line.split(",")
-    val prop_id = pieces(0).toInt
-    val marc_rec_id = pieces(1).toInt
-    val count = pieces(2).toInt
-    new Item(prop_id, marc_rec_id, count)
   }
 }

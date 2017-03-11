@@ -10,7 +10,6 @@ public class DBConn {
     private final String USER = "spark";
     private final String PASSWD = "123456a";
 
-    //public database connection
     public static Connection conn = null;
 
     //test
@@ -26,7 +25,7 @@ public class DBConn {
         dbConn.close();
     }
 
-    //constructor
+    //constructor, open connection
     public DBConn() {
         if (conn == null) {
             try {

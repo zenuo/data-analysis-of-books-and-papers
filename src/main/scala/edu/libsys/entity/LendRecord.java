@@ -4,17 +4,24 @@ package edu.libsys.entity;
  * Created by spark on 3/11/17.
  */
 public class LendRecord {
-    private int cert_id;
+    private int certId;
     private String time;
-    private int marc_rec_id;
-    private String call_no;
+    private int marcRecId;
+    private String callNo;
 
-    public int getCert_id() {
-        return cert_id;
+    public LendRecord(int cert_id, String time, int marcRecId, String call_no) {
+        this.setCertId(cert_id);
+        this.setTime(time);
+        this.setMarcRecId(marcRecId);
+        this.setCallNo(call_no);
     }
 
-    public void setCert_id(int cert_id) {
-        this.cert_id = cert_id;
+    public int getCertId() {
+        return certId;
+    }
+
+    public void setCertId(int certId) {
+        this.certId = certId;
     }
 
     public String getTime() {
@@ -25,19 +32,25 @@ public class LendRecord {
         this.time = time;
     }
 
-    public int getMarc_rec_id() {
-        return marc_rec_id;
+    public int getMarcRecId() {
+        return marcRecId;
     }
 
-    public void setMarc_rec_id(int marc_rec_id) {
-        this.marc_rec_id = marc_rec_id;
+    public void setMarcRecId(int marcRecId) {
+        this.marcRecId = marcRecId;
     }
 
-    public String getCall_no() {
-        return call_no;
+    public String getCallNo() {
+        return callNo;
     }
 
-    public void setCall_no(String call_no) {
-        this.call_no = call_no;
+    public void setCallNo(String callNo) {
+        this.callNo = callNo;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("certId: %d, time: %s, marcRecId: %d, callNo: %s",
+                certId, time, marcRecId, callNo);
     }
 }

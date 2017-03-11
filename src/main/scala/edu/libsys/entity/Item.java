@@ -10,6 +10,12 @@ public class Item {
     private int likeCount = 0;
     private int disLikeCount = 0;
 
+    public Item(int propId,int marcRecId,int lendCount){
+        this.setPropId(propId);
+        this.setMarcRecId(marcRecId);
+        this.setLendCount(lendCount);
+    }
+
     public int getPropId() {
         return propId;
     }
@@ -53,10 +59,7 @@ public class Item {
 
     @Override
     public String toString() {
-        return "propId: " + String.valueOf(propId)
-                + ", marcRecId: " + String.valueOf(marcRecId)
-                + ", lendCount: " + String.valueOf(lendCount)
-                + ", likeCount: " + String.valueOf(lendCount)
-                + ", dislikeCount: " + String.valueOf(disLikeCount);
+        return String.format("propId: %d, marcRecId: %d, lendCount: %d, likeCount: %d, dislikeCount: %d",
+                propId, marcRecId, lendCount, likeCount, disLikeCount);
     }
 }

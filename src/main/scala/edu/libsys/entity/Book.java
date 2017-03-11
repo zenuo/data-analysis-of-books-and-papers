@@ -7,11 +7,20 @@ public class Book {
     private int marcRecId;
     private String callId;
     private String title;
-    private String author;
     private String publisher;
     private String pubYear;
     private int likeCount;
     private int disLikeCount;
+
+    public Book(int marcRecId, String callId, String title, String publisher, String pubYear, int likeCount, int disLikeCount) {
+        this.setMarcRecId(marcRecId);
+        this.setCallId(callId);
+        this.setTitle(title);
+        this.setPublisher(publisher);
+        this.setPubYear(pubYear);
+        this.setLikeCount(likeCount);
+        this.setDisLikeCount(disLikeCount);
+    }
 
     public int getMarcRecId() {
         return marcRecId;
@@ -35,14 +44,6 @@ public class Book {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public String getPublisher() {
@@ -75,5 +76,11 @@ public class Book {
 
     public void setDisLikeCount(int disLikeCount) {
         this.disLikeCount = disLikeCount;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("marcRecId: %d, callId: %s, title: %s, publisher: %s, pubYear: %s, likeCount: %d, disLikeCount: %d",
+                marcRecId, callId, title, publisher, pubYear, likeCount, disLikeCount);
     }
 }

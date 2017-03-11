@@ -10,6 +10,14 @@ public class Author {
     private int likeCount = 0;
     private int disLikeCount = 0;
 
+    public Author(int id, String name, int workCount,int likeCount, int disLikeCount) {
+        this.setId(id);
+        this.setName(name);
+        this.setWorkCount(workCount);
+        this.setLikeCount(likeCount);
+        this.setDisLikeCount(disLikeCount);
+    }
+
     public int getId() {
         return id;
     }
@@ -52,11 +60,8 @@ public class Author {
 
     @Override
     public String toString() {
-        return "id: " + String.valueOf(id)
-                + ", name: " + name
-                + ",workCount: " + String.valueOf(workCount)
-                + ", likeCount: " + String.valueOf(likeCount)
-                + ", dislikeCount: " + String.valueOf(disLikeCount);
+        return String.format("id: %d, name: %s,workCount: %d, likeCount: %d, dislikeCount: %d",
+                id, name, workCount, likeCount, disLikeCount);
     }
 
 }
