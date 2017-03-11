@@ -1,4 +1,4 @@
-package edu.libsys;
+package edu.libsys.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,13 +9,17 @@ public class DBConn {
     private final String URL = "jdbc:mariadb://localhost/LIBSYS";
     private final String USER = "spark";
     private final String PASSWD = "123456a";
+
+    //public database connection
     public static Connection conn = null;
 
     //test
     public static void main(String[] args) {
         DBConn dbConn = new DBConn();
         try {
-            System.out.println(conn.isClosed());
+            if (!conn.isClosed()) {
+                System.out.println("Database connection is OK.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
