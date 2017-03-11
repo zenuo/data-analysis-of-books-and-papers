@@ -11,7 +11,7 @@ public class EntityDao {
 
     private DBConn Conn = new DBConn();
 
-    private void saveExample(String p1, String p2) {
+    public void saveExample(String p1, String p2) {
         try {
             String sql = "INSERT INTO TABLE(M_ISBN, URL) VALUES(?,?);";
             PreparedStatement pstmt = Conn.conn.prepareStatement(sql);
@@ -24,13 +24,13 @@ public class EntityDao {
         }
     }
 
-    private void saveItem(Item item) {
+    public void saveItem(Item item) {
         try {
             String sql = "INSERT INTO ITEM VALUES(?,?,?);";
             PreparedStatement pstmt = Conn.conn.prepareStatement(sql);
-            pstmt.setInt(1, item.getProp_id());
-            pstmt.setInt(2, item.getCount());
-            pstmt.setInt(3, item.getCount());
+            pstmt.setInt(1, item.getPropId());
+            pstmt.setInt(2, item.getMarcRecId());
+            pstmt.setInt(3, item.getLendCount());
             pstmt.executeUpdate();
         } catch (Exception e) {
             System.out.println("Item insert ok");
@@ -38,18 +38,6 @@ public class EntityDao {
         }
     }
 
-    private void updateItem(Item item) {
-        try {
-            String sql = "UPDATE ;";
-            PreparedStatement pstmt = Conn.conn.prepareStatement(sql);
-            pstmt.setInt(1, item.getProp_id());
-            pstmt.setInt(2, item.getCount());
-            pstmt.executeUpdate();
-        } catch (Exception e) {
-            System.out.println("Item insert ok");
-            e.printStackTrace();
-        }
-    }
 
-    //private void savItemInto
+    //private void saveItemInto
 }

@@ -4,31 +4,50 @@ package edu.libsys.entity;
  * Created by spark on 3/11/17.
  */
 public class Item {
-    private int prop_id;
-    private int marc_rec_id;
-    private int count;
+    private int propId;
+    private int marcRecId;
+    private int lendCount;
+    private int likeCount;
+    private int disLikeCount;
 
-    public int getProp_id() {
-        return prop_id;
+    public int getPropId() {
+        return propId;
     }
 
-    public void setProp_id(int prop_id) {
-        this.prop_id = prop_id;
+    public void setPropId(int propId) {
+        this.propId = propId;
     }
 
-    public int getMarc_rec_id() {
-        return marc_rec_id;
+    public int getMarcRecId() {
+        return marcRecId;
     }
 
-    public void setMarc_rec_id(int marc_rec_id) {
-        this.marc_rec_id = marc_rec_id;
+    public void setMarcRecId(int marcRecId) {
+        this.marcRecId = marcRecId;
     }
 
-    public int getCount() {
-        return count;
+
+    public int getLendCount() {
+        return lendCount;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setLendCount(int lendCount) {
+        this.lendCount = lendCount;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public int getDisLikeCount() {
+        return disLikeCount;
+    }
+
+    public void setDisLikeCount(int disLikeCount) {
+        this.disLikeCount = disLikeCount;
     }
 }

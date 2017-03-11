@@ -2,7 +2,7 @@ package edu.libsys.dataclean;
 
 /**
  * Created by spark on 3/11/17.
- * Filter "ITEM.csv" which in 1610018 lines to "ITEM.txt" 387446 lines.
+ * Filter "ITEM.csv" which in 1610018 lines to "indexTerm.txt" 387446 lines.
  */
 
 import com.google.common.hash.BloomFilter;
@@ -22,10 +22,10 @@ public class RemoveDuplicateItem {
         try {
             String fileName = "ITEM.csv";
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("ITEM.txt", true), "utf-8"));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("indexTerm.txt", true), "utf-8"));
             //write unique item to new file by marc_rec_id
             String s = null;
-            while ((s = br.readLine()) != "") {
+            while ((s = br.readLine()) != null) {
                 int marc_rec_id = Integer.valueOf(rdi.getMarcRecId(s));
                 if (!bloomFilter.mightContain(marc_rec_id)) {
                     bloomFilter.put(marc_rec_id);
