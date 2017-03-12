@@ -12,8 +12,8 @@ public class SessionFactory {
     //static sqlSessionFactory
     public static SqlSessionFactory sqlSessionFactory;
 
-    //constructor, build sqlSessionFactory.
-    public SessionFactory(){
+    //build sqlSessionFactory, return a instance of SqlSession.
+    public static SqlSession getSqlSession() {
         String resource = "edu/libsys/conf/mybatis-config.xml";
         if (sqlSessionFactory == null){
             try{
@@ -25,10 +25,6 @@ public class SessionFactory {
                 e.printStackTrace();
             }
         }
-    }
-
-    //return a instance of SqlSession.
-    public SqlSession getSqlSession() {
         return sqlSessionFactory.openSession();
     }
 }

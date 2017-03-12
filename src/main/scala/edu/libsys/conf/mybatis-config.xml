@@ -19,5 +19,6 @@
         </environment>
     </environments>
     <mappers>
+        <package name="edu.libsys.data.mapper"/>
     </mappers>
 </configuration>
