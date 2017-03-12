@@ -1,8 +1,5 @@
 package edu.libsys.entity;
 
-/**
- * Created by spark on 3/11/17.
- */
 public class Author {
     private int id;
     private String name;
@@ -51,8 +48,12 @@ public class Author {
 
     @Override
     public String toString() {
-        return String.format("id: %d, name: %s, workCount: %d, likeCount: %d, dislikeCount: %d",
-                id, name, workCount, likeCount, disLikeCount);
+        return "Author{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", workCount=" + workCount +
+                ", likeCount=" + likeCount +
+                ", disLikeCount=" + disLikeCount +
+                '}';
     }
-
 }

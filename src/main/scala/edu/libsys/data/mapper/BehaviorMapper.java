@@ -17,8 +17,8 @@ public interface BehaviorMapper {
     })
 
     @Select("SELECT * FROM BEHAVIOR WHERE id=#{id}")
-    Behavior select(int id);
+    Behavior getBehaviorById(int id);
 
     @Insert("INSERT INTO BEHAVIOR(userId, itemId, type, time, content) VALUES(#{userId}, #{itemId}, #{type}, #{time}, #{content})")
-    void insert(Behavior behavior);
+    void addBehavior(Behavior behavior);
 }

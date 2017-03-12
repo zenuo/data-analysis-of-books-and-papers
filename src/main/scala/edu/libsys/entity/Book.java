@@ -1,25 +1,44 @@
 package edu.libsys.entity;
 
-/**
- * Created by spark on 3/11/17.
- */
 public class Book {
     private int marcRecId;
     private String callId;
     private String title;
+    private int author;
     private String publisher;
     private String pubYear;
+    private String isbn;
     private int likeCount;
     private int disLikeCount;
 
-    public Book(int marcRecId, String callId, String title, String publisher, String pubYear, int likeCount, int disLikeCount) {
-        this.setMarcRecId(marcRecId);
-        this.setCallId(callId);
-        this.setTitle(title);
-        this.setPublisher(publisher);
-        this.setPubYear(pubYear);
-        this.setLikeCount(likeCount);
-        this.setDisLikeCount(disLikeCount);
+    public Book() {
+    }
+
+    public Book(int marcRecId, String callId, String title, int author, String publisher, String pubYear, String isbn, int likeCount, int disLikeCount) {
+        this.marcRecId = marcRecId;
+        this.callId = callId;
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.pubYear = pubYear;
+        this.isbn = isbn;
+        this.likeCount = likeCount;
+        this.disLikeCount = disLikeCount;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "marcRecId=" + marcRecId +
+                ", callId='" + callId + '\'' +
+                ", title='" + title + '\'' +
+                ", author=" + author +
+                ", publisher='" + publisher + '\'' +
+                ", pubYear='" + pubYear + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", likeCount=" + likeCount +
+                ", disLikeCount=" + disLikeCount +
+                '}';
     }
 
     public int getMarcRecId() {
@@ -46,6 +65,14 @@ public class Book {
         this.title = title;
     }
 
+    public int getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(int author) {
+        this.author = author;
+    }
+
     public String getPublisher() {
         return publisher;
     }
@@ -60,6 +87,14 @@ public class Book {
 
     public void setPubYear(String pubYear) {
         this.pubYear = pubYear;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 
     public int getLikeCount() {
@@ -78,9 +113,4 @@ public class Book {
         this.disLikeCount = disLikeCount;
     }
 
-    @Override
-    public String toString() {
-        return String.format("marcRecId: %d, callId: %s, title: %s, publisher: %s, pubYear: %s, likeCount: %d, disLikeCount: %d",
-                marcRecId, callId, title, publisher, pubYear, likeCount, disLikeCount);
-    }
 }

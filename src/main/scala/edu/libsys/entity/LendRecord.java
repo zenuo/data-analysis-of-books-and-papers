@@ -1,8 +1,5 @@
 package edu.libsys.entity;
 
-/**
- * Created by spark on 3/11/17.
- */
 public class LendRecord {
     private int certId;
     private String time;
@@ -50,7 +47,11 @@ public class LendRecord {
 
     @Override
     public String toString() {
-        return String.format("certId: %d, time: %s, marcRecId: %d, callNo: %s",
-                certId, time, marcRecId, callNo);
+        return "LendRecord{" +
+                "certId=" + certId +
+                ", time='" + time + '\'' +
+                ", marcRecId=" + marcRecId +
+                ", callNo='" + callNo + '\'' +
+                '}';
     }
 }

@@ -7,12 +7,12 @@ import org.apache.ibatis.session.SqlSession;
 import java.util.List;
 
 public class AuthorDao {
-    public Author get(int id) {
+    public Author getUserById(int id) {
         SqlSession sqlSession = SessionFactory.getSqlSession();
         Author author = null;
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            author = authorMapper.select(id);
+            author = authorMapper.getUserById(id);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -21,12 +21,12 @@ public class AuthorDao {
         return author;
     }
 
-    public int add(Author author) {
+    public int addAuthor(Author author) {
         int status = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorMapper.insert(author);
+            authorMapper.addAuthor(author);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {
@@ -38,12 +38,12 @@ public class AuthorDao {
         return status;
     }
 
-    public int update(Author author) {
+    public int updateAuthor(Author author) {
         int status = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorMapper.update(author);
+            authorMapper.updateAuthor(author);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {
@@ -54,12 +54,12 @@ public class AuthorDao {
         return status;
     }
 
-    public int delete(int id) {
+    public int deleteAuthor(int id) {
         int status = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorMapper.delete(id);
+            authorMapper.deleteAuthor(id);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {
@@ -70,12 +70,12 @@ public class AuthorDao {
         return status;
     }
 
-    public int like(int id) {
+    public int likeCountPlusOne(int id) {
         int status = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorMapper.like();
+            authorMapper.likeCountPlusOne();
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {
@@ -86,12 +86,12 @@ public class AuthorDao {
         return status;
     }
 
-    public int disLike(int id) {
+    public int disLikeCountPlusOne(int id) {
         int status = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorMapper.disLike();
+            authorMapper.disLikeCountPlusOne();
             status = 1;
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,16 +101,17 @@ public class AuthorDao {
         return status;
     }
 
+    //TO-DO
     public List<Author> gets(int pageNo) {
         return null;
     }
 
-    public int count() {
+    public int countAuthor() {
         int count = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            count = authorMapper.count();
+            count = authorMapper.countAuthor();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -119,12 +120,12 @@ public class AuthorDao {
         return count;
     }
 
-    public List<Author> search(String keyWord) {
+    public List<Author> getAuthorListBySearchName(String keyWord) {
         SqlSession sqlSession = SessionFactory.getSqlSession();
         List<Author> authorList = null;
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorList = authorMapper.search(keyWord);
+            authorList = authorMapper.getAuthorListBySearchName(keyWord);
             System.out.println(authorList.size());
         } catch (Exception e) {
             e.printStackTrace();

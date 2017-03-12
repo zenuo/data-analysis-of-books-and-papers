@@ -1,8 +1,5 @@
 package edu.libsys.entity;
 
-/**
- * Created by spark on 3/11/17.
- */
 public class Item {
     private int propId;
     private int marcRecId;
@@ -59,7 +56,12 @@ public class Item {
 
     @Override
     public String toString() {
-        return String.format("propId: %d, marcRecId: %d, lendCount: %d, likeCount: %d, dislikeCount: %d",
-                propId, marcRecId, lendCount, likeCount, disLikeCount);
+        return "Item{" +
+                "propId=" + propId +
+                ", marcRecId=" + marcRecId +
+                ", lendCount=" + lendCount +
+                ", likeCount=" + likeCount +
+                ", disLikeCount=" + disLikeCount +
+                '}';
     }
 }

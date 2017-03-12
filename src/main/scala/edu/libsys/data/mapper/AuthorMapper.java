@@ -15,26 +15,26 @@ public interface AuthorMapper {
     })
 
     @Select("SELECT * FROM AUTHOR WHERE id=#{id}")
-    Author select(int id);
+    Author getUserById(int id);
 
     @Insert("INSERT INTO AUTHOR(name, workCount, likeCount, disLikeCount) VALUES(#{name} ,#{workCount}, #{likeCount}, #{disLikeCount})")
-    void insert(Author author);
+    void addAuthor(Author author);
 
     @Update("UPDATE AUTHOR SET name=#{name} ,workCount=#{workCount} WHERE id=#{id}")
-    void update(Author author);
+    void updateAuthor(Author author);
 
     @Delete("DELETE FROM AUTHOR WHERE id=#{id}")
-    void delete(int id);
+    void deleteAuthor(int id);
 
     @Update("UPDATE AUTHOR SET likeCount=likeCount+1 WHERE id=#{id}")
-    void like();
+    void likeCountPlusOne();
 
     @Update("UPDATE AUTHOR SET disLikeCount=disLikeCount+1 WHERE id=#{id}")
-    void disLike();
+    void disLikeCountPlusOne();
 
     @Select("SELECT COUNT(*) FROM AUTHOR")
-    int count();
+    int countAuthor();
 
-    @Select("SELECT * FROM AUTHOR WHERE name like '%#{keyWord}%'")
-    List<Author> search(String keyWord);
+    @Select("SELECT * FROM AUTHOR WHERE name like CONCAT('%',#{keyWord},'%')")
+    List<Author> getAuthorListBySearchName(String keyWord);
 }

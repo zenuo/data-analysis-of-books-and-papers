@@ -1,8 +1,5 @@
 package edu.libsys.entity;
 
-/**
- * Created by spark on 3/11/17.
- */
 public class User {
     private int id;
     private String name;
@@ -59,10 +56,13 @@ public class User {
     }
 
     @Override
-    public String toString(){
-        return "id: " + String.valueOf(id)
-                + ", name: " + name
-                + ", type: " + String.valueOf(type)
-                + ", email: " + email;
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type=" + type +
+                ", email='" + email + '\'' +
+                ", passwd='" + passwd + '\'' +
+                '}';
     }
 }

@@ -1,8 +1,5 @@
 package edu.libsys.entity;
 
-/**
- * Created by spark on 3/11/17.
- */
 public class Behavior {
     private int id;
     private int userId;
@@ -69,5 +66,17 @@ public class Behavior {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "Behavior{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", itemId=" + itemId +
+                ", type=" + type +
+                ", time='" + time + '\'' +
+                ", content='" + content + '\'' +
+                '}';
     }
 }
