@@ -1,11 +1,12 @@
-package edu.libsys.dao;
+package edu.libsys.data.dao;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 public class SessionFactory {
     //static sqlSessionFactory
@@ -19,11 +20,15 @@ public class SessionFactory {
                 InputStream inputStream = Resources.getResourceAsStream(resource);
                 sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
                 inputStream.close();
-                System.out.println("Build SqlSessionFactory success.");
             }catch (IOException e){
                 System.err.println("Build SqlSessionFactory error.");
                 e.printStackTrace();
             }
         }
+    }
+
+    //return a instance of SqlSession.
+    public SqlSession getSqlSession() {
+        return sqlSessionFactory.openSession();
     }
 }

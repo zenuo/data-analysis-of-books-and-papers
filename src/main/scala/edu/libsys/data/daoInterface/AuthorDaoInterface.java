@@ -1,4 +1,4 @@
-package edu.libsys.dao;
+package edu.libsys.data.daoInterface;
 
 import edu.libsys.entity.Author;
 

@@ -1,16 +1,16 @@
-package edu.libsys.dao;
+package edu.libsys.data.dao;
 
+import edu.libsys.data.daoInterface.AuthorDaoInterface;
 import edu.libsys.entity.Author;
-
-import org.apache.log4j.Logger;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.log4j.Logger;
 
 import java.util.stream.Stream;
 
 public class AuthorDao implements AuthorDaoInterface {
 
-    private SqlSessionFactory sqlSessionFactory;
     private static Logger logger = Logger.getLogger(Author.class);
+    private SqlSessionFactory sqlSessionFactory;
 
     public AuthorDao(SqlSessionFactory sqlSessionFactory){
         this.sqlSessionFactory = sqlSessionFactory;
