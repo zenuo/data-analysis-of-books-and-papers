@@ -10,21 +10,20 @@ public class Author {
     private int likeCount = 0;
     private int disLikeCount = 0;
 
-    public Author(int id, String name, int workCount,int likeCount, int disLikeCount) {
-        this.setId(id);
+    public Author(String name, int workCount) {
         this.setName(name);
         this.setWorkCount(workCount);
-        this.setLikeCount(likeCount);
-        this.setDisLikeCount(disLikeCount);
+    }
+
+    //empty constructor
+    public Author() {
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    //no setter of id
 
     public String getName() {
         return name;
@@ -38,16 +37,8 @@ public class Author {
         return likeCount;
     }
 
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
-    }
-
     public int getDisLikeCount() {
         return disLikeCount;
-    }
-
-    public void setDisLikeCount(int disLikeCount) {
-        this.disLikeCount = disLikeCount;
     }
 
     public int getWorkCount() {
@@ -60,7 +51,7 @@ public class Author {
 
     @Override
     public String toString() {
-        return String.format("id: %d, name: %s,workCount: %d, likeCount: %d, dislikeCount: %d",
+        return String.format("id: %d, name: %s, workCount: %d, likeCount: %d, dislikeCount: %d",
                 id, name, workCount, likeCount, disLikeCount);
     }
 

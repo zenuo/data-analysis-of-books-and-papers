@@ -4,36 +4,47 @@ package edu.libsys.entity;
  * Created by spark on 3/11/17.
  */
 public class Behavior {
-    private int user_id;
-    private int item_id;
-    private int type;
-    //like : 0
-    //dislike : 1
+    private int id;
+    private int userId;
+    private int itemId;
+    private int type;//like:0, dislike:1
     private String time;
     private String content;
 
-    public Behavior(int user_id, int item_id, int type, String time, String content) {
-        this.user_id = user_id;
-        this.item_id = item_id;
+    public Behavior(int id, int userId, int itemId, int type, String time, String content) {
+        this.id = id;
+        this.userId = userId;
+        this.itemId = itemId;
         this.type = type;
         this.time = time;
         this.content = content;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public Behavior() {
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public int getId() {
+        return id;
     }
 
-    public int getItem_id() {
-        return item_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setItem_id(int item_id) {
-        this.item_id = item_id;
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
     }
 
     public int getType() {

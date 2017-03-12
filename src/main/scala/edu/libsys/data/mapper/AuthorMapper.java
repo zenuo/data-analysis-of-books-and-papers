@@ -3,6 +3,8 @@ package edu.libsys.data.mapper;
 import edu.libsys.entity.Author;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 public interface AuthorMapper {
     @Results({
             @Result(property = "id", column = "id"),
@@ -15,7 +17,7 @@ public interface AuthorMapper {
     @Select("SELECT * FROM AUTHOR WHERE id=#{id}")
     Author select(int id);
 
-    @Insert("INSERT INTO AUTHOR(id, name, workCount) VALUES(#{id}, #{name} ,#{workCount})")
+    @Insert("INSERT INTO AUTHOR(name, workCount, likeCount, disLikeCount) VALUES(#{name} ,#{workCount}, #{likeCount}, #{disLikeCount})")
     void insert(Author author);
 
     @Update("UPDATE AUTHOR SET name=#{name} ,workCount=#{workCount} WHERE id=#{id}")
@@ -32,4 +34,7 @@ public interface AuthorMapper {
 
     @Select("SELECT COUNT(*) FROM AUTHOR")
     int count();
+
+    @Select("SELECT * FROM AUTHOR WHERE name like '%#{keyWord}%'")
+    List<Author> search(String keyWord);
 }

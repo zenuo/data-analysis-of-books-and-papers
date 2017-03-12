@@ -4,7 +4,7 @@ import edu.libsys.data.mapper.AuthorMapper;
 import edu.libsys.entity.Author;
 import org.apache.ibatis.session.SqlSession;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 public class AuthorDao {
     public Author get(int id) {
@@ -13,7 +13,6 @@ public class AuthorDao {
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
             author = authorMapper.select(id);
-            sqlSession.commit();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -102,21 +101,36 @@ public class AuthorDao {
         return status;
     }
 
-    public Stream<Author> gets(int pageNo) {
+    public List<Author> gets(int pageNo) {
         return null;
     }
 
     public int count() {
+        int count = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorMapper.count();
-            return 1;
+            count = authorMapper.count();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             sqlSession.close();
         }
-        return 0;
+        return count;
+    }
+
+    public List<Author> search(String keyWord) {
+        SqlSession sqlSession = SessionFactory.getSqlSession();
+        List<Author> authorList = null;
+        try {
+            AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
+            authorList = authorMapper.search(keyWord);
+            System.out.println(authorList.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+        return authorList;
     }
 }
