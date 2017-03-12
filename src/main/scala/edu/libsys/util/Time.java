@@ -3,16 +3,7 @@ package edu.libsys.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class Util {
-    //test
-    public static void main(String[] args) {
-        long l = Time.stringToTimestamp("2000-09-0209:54:56");
-        System.out.println(l);
-        System.out.println(Time.timestampToString(l));
-    }
-}
-
-class Time {
+public class Time {
     public static String timestampToString(long time) {
         return new java.text
                 .SimpleDateFormat("yyyy-MM-ddHH:mm:ss")
