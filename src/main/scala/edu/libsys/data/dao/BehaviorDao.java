@@ -9,71 +9,56 @@ import java.util.List;
 public class BehaviorDao {
     public Behavior getBehaviorById(int id) {
         Behavior behavior = null;
-        SqlSession sqlSession = SessionFactory.getSqlSession();
-        try {
+        try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             BehaviorMapper behaviorMapper = sqlSession.getMapper(BehaviorMapper.class);
             behavior = behaviorMapper.getBehaviorById(id);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            sqlSession.close();
         }
         return behavior;
     }
 
     public int addBehavior(Behavior behavior) {
         int status = 0;
-        SqlSession sqlSession = SessionFactory.getSqlSession();
-        try {
+        try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             BehaviorMapper behaviorMapper = sqlSession.getMapper(BehaviorMapper.class);
             behaviorMapper.addBehavior(behavior);
             status = 1;
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            sqlSession.close();
         }
         return status;
     }
 
     public List<Behavior> getBehaviorList() {
         List<Behavior> behaviorList = null;
-        SqlSession sqlSession = SessionFactory.getSqlSession();
-        try {
+        try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             BehaviorMapper behaviorMapper = sqlSession.getMapper(BehaviorMapper.class);
             behaviorList = behaviorMapper.getBehaviorList();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            sqlSession.close();
         }
         return behaviorList;
     }
 
     public List<Behavior> getBehaviorListByUserId(int userId) {
         List<Behavior> behaviorList = null;
-        SqlSession sqlSession = SessionFactory.getSqlSession();
-        try {
+        try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             BehaviorMapper behaviorMapper = sqlSession.getMapper(BehaviorMapper.class);
             behaviorList = behaviorMapper.getBehaviorListByUserId(userId);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            sqlSession.close();
         }
         return behaviorList;
     }
 
     List<Behavior> getBehaviorListByItemId(int itemId) {
         List<Behavior> behaviorList = null;
-        SqlSession sqlSession = SessionFactory.getSqlSession();
-        try {
+        try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             BehaviorMapper behaviorMapper = sqlSession.getMapper(BehaviorMapper.class);
             behaviorList = behaviorMapper.getBehaviorListByItemId(itemId);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            sqlSession.close();
         }
         return behaviorList;
     }
