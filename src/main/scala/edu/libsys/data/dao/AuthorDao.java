@@ -2,7 +2,6 @@ package edu.libsys.data.dao;
 
 import edu.libsys.data.mapper.AuthorMapper;
 import edu.libsys.entity.Author;
-import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;
@@ -102,12 +101,10 @@ public class AuthorDao {
         return status;
     }
 
-    //TO-DO
-    public List<Author> gets(int pageNo) {
+    public List<Author> getAuthorList() {
         List<Author> authorList = null;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            RowBounds rowBounds = new RowBounds(0, 10);
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
             authorList = authorMapper.getAuthorList();
         } catch (Exception e) {
@@ -136,7 +133,6 @@ public class AuthorDao {
         List<Author> authorList = null;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            RowBounds rowBounds = new RowBounds(0, 10);
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
             authorList = authorMapper.getAuthorListBySearchName(keyWord);
             System.out.println(authorList.size());

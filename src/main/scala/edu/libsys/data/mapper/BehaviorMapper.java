@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 public interface BehaviorMapper {
     @Results({
             @Result(property = "id", column = "id"),
@@ -21,4 +23,13 @@ public interface BehaviorMapper {
 
     @Insert("INSERT INTO BEHAVIOR(userId, itemId, type, time, content) VALUES(#{userId}, #{itemId}, #{type}, #{time}, #{content})")
     void addBehavior(Behavior behavior);
+
+    @Select("SELECT * FROM BEHAVIOR")
+    List<Behavior> getBehaviorList();
+
+    @Select("SELECT * FROM BEHAVIOR WHERE userId=#{userId}")
+    List<Behavior> getBehaviorListByUserId(int userId);
+
+    @Select("SELECT * FROM BEHAVIOR WHERE itemId=#{itemId}")
+    List<Behavior> getBehaviorListByItemId(int itemId);
 }

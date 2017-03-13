@@ -1,80 +1,74 @@
 package edu.libsys.data.dao;
 
-import edu.libsys.data.mapper.BookMapper;
-import edu.libsys.entity.Book;
+import edu.libsys.data.mapper.UserMapper;
+import edu.libsys.entity.User;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;
 
-public class BookDao {
-    public Book getBookByMarcRecId(int marcRecId) {
-        Book book = null;
+public class UserDao {
+    public User getUserById(int id) {
+        User user = null;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            book = bookMapper.getBookByMarcRecId(marcRecId);
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            user = userMapper.getUserById(id);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             sqlSession.close();
         }
-        return book;
+        return user;
     }
 
-    public int addBook(Book book) {
-        int status = 0;
+    public List<User> getUserList() {
+        List<User> userList = null;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookMapper.addBook(book);
-            sqlSession.commit();
-            status = 1;
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            userList = userMapper.getUserList();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             sqlSession.close();
         }
-        return status;
+        return userList;
     }
 
-    public int updataBook(Book book) {
-        int status = 0;
+    public List<User> getUserListBySearchName(String keyWord) {
+        List<User> userList = null;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookMapper.updataBook(book);
-            sqlSession.commit();
-            status = 1;
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            userList = userMapper.getUserListBySearchName(keyWord);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             sqlSession.close();
         }
-        return status;
+        return userList;
     }
 
-    public int deleteBook(Book book) {
-        int status = 0;
+    public List<User> getUserListByType(int type) {
+        List<User> userList = null;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookMapper.deleteBook(book);
-            sqlSession.commit();
-            status = 1;
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            userList = userMapper.getUserListByType(type);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             sqlSession.close();
         }
-        return status;
+        return userList;
     }
 
-    public int countBook() {
+    public int countUser() {
         int count = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            count = bookMapper.countBook();
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            count = userMapper.countUser();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -83,40 +77,26 @@ public class BookDao {
         return count;
     }
 
-    public List<Book> getBookListBySearchTitle(String keyWord) {
-        List<Book> bookList = null;
+    public String getPasswdByUser(String name) {
+        String passwd = null;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookList = bookMapper.getBookListBySearchTitle(keyWord);
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            passwd = userMapper.getPasswdByUser(name);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             sqlSession.close();
         }
-        return bookList;
+        return passwd;
     }
 
-    public List<Book> getBookList() {
-        List<Book> bookList = null;
-        SqlSession sqlSession = SessionFactory.getSqlSession();
-        try {
-            BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookList = bookMapper.getBookList();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            sqlSession.close();
-        }
-        return bookList;
-    }
-
-    public int likeCountPlusOne(Book book) {
+    public int addUser(User user) {
         int status = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookMapper.likeCountPlusOne(book);
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            userMapper.addUser(user);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {
@@ -127,12 +107,28 @@ public class BookDao {
         return status;
     }
 
-    public int disLikeCountPlusOne(Book book) {
+    public int updateUser(User user) {
         int status = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
-            BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookMapper.likeCountPlusOne(book);
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            userMapper.updateUser(user);
+            sqlSession.commit();
+            status = 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+        return status;
+    }
+
+    public int deleteUser(User user) {
+        int status = 0;
+        SqlSession sqlSession = SessionFactory.getSqlSession();
+        try {
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            userMapper.deleteUser(user);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {
@@ -143,3 +139,4 @@ public class BookDao {
         return status;
     }
 }
+

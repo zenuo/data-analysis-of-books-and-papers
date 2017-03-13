@@ -5,6 +5,26 @@
 <configuration>
     <properties resource="edu/libsys/conf/config.properties"/>
 
+    <settings>
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="defaultStatementTimeout" value="3000"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="useGeneratedKeys" value="true"/>
+    </settings>
+
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="helperDialect" value="mariadb"/>
+            <property name="offsetAsPageNum" value="true"/>
+            <property name="rowBoundsWithCount" value="true"/>
+            <property name="pageSizeZero" value="true"/>
+            <property name="reasonable" value="false"/>
+            <property name="params" value="pageNum=pageHelperStart;pageSize=pageHelperRows;"/>
+            <property name="supportMethodsArguments" value="false"/>
+            <property name="returnPageInfo" value="none"/>
+        </plugin>
+    </plugins>
+
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>

@@ -4,6 +4,8 @@ import edu.libsys.data.mapper.BehaviorMapper;
 import edu.libsys.entity.Behavior;
 import org.apache.ibatis.session.SqlSession;
 
+import java.util.List;
+
 public class BehaviorDao {
     public Behavior getBehaviorById(int id) {
         Behavior behavior = null;
@@ -32,5 +34,47 @@ public class BehaviorDao {
             sqlSession.close();
         }
         return status;
+    }
+
+    public List<Behavior> getBehaviorList() {
+        List<Behavior> behaviorList = null;
+        SqlSession sqlSession = SessionFactory.getSqlSession();
+        try {
+            BehaviorMapper behaviorMapper = sqlSession.getMapper(BehaviorMapper.class);
+            behaviorList = behaviorMapper.getBehaviorList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+        return behaviorList;
+    }
+
+    public List<Behavior> getBehaviorListByUserId(int userId) {
+        List<Behavior> behaviorList = null;
+        SqlSession sqlSession = SessionFactory.getSqlSession();
+        try {
+            BehaviorMapper behaviorMapper = sqlSession.getMapper(BehaviorMapper.class);
+            behaviorList = behaviorMapper.getBehaviorListByUserId(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+        return behaviorList;
+    }
+
+    List<Behavior> getBehaviorListByItemId(int itemId) {
+        List<Behavior> behaviorList = null;
+        SqlSession sqlSession = SessionFactory.getSqlSession();
+        try {
+            BehaviorMapper behaviorMapper = sqlSession.getMapper(BehaviorMapper.class);
+            behaviorList = behaviorMapper.getBehaviorListByItemId(itemId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+        return behaviorList;
     }
 }

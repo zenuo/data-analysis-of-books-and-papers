@@ -11,13 +11,18 @@ public class Paper {
     private int disLikeCount;
     private int site;
 
-    public Paper(String id, String title, String searchWord, String source, String url, String intro, int site) {
+    public Paper() {
+    }
+
+    public Paper(String id, String title, String searchWord, String source, String url, String intro, int likeCount, int disLikeCount, int site) {
         this.id = id;
         this.title = title;
         this.searchWord = searchWord;
         this.source = source;
         this.url = url;
         this.intro = intro;
+        this.likeCount = likeCount;
+        this.disLikeCount = disLikeCount;
         this.site = site;
     }
 

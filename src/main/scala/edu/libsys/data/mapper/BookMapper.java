@@ -36,6 +36,9 @@ public interface BookMapper {
     @Select("SELECT * FROM BOOK WHERE title like CONCAT('%', #{keyWord}, '%')")
     List<Book> getBookListBySearchTitle(String keyWord);
 
+    @Select("SELECT * FROM BOOK")
+    List<Book> getBookList();
+
     @Update("UPDATE BOOK SET likeCount=likeCount+1 marcRecId=#{marcRecId}")
     void likeCountPlusOne(Book book);
 

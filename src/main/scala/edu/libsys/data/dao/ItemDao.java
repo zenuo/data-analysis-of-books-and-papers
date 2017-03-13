@@ -4,9 +4,8 @@ import edu.libsys.data.mapper.ItemMapper;
 import edu.libsys.entity.Item;
 import org.apache.ibatis.session.SqlSession;
 
-/**
- * Created by spark on 3/13/17.
- */
+import java.util.List;
+
 public class ItemDao {
     public Item getItemBymarcRecId(int marcRecId) {
         Item item = null;
@@ -98,5 +97,19 @@ public class ItemDao {
             sqlSession.close();
         }
         return count;
+    }
+
+    public List<Item> getItemList() {
+        List<Item> itemList = null;
+        SqlSession sqlSession = SessionFactory.getSqlSession();
+        try {
+            ItemMapper itemMapper = sqlSession.getMapper(ItemMapper.class);
+            itemList = itemMapper.getItemList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+        return itemList;
     }
 }
