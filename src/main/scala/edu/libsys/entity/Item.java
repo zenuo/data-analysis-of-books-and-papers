@@ -1,8 +1,8 @@
 package edu.libsys.entity;
 
 public class Item {
-    private int propId;
     private int marcRecId;
+    private int propId;
     private int lendCount;
     private int likeCount = 0;
     private int disLikeCount = 0;

@@ -3,15 +3,6 @@ package edu.libsys
 import org.apache.spark.sql.SparkSession
 
 object Main {
-
-  /*
-  //lend record
-  case class LendRecord(cert_id: Int, time: String, marc_rec_id: Int, call_no: String)
-
-  //item
-  case class Item(prop_id: Int, marc_rec_id: Int, count: Int)
-  */
-
   //main method
   def main(args: Array[String]): Unit = {
     val spark = SparkSession

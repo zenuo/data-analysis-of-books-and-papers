@@ -1,9 +1,9 @@
 package edu.libsys.data.mapper;
 
 import edu.libsys.entity.Book;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 public interface BookMapper {
     @Results({
@@ -19,7 +19,26 @@ public interface BookMapper {
     })
 
     @Select("SELECT * FROM BOOK WHERE marcRecId=#{marcRecId}")
-    Book getBookById(String marcRecId);
+    Book getBookByMarcRecId(int marcRecId);
 
+    @Insert("INSERT INTO BOOK(marcRecId, callId, title, author, publisher, pubYear, isbn, likeCount, disLikeCount) VALUES(#{marcRecId}, #{callId}, #{title}, #{author}, #{publisher}, #{pubYear}, #{isbn}, #{likeCount}, #{disLikeCount})")
+    void addBook(Book book);
 
+    @Update("UPDATE BOOK SET callId=#{callId}, title=#{title}, author=#{author}, publisher={publisher}, pubYear=#{pubYear}, isbn=#{isbn} WHERE marcRecId=#{marcRecId}")
+    void updataBook(Book book);
+
+    @Delete("DELETE FROM BOOK WHERE marcRecId=#{marcRecId}")
+    void deleteBook(Book book);
+
+    @Select("SELECT COUNT(*) FROM BOOK")
+    int countBook();
+
+    @Select("SELECT * FROM BOOK WHERE title like CONCAT('%', #{keyWord}, '%')")
+    List<Book> getBookListBySearchTitle(String keyWord);
+
+    @Update("UPDATE BOOK SET likeCount=likeCount+1 marcRecId=#{marcRecId}")
+    void likeCountPlusOne(Book book);
+
+    @Update("UPDATE BOOK SET disLikeCount=disLikeCount+1 marcRecId=#{marcRecId}")
+    void disLikeCountPlusOne(Book book);
 }

@@ -17,6 +17,9 @@ public interface AuthorMapper {
     @Select("SELECT * FROM AUTHOR WHERE id=#{id}")
     Author getUserById(int id);
 
+    @Select("SELECT * FROM AUTHOR")
+    List<Author> getAuthorList();
+
     @Insert("INSERT INTO AUTHOR(name, workCount, likeCount, disLikeCount) VALUES(#{name} ,#{workCount}, #{likeCount}, #{disLikeCount})")
     void addAuthor(Author author);
 
@@ -24,7 +27,7 @@ public interface AuthorMapper {
     void updateAuthor(Author author);
 
     @Delete("DELETE FROM AUTHOR WHERE id=#{id}")
-    void deleteAuthor(int id);
+    void deleteAuthor(Author author);
 
     @Update("UPDATE AUTHOR SET likeCount=likeCount+1 WHERE id=#{id}")
     void likeCountPlusOne();

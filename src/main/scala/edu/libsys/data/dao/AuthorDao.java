@@ -2,6 +2,7 @@ package edu.libsys.data.dao;
 
 import edu.libsys.data.mapper.AuthorMapper;
 import edu.libsys.entity.Author;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;
@@ -54,12 +55,12 @@ public class AuthorDao {
         return status;
     }
 
-    public int deleteAuthor(int id) {
+    public int deleteAuthor(Author author) {
         int status = 0;
         SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorMapper.deleteAuthor(id);
+            authorMapper.deleteAuthor(author);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {
@@ -103,7 +104,18 @@ public class AuthorDao {
 
     //TO-DO
     public List<Author> gets(int pageNo) {
-        return null;
+        List<Author> authorList = null;
+        SqlSession sqlSession = SessionFactory.getSqlSession();
+        try {
+            RowBounds rowBounds = new RowBounds(0, 10);
+            AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
+            authorList = authorMapper.getAuthorList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+        return authorList;
     }
 
     public int countAuthor() {
@@ -121,9 +133,10 @@ public class AuthorDao {
     }
 
     public List<Author> getAuthorListBySearchName(String keyWord) {
-        SqlSession sqlSession = SessionFactory.getSqlSession();
         List<Author> authorList = null;
+        SqlSession sqlSession = SessionFactory.getSqlSession();
         try {
+            RowBounds rowBounds = new RowBounds(0, 10);
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
             authorList = authorMapper.getAuthorListBySearchName(keyWord);
             System.out.println(authorList.size());

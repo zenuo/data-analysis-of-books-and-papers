@@ -4,7 +4,7 @@ public class Book {
     private int marcRecId;
     private String callId;
     private String title;
-    private int author;
+    private String author;
     private String publisher;
     private String pubYear;
     private String isbn;
@@ -12,18 +12,6 @@ public class Book {
     private int disLikeCount;
 
     public Book() {
-    }
-
-    public Book(int marcRecId, String callId, String title, int author, String publisher, String pubYear, String isbn, int likeCount, int disLikeCount) {
-        this.marcRecId = marcRecId;
-        this.callId = callId;
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
-        this.pubYear = pubYear;
-        this.isbn = isbn;
-        this.likeCount = likeCount;
-        this.disLikeCount = disLikeCount;
     }
 
     @Override
@@ -39,6 +27,14 @@ public class Book {
                 ", likeCount=" + likeCount +
                 ", disLikeCount=" + disLikeCount +
                 '}';
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public int getMarcRecId() {
@@ -63,14 +59,6 @@ public class Book {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public int getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(int author) {
-        this.author = author;
     }
 
     public String getPublisher() {
