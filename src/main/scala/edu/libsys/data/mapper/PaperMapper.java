@@ -33,6 +33,9 @@ public interface PaperMapper {
     @Select("SELECT id ,title, searchWord, source, url, intro, likeCount, disLikeCount, site FROM PAPER WHERE searchWord LIKE CONCAT('%',#{keyWord},'%')")
     List<Paper> getPaperListBySearchSearchWord(String keyWord);
 
+    @Select("SELECT COUNT(*) FROM PAPER")
+    int countPaper();
+
     @Insert("INSERT INTO PAPER(id ,title, searchWord, source, url, intro, likeCount, disLikeCount, site) VALUES(#{id}, #{title}, #{searchWord}, #{source}, #{url}, #{intro}, #{likeCount}, #{disLikeCount}, #{site})")
     void addPaper(Paper paper);
 

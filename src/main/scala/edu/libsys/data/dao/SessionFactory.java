@@ -7,8 +7,9 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
-public class SessionFactory {
+public class SessionFactory implements Serializable {
     //static sqlSessionFactory
     public static SqlSessionFactory sqlSessionFactory;
 

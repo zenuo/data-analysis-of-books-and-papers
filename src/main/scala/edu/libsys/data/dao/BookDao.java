@@ -4,9 +4,10 @@ import edu.libsys.data.mapper.BookMapper;
 import edu.libsys.entity.Book;
 import org.apache.ibatis.session.SqlSession;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class BookDao {
+public class BookDao implements Serializable {
     public Book getBookByMarcRecId(int marcRecId) {
         Book book = null;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
@@ -107,7 +108,7 @@ public class BookDao {
         int status = 0;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookMapper.likeCountPlusOne(book);
+            bookMapper.disLikeCountPlusOne(book);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {

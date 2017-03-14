@@ -18,18 +18,18 @@ public interface BehaviorMapper {
             @Result(property = "content", column = "content")
     })
 
-    @Select("SELECT * FROM BEHAVIOR WHERE id=#{id}")
+    @Select("SELECT id, userId, itemId, type, time, content FROM BEHAVIOR WHERE id=#{id}")
     Behavior getBehaviorById(int id);
 
     @Insert("INSERT INTO BEHAVIOR(userId, itemId, type, time, content) VALUES(#{userId}, #{itemId}, #{type}, #{time}, #{content})")
     void addBehavior(Behavior behavior);
 
-    @Select("SELECT * FROM BEHAVIOR")
+    @Select("SELECT id, userId, itemId, type, time, content FROM BEHAVIOR")
     List<Behavior> getBehaviorList();
 
-    @Select("SELECT * FROM BEHAVIOR WHERE userId=#{userId}")
+    @Select("SELECT id, userId, itemId, type, time, content FROM BEHAVIOR WHERE userId=#{userId}")
     List<Behavior> getBehaviorListByUserId(int userId);
 
-    @Select("SELECT * FROM BEHAVIOR WHERE itemId=#{itemId}")
+    @Select("SELECT id, userId, itemId, type, time, content FROM BEHAVIOR WHERE itemId=#{itemId}")
     List<Behavior> getBehaviorListByItemId(int itemId);
 }

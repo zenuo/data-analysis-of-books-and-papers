@@ -14,11 +14,17 @@ public interface AuthorMapper {
             @Result(property = "disLikeCount", column = "disLikeCount")
     })
 
-    @Select("SELECT * FROM AUTHOR WHERE id=#{id}")
+    @Select("SELECT id, name, workCount, likeCount, disLikeCount FROM AUTHOR WHERE id=#{id}")
     Author getUserById(int id);
 
-    @Select("SELECT * FROM AUTHOR")
+    @Select("SELECT id, name, workCount, likeCount, disLikeCount FROM AUTHOR")
     List<Author> getAuthorList();
+
+    @Select("SELECT COUNT(*) FROM AUTHOR")
+    int countAuthor();
+
+    @Select("SELECT id, name, workCount, likeCount, disLikeCount FROM AUTHOR WHERE name like CONCAT('%',#{keyWord},'%')")
+    List<Author> getAuthorListBySearchName(String keyWord);
 
     @Insert("INSERT INTO AUTHOR(name, workCount, likeCount, disLikeCount) VALUES(#{name} ,#{workCount}, #{likeCount}, #{disLikeCount})")
     void addAuthor(Author author);
@@ -26,18 +32,13 @@ public interface AuthorMapper {
     @Update("UPDATE AUTHOR SET name=#{name} ,workCount=#{workCount} WHERE id=#{id}")
     void updateAuthor(Author author);
 
-    @Delete("DELETE FROM AUTHOR WHERE id=#{id}")
-    void deleteAuthor(Author author);
-
     @Update("UPDATE AUTHOR SET likeCount=likeCount+1 WHERE id=#{id}")
     void likeCountPlusOne();
 
     @Update("UPDATE AUTHOR SET disLikeCount=disLikeCount+1 WHERE id=#{id}")
     void disLikeCountPlusOne();
 
-    @Select("SELECT COUNT(*) FROM AUTHOR")
-    int countAuthor();
+    @Delete("DELETE FROM AUTHOR WHERE id=#{id}")
+    void deleteAuthor(Author author);
 
-    @Select("SELECT * FROM AUTHOR WHERE name like CONCAT('%',#{keyWord},'%')")
-    List<Author> getAuthorListBySearchName(String keyWord);
 }

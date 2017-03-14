@@ -7,7 +7,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     val spark = SparkSession
       .builder()
-      .appName("BookStatistics")
+      .appName("BookStats")
       .getOrCreate()
     //load data
     val items = spark.sparkContext.textFile("/home/spark/Project/data/csv/item.csv")

@@ -14,11 +14,14 @@ public interface ItemMapper {
             @Result(property = "disLikeCount", column = "disLikeCount")
     })
 
-    @Select("SELECT * FROM ITEM WHERE marcRecId=#{marcRecId}")
+    @Select("SELECT marcRecId, propId, lendCount, likeCount, disLikeCount FROM ITEM WHERE marcRecId=#{marcRecId}")
     Item getItemBymarcRecId(int marcRecId);
 
-    @Select("SELECT * FORM ITEM")
+    @Select("SELECT marcRecId, propId, lendCount, likeCount, disLikeCount FORM ITEM")
     List<Item> getItemList();
+
+    @Select("SELECT COUNT(*) FROM ITEM")
+    int countItem();
 
     @Insert("INSERT INTO ITEM(marcRecId, propId, lendCount, likeCount, disLikeCount) VALUES(#{marcRecId}, #{propId}, #{lendCount}, #{likeCount}, #{disLikeCount})")
     void addItem(Item item);
@@ -31,7 +34,4 @@ public interface ItemMapper {
 
     @Update("UPDATE ITEM SET likeCount=likeCount+1 WHERE marcRecId=#{marcRecId}")
     void disLikeCountPlusOne(Item item);
-
-    @Select("SELECT COUNT(*) FROM ITEM")
-    int countItem();
 }

@@ -5,6 +5,12 @@ public class LendRecord {
     private String time;
     private int marcRecId;
 
+    public LendRecord(int certId, String time, int marcRecId) {
+        this.certId = certId;
+        this.time = time;
+        this.marcRecId = marcRecId;
+    }
+
     public int getCertId() {
         return certId;
     }

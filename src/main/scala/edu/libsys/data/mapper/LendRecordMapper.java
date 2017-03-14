@@ -15,13 +15,13 @@ public interface LendRecordMapper {
             @Result(property = "marcRecId", column = "marcRecId")
     })
 
-    @Select("SELECT * FROM LENDRECORD WHERE marcRecId=#{marcRecId}")
+    @Select("SELECT certId, time, marcRecId FROM LENDRECORD WHERE marcRecId=#{marcRecId}")
     List<LendRecord> getLendRecordListByMarcRecId(int marcRecId);
 
-    @Select("SELECT * FROM LENDRECORD WHERE certId=#{certId}")
+    @Select("SELECT certId, time, marcRecId FROM LENDRECORD WHERE certId=#{certId}")
     List<LendRecord> getLendRecordListByCertId(int certId);
 
-    @Select("SELECT * FROM LENDRECORD")
+    @Select("SELECT certId, time, marcRecId FROM LENDRECORD")
     List<LendRecord> getLendRecordList();
 
     @Select("SELECT COUNT(*) FROM LENDRECORD")

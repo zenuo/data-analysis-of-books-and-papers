@@ -4,9 +4,10 @@ import edu.libsys.data.mapper.UserMapper;
 import edu.libsys.entity.User;
 import org.apache.ibatis.session.SqlSession;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class UserDao {
+public class UserDao implements Serializable {
     public User getUserById(int id) {
         User user = null;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {

@@ -4,9 +4,10 @@ import edu.libsys.data.mapper.LendRecordMapper;
 import edu.libsys.entity.LendRecord;
 import org.apache.ibatis.session.SqlSession;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class LendRecordDao {
+public class LendRecordDao implements Serializable {
     public List<LendRecord> getLendRecordListByMarcRecId(int marcRecId) {
         List<LendRecord> lendRecordList = null;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {

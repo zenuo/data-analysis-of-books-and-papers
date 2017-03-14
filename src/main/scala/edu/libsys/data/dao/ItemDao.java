@@ -4,9 +4,10 @@ import edu.libsys.data.mapper.ItemMapper;
 import edu.libsys.entity.Item;
 import org.apache.ibatis.session.SqlSession;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ItemDao {
+public class ItemDao implements Serializable {
     public Item getItemBymarcRecId(int marcRecId) {
         Item item = null;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {

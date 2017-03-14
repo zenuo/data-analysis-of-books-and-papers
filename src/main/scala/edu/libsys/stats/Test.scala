@@ -1,39 +1,33 @@
 package edu.libsys.stats
 
-import edu.libsys.entity.{Item, LendRecord}
+import edu.libsys.entity.{Author, Item, LendRecord}
 
-/**
-  * Created by spark on 3/11/17.
-  */
+import scala.collection.mutable.ArrayBuffer
+
 object Test {
-  def main(args: Array[String]) : Unit= {
-    val s1 = "99000328,0000006280,0"
-    val i:Item = parseItem(s1)
-    println(i.toString)
-    val s2 = "\"99321117\",\"2000-09-0209:54:56\",\"0000040935\",\"N49/81:1\""
-    val l:LendRecord = parseLendRecord(s2)
-    println(l.toString)
+  def main(args: Array[String]): Unit = {
+    val authorList = ArrayBuffer[Author]()
+    val author = new Author("lihua")
+    authorList += author
+    authorList += author
+    authorList.foreach(println(_))
   }
 
   //parse String to LendRecord
-  def parseLendRecord(line: String) = {
-    //replace """(comma)
+  def parseLendRecord(line: String): LendRecord = {
     val pieces = line.replaceAll("\"", "").split(",")
     val cert_id = pieces(0).toInt
     val time = pieces(1)
     val marc_rec_id = pieces(2).toInt
-    val call_no = pieces(3)
-    new LendRecord(cert_id, time, marc_rec_id, call_no)
+    new LendRecord(cert_id, time, marc_rec_id)
   }
 
   //parse String to Item
-  def parseItem(line: String) = {
-    //replace """(comma)
+  def parseItem(line: String): Item = {
     val pieces = line.split(",")
     val prop_id = pieces(0).toInt
     val marc_rec_id = pieces(1).toInt
     val count = pieces(2).toInt
     new Item(prop_id, marc_rec_id, count)
   }
-
 }

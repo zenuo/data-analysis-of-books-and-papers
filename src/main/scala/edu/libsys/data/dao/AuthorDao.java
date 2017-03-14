@@ -4,9 +4,10 @@ import edu.libsys.data.mapper.AuthorMapper;
 import edu.libsys.entity.Author;
 import org.apache.ibatis.session.SqlSession;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class AuthorDao {
+public class AuthorDao implements Serializable {
     public Author getUserById(int id) {
         Author author = null;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {

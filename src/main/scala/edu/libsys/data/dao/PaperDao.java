@@ -4,9 +4,10 @@ import edu.libsys.data.mapper.PaperMapper;
 import edu.libsys.entity.Paper;
 import org.apache.ibatis.session.SqlSession;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PaperDao {
+public class PaperDao implements Serializable {
     public Paper getPaperById(String id) {
         Paper paper = null;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
@@ -99,5 +100,17 @@ public class PaperDao {
             e.printStackTrace();
         }
         return status;
+    }
+
+    public int countPaper() {
+        int count = 0;
+        try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
+            PaperMapper paperMapper = sqlSession.getMapper(PaperMapper.class);
+            count = paperMapper.countPaper();
+            sqlSession.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 }
