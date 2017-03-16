@@ -45,32 +45,6 @@ public class ItemDao implements Serializable {
         return status;
     }
 
-    public int likeCountPlusOne(Item item) {
-        int status = 0;
-        try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
-            ItemMapper itemMapper = sqlSession.getMapper(ItemMapper.class);
-            itemMapper.likeCountPlusOne(item);
-            sqlSession.commit();
-            status = 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return status;
-    }
-
-    public int disLikeCountPlusOne(Item item) {
-        int status = 0;
-        try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
-            ItemMapper itemMapper = sqlSession.getMapper(ItemMapper.class);
-            itemMapper.disLikeCountPlusOne(item);
-            sqlSession.commit();
-            status = 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return status;
-    }
-
     public int countItem() {
         int count = 0;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {

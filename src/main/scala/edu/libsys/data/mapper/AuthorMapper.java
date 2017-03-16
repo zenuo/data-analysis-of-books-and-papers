@@ -33,10 +33,10 @@ public interface AuthorMapper {
     void updateAuthor(Author author);
 
     @Update("UPDATE AUTHOR SET likeCount=likeCount+1 WHERE id=#{id}")
-    void likeCountPlusOne();
+    void likeCountPlusOne(int id);
 
     @Update("UPDATE AUTHOR SET disLikeCount=disLikeCount+1 WHERE id=#{id}")
-    void disLikeCountPlusOne();
+    void disLikeCountPlusOne(int id);
 
     @Delete("DELETE FROM AUTHOR WHERE id=#{id}")
     void deleteAuthor(Author author);

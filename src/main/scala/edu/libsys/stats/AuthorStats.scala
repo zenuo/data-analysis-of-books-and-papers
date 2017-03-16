@@ -6,12 +6,13 @@ import org.apache.spark.sql.SparkSession
 
 object AuthorStats {
   def main(args: Array[String]): Unit = {
+    //create spark session
     val spark = SparkSession
       .builder()
       .appName("AuthorStats")
       .getOrCreate()
 
-    //create dao of author
+    //create an instances of AuthorDao
     val authorDao = new AuthorDao()
 
     //load file
@@ -21,7 +22,7 @@ object AuthorStats {
     //parse file to list of tuple
     val authorIDTupleList = spark.sparkContext.textFile(filePath).map(line => {
       val tokens = line.split(delimiter).map(_.trim)
-      (tokens(1) -> tokens(0))
+      tokens(1) -> tokens(0)
     })
     authorIDTupleList.cache()
     println(authorIDTupleList.count())

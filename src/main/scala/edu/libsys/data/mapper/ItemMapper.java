@@ -9,9 +9,7 @@ public interface ItemMapper {
     @Results({
             @Result(property = "marcRecId", column = "marcRecId"),
             @Result(property = "propId", column = "propId"),
-            @Result(property = "lendCount", column = "lendCount"),
-            @Result(property = "likeCount", column = "likeCount"),
-            @Result(property = "disLikeCount", column = "disLikeCount")
+            @Result(property = "lendCount", column = "lendCount")
     })
 
     @Select("SELECT marcRecId, propId, lendCount, likeCount, disLikeCount FROM ITEM WHERE marcRecId=#{marcRecId}")
@@ -28,10 +26,4 @@ public interface ItemMapper {
 
     @Update("UPDATE ITEM SET lendCount=lendCount+1 WHERE marcRecId=#{marcRecId}")
     void lendCountPlusOne(Item item);
-
-    @Update("UPDATE ITEM SET likeCount=likeCount+1 WHERE marcRecId=#{marcRecId}")
-    void likeCountPlusOne(Item item);
-
-    @Update("UPDATE ITEM SET likeCount=likeCount+1 WHERE marcRecId=#{marcRecId}")
-    void disLikeCountPlusOne(Item item);
 }

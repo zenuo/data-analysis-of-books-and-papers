@@ -34,10 +34,10 @@ public interface BookMapper {
     void addBook(Book book);
 
     @Update("UPDATE BOOK SET likeCount=likeCount+1 marcRecId=#{marcRecId}")
-    void likeCountPlusOne(Book book);
+    void likeCountPlusOne(int marcRecId);
 
     @Update("UPDATE BOOK SET disLikeCount=disLikeCount+1 marcRecId=#{marcRecId}")
-    void disLikeCountPlusOne(Book book);
+    void disLikeCountPlusOne(int marcRecId);
 
     @Update("UPDATE BOOK SET callId=#{callId}, title=#{title}, author=#{author}, publisher={publisher}, pubYear=#{pubYear}, isbn=#{isbn} WHERE marcRecId=#{marcRecId}")
     void updataBook(Book book);

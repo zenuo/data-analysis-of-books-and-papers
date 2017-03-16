@@ -3,7 +3,7 @@ package edu.libsys.entity;
 public class Author {
     private int id;
     private String name;
-    private int workCount = 0;
+    private int workCount;
     private int likeCount = 0;
     private int disLikeCount = 0;
 
