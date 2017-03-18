@@ -19,7 +19,7 @@ public class LendRecordDao implements Serializable {
         return lendRecordList;
     }
 
-    public List<LendRecord> getLendRecordListByCertId(int certId) {
+    public List<LendRecord> getLendRecordListByCertId(String certId) {
         List<LendRecord> lendRecordList = null;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             LendRecordMapper lendRecordMapper = sqlSession.getMapper(LendRecordMapper.class);

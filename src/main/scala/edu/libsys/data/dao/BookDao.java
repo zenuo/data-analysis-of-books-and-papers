@@ -91,11 +91,11 @@ public class BookDao implements Serializable {
         return bookList;
     }
 
-    public int likeCountPlusOne(Book book) {
+    public int likeCountPlusOne(int id) {
         int status = 0;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookMapper.likeCountPlusOne(book);
+            bookMapper.likeCountPlusOne(id);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {
@@ -104,11 +104,11 @@ public class BookDao implements Serializable {
         return status;
     }
 
-    public int disLikeCountPlusOne(Book book) {
+    public int disLikeCountPlusOne(int id) {
         int status = 0;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             BookMapper bookMapper = sqlSession.getMapper(BookMapper.class);
-            bookMapper.disLikeCountPlusOne(book);
+            bookMapper.disLikeCountPlusOne(id);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {

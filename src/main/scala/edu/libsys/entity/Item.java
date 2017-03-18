@@ -7,10 +7,10 @@ public class Item {
     private int likeCount = 0;
     private int disLikeCount = 0;
 
-    public Item(int propId,int marcRecId,int lendCount){
-        this.setPropId(propId);
-        this.setMarcRecId(marcRecId);
-        this.setLendCount(lendCount);
+    public Item(int marcRecId, int propId, int lendCount) {
+        this.marcRecId = marcRecId;
+        this.propId = propId;
+        this.lendCount = lendCount;
     }
 
     public int getPropId() {

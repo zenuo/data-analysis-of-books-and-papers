@@ -4,6 +4,14 @@ import edu.libsys.data.dao.AuthorDao
 import edu.libsys.entity.Author
 import org.apache.spark.sql.SparkSession
 
+/*数据样例
+论文ID，作者
+TGZG200701002,刘志军
+10511-1012349726.nh,孙自俭
+10511-1012349726.nh,朱英
+10651-1014167683.nh,向开祥
+ */
+
 object AuthorStats {
   def main(args: Array[String]): Unit = {
     //create spark session
@@ -27,7 +35,6 @@ object AuthorStats {
     authorIDTupleList.cache()
     println(authorIDTupleList.count())
 
-    //create list of tuple(s) like authorName -> paperId
     val authorStats = authorIDTupleList.groupByKey.collect
 
     //traversal list, save authors to database

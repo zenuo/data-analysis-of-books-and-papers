@@ -16,7 +16,7 @@ object Test {
   //parse String to LendRecord
   def parseLendRecord(line: String): LendRecord = {
     val pieces = line.replaceAll("\"", "").split(",")
-    val cert_id = pieces(0).toInt
+    val cert_id = pieces(0)
     val time = pieces(1)
     val marc_rec_id = pieces(2).toInt
     new LendRecord(cert_id, time, marc_rec_id)

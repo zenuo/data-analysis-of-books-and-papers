@@ -19,7 +19,7 @@ public interface LendRecordMapper {
     List<LendRecord> getLendRecordListByMarcRecId(int marcRecId);
 
     @Select("SELECT certId, time, marcRecId FROM LENDRECORD WHERE certId=#{certId}")
-    List<LendRecord> getLendRecordListByCertId(int certId);
+    List<LendRecord> getLendRecordListByCertId(String certId);
 
     @Select("SELECT certId, time, marcRecId FROM LENDRECORD")
     List<LendRecord> getLendRecordList();

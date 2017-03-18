@@ -6,14 +6,16 @@ import java.io.*;
 
 public class RemoveDuplicateLine {
     public static void main(String[] args) {
-        RemoveDuplicateLine rdl = new RemoveDuplicateLine();
         StringFunnel stringFunnel = new StringFunnel();
         //the capability of BloomFilter
+
         long expectedInsertions = 3264062;
         BloomFilter<String> bloomFilter = BloomFilter.create(stringFunnel, expectedInsertions);
+
         //config files
         String oldFileName = "/home/spark/Project/data/txt/id_included.txt";
         String newFileName = "/home/spark/Project/data/txt/new-id_included.txt";
+
         try {
             //traversal file
 

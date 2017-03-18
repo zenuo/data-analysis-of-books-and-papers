@@ -63,7 +63,7 @@ public class AuthorDao implements Serializable {
         int status = 0;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorMapper.likeCountPlusOne();
+            authorMapper.likeCountPlusOne(id);
             sqlSession.commit();
             status = 1;
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class AuthorDao implements Serializable {
         int status = 0;
         try (SqlSession sqlSession = SessionFactory.getSqlSession()) {
             AuthorMapper authorMapper = sqlSession.getMapper(AuthorMapper.class);
-            authorMapper.disLikeCountPlusOne();
+            authorMapper.disLikeCountPlusOne(id);
             status = 1;
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,21 +1,21 @@
 package edu.libsys.entity;
 
 public class LendRecord {
-    private int certId;
+    private String certId;
     private String time;
     private int marcRecId;
 
-    public LendRecord(int certId, String time, int marcRecId) {
+    public LendRecord(String certId, String time, int marcRecId) {
         this.certId = certId;
         this.time = time;
         this.marcRecId = marcRecId;
     }
 
-    public int getCertId() {
+    public String getCertId() {
         return certId;
     }
 
-    public void setCertId(int certId) {
+    public void setCertId(String certId) {
         this.certId = certId;
     }
 
@@ -38,7 +38,7 @@ public class LendRecord {
     @Override
     public String toString() {
         return "LendRecord{" +
-                "certId=" + certId +
+                "certId='" + certId + '\'' +
                 ", time='" + time + '\'' +
                 ", marcRecId=" + marcRecId +
                 '}';
