@@ -1,7 +1,12 @@
 package edu.libsys.entity;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Paper {
-    private String id;
+    private int id;
+    private String paperId;
     private String title;
     private String searchWord;
     private String source;
@@ -9,13 +14,12 @@ public class Paper {
     private String intro;
     private int likeCount;
     private int disLikeCount;
-    private int site;
 
     public Paper() {
     }
 
-    public Paper(String id, String title, String searchWord, String source, String url, String intro, int likeCount, int disLikeCount, int site) {
-        this.id = id;
+    public Paper(String paperId, String title, String searchWord, String source, String url, String intro, int likeCount, int disLikeCount, int site) {
+        this.paperId = paperId;
         this.title = title;
         this.searchWord = searchWord;
         this.source = source;
@@ -23,17 +27,27 @@ public class Paper {
         this.intro = intro;
         this.likeCount = likeCount;
         this.disLikeCount = disLikeCount;
-        this.site = site;
     }
 
-    public String getId() {
+    @XmlAttribute(name = "id")
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
+    @XmlAttribute(name = "paperId")
+    public String getPaperId() {
+        return paperId;
+    }
+
+    public void setPaperId(String paperId) {
+        this.paperId = paperId;
+    }
+
+    @XmlAttribute(name = "title")
     public String getTitle() {
         return title;
     }
@@ -42,6 +56,7 @@ public class Paper {
         this.title = title;
     }
 
+    @XmlAttribute(name = "searchWord")
     public String getSearchWord() {
         return searchWord;
     }
@@ -50,6 +65,7 @@ public class Paper {
         this.searchWord = searchWord;
     }
 
+    @XmlAttribute(name = "source")
     public String getSource() {
         return source;
     }
@@ -58,6 +74,7 @@ public class Paper {
         this.source = source;
     }
 
+    @XmlAttribute(name = "url")
     public String getUrl() {
         return url;
     }
@@ -66,6 +83,7 @@ public class Paper {
         this.url = url;
     }
 
+    @XmlAttribute(name = "intro")
     public String getIntro() {
         return intro;
     }
@@ -74,6 +92,7 @@ public class Paper {
         this.intro = intro;
     }
 
+    @XmlAttribute(name = "likeCount")
     public int getLikeCount() {
         return likeCount;
     }
@@ -82,6 +101,7 @@ public class Paper {
         this.likeCount = likeCount;
     }
 
+    @XmlAttribute(name = "disLikeCount")
     public int getDisLikeCount() {
         return disLikeCount;
     }
@@ -90,18 +110,11 @@ public class Paper {
         this.disLikeCount = disLikeCount;
     }
 
-    public int getSite() {
-        return site;
-    }
-
-    public void setSite(int site) {
-        this.site = site;
-    }
-
     @Override
     public String toString() {
         return "Paper{" +
-                "id='" + id + '\'' +
+                "id=" + id +
+                ", paperId='" + paperId + '\'' +
                 ", title='" + title + '\'' +
                 ", searchWord='" + searchWord + '\'' +
                 ", source='" + source + '\'' +
@@ -109,7 +122,6 @@ public class Paper {
                 ", intro='" + intro + '\'' +
                 ", likeCount=" + likeCount +
                 ", disLikeCount=" + disLikeCount +
-                ", site=" + site +
                 '}';
     }
 }

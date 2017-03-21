@@ -32,7 +32,7 @@ public interface UserMapper {
     @Select("SELECT passwd FROM USER WHERE name=#{name}")
     String getPasswdByUser(String name);
 
-    @Insert("INSERT INTO USER(id, name, type, email, passwd) VALUES(#{id}, #{name}, #{type}, #{email}, #{passwd})")
+    @Insert("INSERT INTO USER(name, type, email, passwd) VALUES(#{name}, #{type}, #{email}, #{passwd})")
     void addUser(User user);
 
     @Update("UPDATE USER SET name=#{name}, type=#{type}, email=#{email}, passwd=#{passwd} WHERE id={id}")

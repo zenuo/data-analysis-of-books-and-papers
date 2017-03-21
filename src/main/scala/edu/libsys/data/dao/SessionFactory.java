@@ -16,12 +16,12 @@ public class SessionFactory implements Serializable {
     //build sqlSessionFactory, return a instance of SqlSession.
     public static SqlSession getSqlSession() {
         String resource = "edu/libsys/conf/mybatis-config.xml";
-        if (sqlSessionFactory == null){
-            try{
+        if (sqlSessionFactory == null) {
+            try {
                 InputStream inputStream = Resources.getResourceAsStream(resource);
                 sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
                 inputStream.close();
-            }catch (IOException e){
+            } catch (IOException e) {
                 System.err.println("Build SqlSessionFactory error.");
                 e.printStackTrace();
             }

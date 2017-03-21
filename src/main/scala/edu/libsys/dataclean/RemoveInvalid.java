@@ -23,8 +23,8 @@ public class RemoveInvalid {
     //过滤ITEM.txt中非数字的行
     public static void main(String[] args) {
         //配置文件
-        String oldFileName = "/home/spark/Project/data/csv/LEND_HIST.csv";
-        String newFileName = "/home/spark/Project/data/csv/new-LEND_HIST.csv";
+        String oldFileName = "/home/spark/Project/data/txt/book_id_author-title_callId.txt";
+        String newFileName = "/home/spark/Project/data/txt/book_id_author-title_callId.txt-new";
 
         //辅助字符串
         String line = null;
@@ -41,17 +41,13 @@ public class RemoveInvalid {
             //若符合条件则写入新文件
             while ((line = br.readLine()) != null) {
                 //分割
-                String[] pieces = line.replace("\"", "").split(",");
+                String[] pieces = line.split("#");
                 //判断
-                if (isLengthValid((line), ",", 4)) {
-                    if (isNumeric(pieces[0]) && isNumeric(pieces[2])) {
-                        //写入新文件
-                        bw.write(line + "\n");
-                        bw.flush();
-                    } else {
-                        //输出不符合规则的行
-                        System.out.println(line);
-                    }
+                if (pieces.length == 3) {
+                    bw.write(line + "\n");
+                    bw.flush();
+                } else {
+                    System.out.println(line);
                 }
             }
             //结束
