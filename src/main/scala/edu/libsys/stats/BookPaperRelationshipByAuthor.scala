@@ -1,6 +1,6 @@
 package edu.libsys.stats
 
-import edu.libsys.data.dao.AuthorDao
+import edu.libsys.data.dao.{AuthorDao, PaperBookRelationshipDao}
 import org.apache.spark.sql.SparkSession
 
 /*数据样例
@@ -45,25 +45,44 @@ book_id_author-title_callId.txt
 10,主编冯建奇等,研究生英语教程,H31
  */
 
-object BookPaperAuthorStats {
+object BookPaperRelationshipByAuthor {
   //若论文与图书作者相同，则建立关系；计数
   def main(args: Array[String]): Unit = {
-    //create spark session
+    //判断文件参数是否正确
+    if (args.length != 3) {
+      println("-------------------------------ERROR-------------------------------")
+      println("Valid program arguments:")
+      println("PATH_TO_paper_paperID_author.txt PATH_TO_paper_id_paperId.txt PATH_TO_book_id_author_title.txt")
+      println("please try again, exit now.")
+      println("-------------------------------------------------------------------")
+      sys.exit()
+    }
+
+    //创建会话
     val spark = SparkSession
       .builder()
-      .appName("AuthorStats")
+      .appName("BookPaperRelationshipByAuthor")
       .getOrCreate()
 
     //创建数据库访问对象
     val authorDao = new AuthorDao()
+    val paperBookRelationshipDao = new PaperBookRelationshipDao()
 
-    //加载文件
+    //文件路径
+    val paperInfo01Path = args(0)
+    val paperInfo02Path = args(1)
+    val bookInfoPath = args(2)
+    /*
     val paperInfo01Path = "/home/spark/Project/data/txt/paper_paperID_author.txt"
     val paperInfo02Path = "/home/spark/Project/data/txt/paper_id_paperId.txt"
     val bookInfoPath = "/home/spark/Project/data/txt/book_id_author_title.txt"
+    */
+
+    //分割符
     val delimiter01 = ","
     val delimiter02 = "#"
 
+    /*
     //计数
     //作者论文计数
     val authorPaperList = spark.sparkContext.textFile(paperInfo01Path).map(line => {
@@ -78,31 +97,33 @@ object BookPaperAuthorStats {
     //聚合两个MapPartitionsRDD
     //val authorStats = authorBookCountList.union(authorPaperList)
     //val authorWorkCount = authorStats.reduceByKey(_ + _)
-    //遍历数组，将作者信息存入数据库
-    /*
+    //遍历，将作者信息存入数据库
+
     authorWorkCount.foreach(tuple => {
       authorDao.addAuthor(new Author(tuple._1, tuple._2))
-    })
-*/
+        })
+    */
 
     //建立联系
     //获得论文id与作者的元组
     //paperID_author
-    val paperAuthorpaperIDTupleList = spark.sparkContext.textFile(paperInfo01Path).map(line => {
+    val paperAuthorPaperIDTupleList = spark.sparkContext.textFile(paperInfo01Path).map(line => {
       val tokens = line.split(delimiter01).map(_.trim)
       //类似(TGZG200701002,刘志军)
       tokens(0) -> tokens(1)
     })
     //println(paperAuthorpaperIDTupleList.first().toString()) is (TGZG200701002,刘志军)
+
     //id_paperId
-    val paperIdpaperIDTupleList = spark.sparkContext.textFile(paperInfo02Path).map(line => {
+    val paperIdPaperIDTupleList = spark.sparkContext.textFile(paperInfo02Path).map(line => {
       val tokens = line.split(delimiter01).map(_.trim)
       //类似(10001-1011132221.nh,1)
-      tokens(1) -> tokens(0)
+      tokens(1) -> tokens(0).toInt
     })
     //println(paperIdpaperIDTupleList.first().toString()) is (10001-1011132221.nh,1)
+
     //join两个MapPartitionsRDD
-    val paperAuthorIDTupleList = paperAuthorpaperIDTupleList.join(paperIdpaperIDTupleList).map(tuple => {
+    val paperAuthorIDTupleList = paperAuthorPaperIDTupleList.join(paperIdPaperIDTupleList).map(tuple => {
       //tuple类似于(BGDH200609003,(杨竣辉,144810))
       tuple._2
     })
@@ -113,7 +134,7 @@ object BookPaperAuthorStats {
     val bookAuthorIDTupleList = spark.sparkContext.textFile(bookInfoPath).map(line => {
       //首先需要将转义字符串“\\,”替换成“，”
       val tokens = line.split(delimiter02).map(_.trim)
-      parseBookAuthor(tokens(1)) -> tokens(0)
+      parseBookAuthor(tokens(1)) -> tokens(0).toInt
     })
     //println(bookAuthorIDTupleList.first()) is (陈世秀,1)
     //println(bookAuthorIDTupleList.count()) is 1226327
@@ -123,13 +144,17 @@ object BookPaperAuthorStats {
       tuple._2
     })
 
+    bookPaperRelationshipList.foreach(tuple => {
+      paperBookRelationshipDao.addPaperBookRelationship(tuple._2, tuple._1)
+    })
     //println(bookPaperRelationshipList.count()) is 5527071
-    //println(bookPaperRelationshipList.first()) is (778473,2349)
+    //println(bookPaperRelationshipList.first()) is (778473,2349) bookId,paperId
 
     //stop work
     spark.stop()
   }
 
+  //删除一些字符
   def parseBookAuthor(token: String): String = {
     val word01 = "主"
     val word02 = "著"
@@ -138,7 +163,6 @@ object BookPaperAuthorStats {
     val word05 = "]"
     val word06 = "["
     val word07 = "作者"
-    val parsed = token.replaceAll(word01, "").replaceAll(word02, "").replaceAll(word03, "").replaceAll(word04, "").replace(word05, "").replace(word06, "").replace(word07, "")
-    return parsed
+    token.replaceAll(word01, "").replaceAll(word02, "").replaceAll(word03, "").replaceAll(word04, "").replace(word05, "").replace(word06, "").replace(word07, "")
   }
 }
