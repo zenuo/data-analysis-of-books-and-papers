@@ -60,23 +60,113 @@ TGZG200701002,形势
 
 object BookPaperRelationshipByIndexTermAndCLC {
   def main(args: Array[String]): Unit = {
-    /*
     //判断文件参数是否正确
-    if (args.length != 3){
+    if (args.length != 5) {
       println("-------------------------------ERROR-------------------------------")
       println("Valid program arguments:")
-      println("PATH_TO_paper_paperID_author.txt PATH_TO_paper_id_paperId.txt PATH_TO_book_id_author_title.txt")
+      println("PATH_TO_book_id_callId.txt PATH_TO_cls_no_name.txt PATH_TO_paper_id_paperId.txt PATH_TO_paper_paperId_indexTerm.txt PATH_TO_resultFile")
       println("please try again, exit now.")
       println("-------------------------------------------------------------------")
       sys.exit()
     }
-    */
     //创建会话
     val spark = SparkSession
       .builder()
       .appName("BookPaperRelationshipByIndexTermAndCLC")
       .getOrCreate()
 
+    //创建数据库访问对象
+    //val paperBookRelationshipDao = new PaperBookRelationshipDao()
 
+    //文件路径
+    val bookInfoPath01 = args(0)
+    val bookInfoPath02 = args(1)
+    val paperInfoPath01 = args(2)
+    val paperInfoPath02 = args(3)
+    val resultFilePath = args(4)
+    /*
+    val bookInfoPath01 = "/home/spark/Project/data/txt/book_id_callId.txt"
+    val bookInfoPath02 = "/home/spark/Project/data/txt/cls_no_name.txt"
+    val paperInfoPath01 = "/home/spark/Project/data/txt/paper_id_paperId.txt"
+    val paperInfoPath02 = "/home/spark/Project/data/txt/paper_paperId_indexTerm.txt"
+    */
+
+    //分割符
+    val delimiter01 = ","
+
+    //建立联系
+    //获得图书id与中图分类名的元组
+    //book_id_CLCId
+    val bookIdCLCIdTupleList = spark.sparkContext.textFile(bookInfoPath01).map(line => {
+      val tokens = line.split(delimiter01).map(_.trim)
+      //类似(H152,1)
+      parseCLCId(tokens(1)) -> tokens(0).toInt
+    })
+    //book_CLCId_CLCName
+    val bookCLCIdCLCNameTupleList = spark.sparkContext.textFile(bookInfoPath02).map(line => {
+      val tokens = line.split(delimiter01).map(_.trim)
+      //类似(S325,品种的整理与保存)
+      tokens(0) -> tokens(1)
+    })
+    //join两个MapPartitionsRDD
+    val bookCLCNameIdTupleList = bookCLCIdCLCNameTupleList.join(bookIdCLCIdTupleList).map(tuple => {
+      //类似(品种的整理与保存,122)
+      tuple._2
+    })
+    //bookCLCNameIdTupleList.count(): 1107331
+    //bookCLCNameIdTupleList.first(): (地质勘控仪器,433339)
+
+    //获得论文id与关键词的元组
+    //paper_id_paperId
+    val paperIdPaperIDTupleList = spark.sparkContext.textFile(paperInfoPath01).map(line => {
+      val tokens = line.split(delimiter01).map(_.trim)
+      //类似(10001-1011132221.nh,1)
+      tokens(1) -> tokens(0).toInt
+    })
+    //paper_paperId_IndexTerm
+    val paperPaperIdIndexTermTupleList = spark.sparkContext.textFile(paperInfoPath02).map(line => {
+      val tokens = line.split(delimiter01).map(_.trim)
+      //类似(TGZG200701002,和谐铁路)
+      tokens(0) -> tokens(1)
+    })
+    //join两个MapPartitionsRDD
+    val paperIndexTermIdTupleList = paperPaperIdIndexTermTupleList.join(paperIdPaperIDTupleList).map(tuple => {
+      //类似(和谐铁路,122)
+      tuple._2
+    })
+    //paperIndexTermIdTupleList.count(): 2679067
+    //paperIndexTermIdTupleList.first(): (中铁快运,100397)
+
+    //分析联系
+    //join两个MapPartitionsRDD
+    val paperBookRelationshipList = paperIndexTermIdTupleList.join(bookCLCNameIdTupleList).map(tuple => {
+      //类似(100,122)
+      tuple._2
+    })
+    //paperBookRelationshipList.count(): 36696695
+    //paperBookRelationshipList.first(): (508464,310462)
+
+    /*
+    //存入数据库
+    //因使用DAO执行大量数据插入速度较慢，故暂不使用
+    paperBookRelationshipList.foreach(tuple =>{
+      //paperId, bookId
+      //存入数据库
+      //paperBookRelationshipDao.addPaperBookRelationship(tuple._1, tuple._2)
+    })
+    */
+
+    //保存文本文件
+    paperBookRelationshipList.saveAsTextFile(resultFilePath)
+
+    //结束
+    spark.stop()
+  }
+
+  //从“O411.1-44”中匹配“O411”
+  def parseCLCId(string: String): String = {
+    //正则
+    val pattern = "([A-Z])\\w+".r
+    pattern.findFirstIn(string).getOrElse("")
   }
 }

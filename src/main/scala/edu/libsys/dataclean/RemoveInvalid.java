@@ -1,6 +1,7 @@
 package edu.libsys.dataclean;
 
 import java.io.*;
+import java.util.regex.Pattern;
 
 /*LEND_HIST.csv数据样例
 “财产号”，“借出时间”，“借阅者ID”，“中图编号”
@@ -23,8 +24,8 @@ public class RemoveInvalid {
     //过滤ITEM.txt中非数字的行
     public static void main(String[] args) {
         //配置文件
-        String oldFileName = "/home/spark/Project/data/txt/book_id_author-title_callId.txt";
-        String newFileName = "/home/spark/Project/data/txt/book_id_author-title_callId.txt-new";
+        String oldFileName = "/home/spark/Project/data/txt/book_id_callId.txt";
+        String newFileName = "/home/spark/Project/data/txt/book_id_callName.txt";
 
         //辅助字符串
         String line = null;
@@ -40,14 +41,11 @@ public class RemoveInvalid {
 
             //若符合条件则写入新文件
             while ((line = br.readLine()) != null) {
-                //分割
-                String[] pieces = line.split("#");
+                String[] pieces = line.split(",");
                 //判断
-                if (pieces.length == 3) {
+                if (isChineseChar(pieces[1])) {
                     bw.write(line + "\n");
                     bw.flush();
-                } else {
-                    System.out.println(line);
                 }
             }
             //结束
@@ -72,5 +70,10 @@ public class RemoveInvalid {
             }
         }
         return true;
+    }
+
+    public static boolean isChineseChar(String string) {
+        Pattern pattern = Pattern.compile("[\\u4e00-\\u9fa5]{0,}+");
+        return pattern.matcher(string).matches();
     }
 }

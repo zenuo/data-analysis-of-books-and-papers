@@ -86,3 +86,13 @@ TGZG200701002,交通运输经济
 ## 二、建立关联
 ### 1.原理
 通过
+
+## 三、过程记录
+```
+[spark@localhost BookPaperRelationshipByIndexTermAndCLC.result]$ ll
+total 568036
+-rw-r--r--. 1 spark spark 253118775 Mar 22 11:34 part-00000
+-rw-r--r--. 1 spark spark 131409318 Mar 22 11:34 part-00001
+-rw-r--r--. 1 spark spark 197133179 Mar 22 11:34 part-00002
+-rw-r--r--. 1 spark spark         0 Mar 22 11:34 _SUCCESS
+```

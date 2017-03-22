@@ -1,6 +1,5 @@
 package edu.libsys.stats
 
-import edu.libsys.data.dao.{AuthorDao, PaperBookRelationshipDao}
 import org.apache.spark.sql.SparkSession
 
 /*数据样例
@@ -49,10 +48,10 @@ object BookPaperRelationshipByAuthor {
   //若论文与图书作者相同，则建立关系；计数
   def main(args: Array[String]): Unit = {
     //判断文件参数是否正确
-    if (args.length != 3) {
+    if (args.length != 4) {
       println("-------------------------------ERROR-------------------------------")
       println("Valid program arguments:")
-      println("PATH_TO_paper_paperID_author.txt PATH_TO_paper_id_paperId.txt PATH_TO_book_id_author_title.txt")
+      println("PATH_TO_paper_paperID_author.txt PATH_TO_paper_id_paperId.txt PATH_TO_book_id_author_title.txt PATH_TO_ResultFilePath")
       println("please try again, exit now.")
       println("-------------------------------------------------------------------")
       sys.exit()
@@ -65,16 +64,17 @@ object BookPaperRelationshipByAuthor {
       .getOrCreate()
 
     //创建数据库访问对象
-    val authorDao = new AuthorDao()
-    val paperBookRelationshipDao = new PaperBookRelationshipDao()
+    //val authorDao = new AuthorDao()
+    //val paperBookRelationshipDao = new PaperBookRelationshipDao()
 
     //文件路径
-    val paperInfo01Path = args(0)
-    val paperInfo02Path = args(1)
+    val paperInfoPath01 = args(0)
+    val paperInfoPath02 = args(1)
     val bookInfoPath = args(2)
+    val resultFilePath = args(3)
     /*
-    val paperInfo01Path = "/home/spark/Project/data/txt/paper_paperID_author.txt"
-    val paperInfo02Path = "/home/spark/Project/data/txt/paper_id_paperId.txt"
+    val paperInfoPath01 = "/home/spark/Project/data/txt/paper_paperID_author.txt"
+    val paperInfoPath02 = "/home/spark/Project/data/txt/paper_id_paperId.txt"
     val bookInfoPath = "/home/spark/Project/data/txt/book_id_author_title.txt"
     */
 
@@ -84,8 +84,9 @@ object BookPaperRelationshipByAuthor {
 
     /*
     //计数
+    //意义不大，故舍弃
     //作者论文计数
-    val authorPaperList = spark.sparkContext.textFile(paperInfo01Path).map(line => {
+    val authorPaperList = spark.sparkContext.textFile(paperInfoPath01).map(line => {
       val tokens = line.split(delimiter01).map(_.trim)
       tokens(1) -> 1
     })
@@ -106,16 +107,16 @@ object BookPaperRelationshipByAuthor {
 
     //建立联系
     //获得论文id与作者的元组
-    //paperID_author
-    val paperAuthorPaperIDTupleList = spark.sparkContext.textFile(paperInfo01Path).map(line => {
+    //paper_paperID_author
+    val paperAuthorPaperIDTupleList = spark.sparkContext.textFile(paperInfoPath01).map(line => {
       val tokens = line.split(delimiter01).map(_.trim)
       //类似(TGZG200701002,刘志军)
       tokens(0) -> tokens(1)
     })
     //println(paperAuthorpaperIDTupleList.first().toString()) is (TGZG200701002,刘志军)
 
-    //id_paperId
-    val paperIdPaperIDTupleList = spark.sparkContext.textFile(paperInfo02Path).map(line => {
+    //paper_id_paperId
+    val paperIdPaperIDTupleList = spark.sparkContext.textFile(paperInfoPath02).map(line => {
       val tokens = line.split(delimiter01).map(_.trim)
       //类似(10001-1011132221.nh,1)
       tokens(1) -> tokens(0).toInt
@@ -124,7 +125,7 @@ object BookPaperRelationshipByAuthor {
 
     //join两个MapPartitionsRDD
     val paperAuthorIDTupleList = paperAuthorPaperIDTupleList.join(paperIdPaperIDTupleList).map(tuple => {
-      //tuple类似于(BGDH200609003,(杨竣辉,144810))
+      //类似(BGDH200609003,(杨竣辉,144810))
       tuple._2
     })
     //println(paperAuthorIDTupleList.first()) is (王立莉,300221)
@@ -132,23 +133,30 @@ object BookPaperRelationshipByAuthor {
 
     //获得图书id与作者的元组
     val bookAuthorIDTupleList = spark.sparkContext.textFile(bookInfoPath).map(line => {
-      //首先需要将转义字符串“\\,”替换成“，”
       val tokens = line.split(delimiter02).map(_.trim)
       parseBookAuthor(tokens(1)) -> tokens(0).toInt
     })
     //println(bookAuthorIDTupleList.first()) is (陈世秀,1)
     //println(bookAuthorIDTupleList.count()) is 1226327
 
+    //分析联系
     //join两个MapPartitionsRDD
-    val bookPaperRelationshipList = bookAuthorIDTupleList.join(paperAuthorIDTupleList).map(tuple => {
+    val paperBookRelationshipList = paperAuthorIDTupleList.join(bookAuthorIDTupleList).map(tuple => {
       tuple._2
     })
+    //println(paperBookRelationshipList.count()) is 5527071
+    //println(paperBookRelationshipList.first()) is (778473,2349) bookId,paperId
 
-    bookPaperRelationshipList.foreach(tuple => {
+    /*
+    //存入数据库
+    //因使用DAO执行大量数据插入速度较慢，故不使用
+    paperBookRelationshipList.foreach(tuple => {
       paperBookRelationshipDao.addPaperBookRelationship(tuple._2, tuple._1)
     })
-    //println(bookPaperRelationshipList.count()) is 5527071
-    //println(bookPaperRelationshipList.first()) is (778473,2349) bookId,paperId
+    */
+
+    //保存文本文件
+    paperBookRelationshipList.saveAsTextFile(resultFilePath)
 
     //stop work
     spark.stop()
