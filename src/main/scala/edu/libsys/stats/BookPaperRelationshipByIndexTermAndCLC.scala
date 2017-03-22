@@ -1,5 +1,6 @@
 package edu.libsys.stats
 
+import edu.libsys.util.StringUtils
 import org.apache.spark.sql.SparkSession
 
 /*数据样例
@@ -69,14 +70,12 @@ object BookPaperRelationshipByIndexTermAndCLC {
       println("-------------------------------------------------------------------")
       sys.exit()
     }
+
     //创建会话
     val spark = SparkSession
       .builder()
       .appName("BookPaperRelationshipByIndexTermAndCLC")
       .getOrCreate()
-
-    //创建数据库访问对象
-    //val paperBookRelationshipDao = new PaperBookRelationshipDao()
 
     //文件路径
     val bookInfoPath01 = args(0)
@@ -84,12 +83,6 @@ object BookPaperRelationshipByIndexTermAndCLC {
     val paperInfoPath01 = args(2)
     val paperInfoPath02 = args(3)
     val resultFilePath = args(4)
-    /*
-    val bookInfoPath01 = "/home/spark/Project/data/txt/book_id_callId.txt"
-    val bookInfoPath02 = "/home/spark/Project/data/txt/cls_no_name.txt"
-    val paperInfoPath01 = "/home/spark/Project/data/txt/paper_id_paperId.txt"
-    val paperInfoPath02 = "/home/spark/Project/data/txt/paper_paperId_indexTerm.txt"
-    */
 
     //分割符
     val delimiter01 = ","
@@ -100,7 +93,7 @@ object BookPaperRelationshipByIndexTermAndCLC {
     val bookIdCLCIdTupleList = spark.sparkContext.textFile(bookInfoPath01).map(line => {
       val tokens = line.split(delimiter01).map(_.trim)
       //类似(H152,1)
-      parseCLCId(tokens(1)) -> tokens(0).toInt
+      StringUtils.parseCLCId(tokens(1)) -> tokens(0).toInt
     })
     //book_CLCId_CLCName
     val bookCLCIdCLCNameTupleList = spark.sparkContext.textFile(bookInfoPath02).map(line => {
@@ -123,7 +116,7 @@ object BookPaperRelationshipByIndexTermAndCLC {
       //类似(10001-1011132221.nh,1)
       tokens(1) -> tokens(0).toInt
     })
-    //paper_paperId_IndexTerm
+    //paper_paperId_indexTerm
     val paperPaperIdIndexTermTupleList = spark.sparkContext.textFile(paperInfoPath02).map(line => {
       val tokens = line.split(delimiter01).map(_.trim)
       //类似(TGZG200701002,和谐铁路)
@@ -146,27 +139,10 @@ object BookPaperRelationshipByIndexTermAndCLC {
     //paperBookRelationshipList.count(): 36696695
     //paperBookRelationshipList.first(): (508464,310462)
 
-    /*
-    //存入数据库
-    //因使用DAO执行大量数据插入速度较慢，故暂不使用
-    paperBookRelationshipList.foreach(tuple =>{
-      //paperId, bookId
-      //存入数据库
-      //paperBookRelationshipDao.addPaperBookRelationship(tuple._1, tuple._2)
-    })
-    */
-
     //保存文本文件
     paperBookRelationshipList.saveAsTextFile(resultFilePath)
 
     //结束
     spark.stop()
-  }
-
-  //从“O411.1-44”中匹配“O411”
-  def parseCLCId(string: String): String = {
-    //正则
-    val pattern = "([A-Z])\\w+".r
-    pattern.findFirstIn(string).getOrElse("")
   }
 }

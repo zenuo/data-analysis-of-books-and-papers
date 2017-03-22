@@ -9,6 +9,6 @@ object Test {
     authorList += author
     authorList += author
     authorList.foreach(println(_))*/
-    println(RemoveInvalid.isChineseChar("字符是不是汉字"))
+    println(RemoveInvalid.isChineseChar("字"))
   }
 }
