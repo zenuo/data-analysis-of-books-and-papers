@@ -88,11 +88,37 @@ TGZG200701002,交通运输经济
 通过
 
 ## 三、过程记录
+### 1.启动hadoop集群
+Master执行：
 ```
-[spark@localhost BookPaperRelationshipByIndexTermAndCLC.result]$ ll
-total 568036
--rw-r--r--. 1 spark spark 253118775 Mar 22 11:34 part-00000
--rw-r--r--. 1 spark spark 131409318 Mar 22 11:34 part-00001
--rw-r--r--. 1 spark spark 197133179 Mar 22 11:34 part-00002
--rw-r--r--. 1 spark spark         0 Mar 22 11:34 _SUCCESS
+/usr/local/hadoop/sbin/start-dfs.sh && /usr/local/hadoop/sbin/start-yarn.sh
+```
+查看：
+```markdown
+192.168.1.124:8088
+```
+### 2.启动spark集群
+Master执行：
+```markdown
+/usr/local/spark/sbin/start-all.sh
+```
+查看：
+```markdown
+192.168.1.124:8080
+```
+### 3.程序及数据文件路径：
+程序：Master:/home/spark/spark-stats.jar
+文件：hdfs:///home/spark/data/*
+
+### 4.提交作业
+```markdown
+/usr/local/spark/bin/spark-submit \
+    --class edu.libsys.Main \
+    --master yarn \
+    --deploy-mode cluster \ 
+    --executor-memory 3G \
+    --queue default \
+    /home/spark/book-stats-1.0.jar \
+    hdfs:///user/data \
+    hdfs:///user/result
 ```
