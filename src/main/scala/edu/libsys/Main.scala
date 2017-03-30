@@ -26,6 +26,7 @@ object Main {
     }
 
     //文件路径
+    //来源数据文件路径
     val book_id_author = args(0) + "/book_id_author.txt"
     val book_id_CLCId = args(0) + "/book_id_CLCId.txt"
     val cls_no_name = args(0) + "/cls_no_name.txt"
@@ -33,6 +34,7 @@ object Main {
     val paper_paperID_author = args(0) + "/paper_paperID_author.txt"
     val paper_paperId_field = args(0) + "/paper_paperId_field.txt"
     val paper_paperId_indexTerm = args(0) + "/paper_paperId_indexTerm.txt"
+    //结果数据文件保存路径
     val result_file_PaperBookRelationship = args(1) + "_PaperBookRelationship"
     val result_file_BookBookRelationship = args(1) + "_BookBookRelationship"
     val result_file_PaperPaperRelationship = args(1) + "_PaperPaperRelationship"
@@ -40,60 +42,61 @@ object Main {
     //根据作者分析论文与图书联系
     val bookAuthorIdRDD = GetBookAuthorIdRDD.work(book_id_author).distinct()
     val paperAuthorIdRDD = GetPaperAuthorIdRDD.work(paper_id_paperId, paper_paperID_author).distinct()
-    val paperBookRelationshipListByAuthor = paperAuthorIdRDD
-      .join(bookAuthorIdRDD)
-      .map(tuple => {
-        //(Int, Int)
-        tuple._2
-      })
+
     //根据作者，图书与图书关联
-    val joinedBookBookRelationshipByAuthorRDD = bookAuthorIdRDD
+    val bookBookRelationshipByAuthorRDD = bookAuthorIdRDD
       .join(bookAuthorIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
         tuple._2
       })
     //根据作者，论文与论文关联
-    val joinedPaperPaperRelationshipByAuthorRDD = paperAuthorIdRDD
+    val paperPaperRelationshipByAuthorRDD = paperAuthorIdRDD
       .join(paperAuthorIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
         tuple._2
       })
+    //根据作者，论文与图书关联
+    val paperBookRelationshipListByAuthor = paperAuthorIdRDD
+      .join(bookAuthorIdRDD)
+      .map(tuple => {
+        tuple._2
+      })
 
-    //根据论文关键词和图书中图分类名分析论文与图书联系
+    //根据论文关键词和图书中图分类名分析论文与图书关联
     val bookCLCNameIdRDD = GetBookCLCNameIdRDD.work(book_id_CLCId, cls_no_name).distinct()
     val paperIndexTermIdRDD = GetPaperIndexTermIdRDD.work(paper_id_paperId, paper_paperId_indexTerm).distinct()
-    val joinedPaperBookRelationshipListByIndexTermAndCLCName = paperIndexTermIdRDD
+    val paperBookRelationshipListByIndexTermAndCLCName = paperIndexTermIdRDD
       .join(bookCLCNameIdRDD)
       .map(tuple => {
-        //(Int, Int)
         tuple._2
       })
     //根据中图分类名，图书与图书关联
-    val joinedBookBookRelationshipByCLCNameRDD = bookCLCNameIdRDD
+    val bookBookRelationshipByCLCNameRDD = bookCLCNameIdRDD
       .join(bookCLCNameIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
         tuple._2
       })
     //根据论文关键词，论文与论文关联
-    val joinedPaperPaperRelationshipByIndexTermRDD = paperIndexTermIdRDD
+    val paperPaperRelationshipByIndexTermRDD = paperIndexTermIdRDD
       .join(paperIndexTermIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
         tuple._2
       })
 
-    //根据论文领域名和图书中图分类名分析论文与图书联系
+    //根据论文领域名称和图书中图分类名分析论文与图书关联
     val paperFieldIdRDD = GetPaperFieldIdRDD.work(paper_id_paperId, paper_paperId_field).distinct()
-    val joinedPaperBookRelationshipListByFieldAndCLCName = paperFieldIdRDD.join(bookCLCNameIdRDD)
+    val paperBookRelationshipListByFieldAndCLCName = paperFieldIdRDD
+      .join(bookCLCNameIdRDD)
       .map(tuple => {
         //(Int, Int)
         tuple._2
       })
     //根据论文关键词，论文与论文关联
-    val joinedPaperPaperRelationshipByFieldRDD = paperFieldIdRDD
+    val paperPaperRelationshipByFieldRDD = paperFieldIdRDD
       .join(paperFieldIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
@@ -101,24 +104,24 @@ object Main {
       })
 
     //图书与图书关联
-    val bookBookRelationshipRDD = joinedBookBookRelationshipByAuthorRDD.distinct()
-      .union(joinedBookBookRelationshipByCLCNameRDD.distinct())
+    val bookBookRelationshipRDD = bookBookRelationshipByAuthorRDD.distinct()
+      .union(bookBookRelationshipByCLCNameRDD.distinct())
       .distinct()
     //保存
     bookBookRelationshipRDD.saveAsTextFile(result_file_BookBookRelationship)
 
     //论文与论文关联
-    val paperPaperRelationshipRDD = joinedPaperPaperRelationshipByAuthorRDD.distinct()
-      .union(joinedPaperPaperRelationshipByIndexTermRDD.distinct())
-      .union(joinedPaperPaperRelationshipByFieldRDD.distinct())
+    val paperPaperRelationshipRDD = paperPaperRelationshipByAuthorRDD.distinct()
+      .union(paperPaperRelationshipByIndexTermRDD.distinct())
+      .union(paperPaperRelationshipByFieldRDD.distinct())
       .distinct()
     //保存
     paperPaperRelationshipRDD.saveAsTextFile(result_file_PaperPaperRelationship)
 
     //论文与图书关联
     val paperBookRelationshipRDD = paperBookRelationshipListByAuthor.distinct()
-      .union(joinedPaperBookRelationshipListByIndexTermAndCLCName.distinct())
-      .union(joinedPaperBookRelationshipListByFieldAndCLCName.distinct())
+      .union(paperBookRelationshipListByIndexTermAndCLCName.distinct())
+      .union(paperBookRelationshipListByFieldAndCLCName.distinct())
       .distinct()
     //保存
     paperBookRelationshipRDD.saveAsTextFile(result_file_PaperBookRelationship)

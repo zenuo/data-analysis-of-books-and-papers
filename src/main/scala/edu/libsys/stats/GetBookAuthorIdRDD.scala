@@ -10,9 +10,12 @@ object GetBookAuthorIdRDD {
     //分割符
     val delimiter01 = "#"
     //返回RDD
-    Main.spark.sparkContext.textFile(book_id_author).map(line => {
-      val tokens = line.split(delimiter01).map(_.trim)
-      StringUtils.parseBookAuthor(tokens(1)) -> tokens(0).toInt
-    })
+    Main.spark.sparkContext
+      .textFile(book_id_author)
+      .map(line => {
+        val tokens = line.split(delimiter01)
+          .map(_.trim)
+        StringUtils.parseBookAuthor(tokens(1)) -> tokens(0).toInt
+      })
   }
 }

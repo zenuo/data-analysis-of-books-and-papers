@@ -11,23 +11,32 @@ object GetPaperAuthorIdRDD {
     val delimiter01 = ","
 
     //paper_id_paperId
-    val paperIdPaperIDTupleList = Main.spark.sparkContext.textFile(paper_id_paperId).map(line => {
-      val tokens = line.split(delimiter01).map(_.trim)
-      //类似(10001-1011132221.nh,1)
-      tokens(1) -> tokens(0).toInt
-    })
+    val paperIdPaperIDTupleList = Main.spark.sparkContext
+      .textFile(paper_id_paperId)
+      .map(line => {
+        val tokens = line.split(delimiter01)
+          .map(_.trim)
+        //结果类似(10001-1011132221.nh,1)
+        tokens(1) -> tokens(0).toInt
+      })
 
     //paper_paperID_author
-    val paperAuthorPaperIDTupleList = Main.spark.sparkContext.textFile(paper_paperID_author).map(line => {
-      val tokens = line.split(delimiter01).map(_.trim)
-      //类似(TGZG200701002,刘志军)
-      tokens(0) -> tokens(1)
-    })
+    val paperAuthorPaperIDTupleList = Main.spark.sparkContext
+      .textFile(paper_paperID_author)
+      .map(line => {
+        val tokens = line.split(delimiter01)
+          .map(_.trim)
+        //结果类似(TGZG200701002,刘志军)
+        tokens(0) -> tokens(1)
+      })
 
     //返回RDD
-    paperAuthorPaperIDTupleList.join(paperIdPaperIDTupleList).map(tuple => {
-      //类似(BGDH200609003,(杨竣辉,144810))
-      tuple._2
-    })
+    paperAuthorPaperIDTupleList
+      .join(paperIdPaperIDTupleList)
+      .map(tuple => {
+        //tuple类似(BGDH200609003,(杨竣辉,144810))
+        // tuple._2类似(杨竣辉,144810)
+        tuple._2
+      })
   }
 }

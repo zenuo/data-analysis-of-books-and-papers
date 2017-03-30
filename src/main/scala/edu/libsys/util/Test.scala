@@ -55,10 +55,10 @@ object Test {
         tuple._2
       })
 
-    val paperPaperRelationshipRDD = joinedPaperPaperRelationshipByAuthorRDD.distinct()
-      .union(joinedPaperPaperRelationshipByIndexTermRDD.distinct())
-      .union(joinedPaperPaperRelationshipByFieldRDD.distinct())
-      .distinct()
+    val paperPaperRelationshipRDD = joinedPaperPaperRelationshipByAuthorRDD
+      .union(joinedPaperPaperRelationshipByIndexTermRDD)
+      .union(joinedPaperPaperRelationshipByFieldRDD)
+
     //保存
     paperPaperRelationshipRDD.saveAsTextFile(result_file)
 
