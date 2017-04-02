@@ -3,22 +3,6 @@ package edu.libsys.dataclean;
 import java.io.*;
 import java.util.regex.Pattern;
 
-/*LEND_HIST.csv数据样例
-“财产号”，“借出时间”，“借阅者ID”，“中图编号”
-"99321117","2000-09-0209:54:56","0000040935","N49/81:1"
-"13740057","2000-09-1808:41:25","0000042151","I227/126:2"
-"13740057","2000-09-1808:41:34","0000020247","C913.14/9"
-"99131309","2000-09-1311:12:01","0000010400","B992.3/5"
- */
-
-/*ITEM.txt数据样例
-财产号，书籍编号，计数
-99000328,0000006280,0
-97003188,0000006291,21
-20029430,0000006298,0
-00058147,0000006303,0
- */
-
 public class RemoveInvalid {
 
     //过滤ITEM.txt中非数字的行
@@ -73,7 +57,7 @@ public class RemoveInvalid {
     }
 
     //是否为汉字
-    public static boolean isChineseChar(String string) {
+    private static boolean isChineseChar(String string) {
         Pattern pattern = Pattern.compile("[\\u4e00-\\u9fa5]{0,}+");
         return pattern.matcher(string).matches();
     }

@@ -36,7 +36,7 @@ object Main {
     val paper_paperId_indexTerm = args(0) + "/paper_paperId_indexTerm.txt"
     //结果数据文件保存路径
     val result_file_bookBookRelationshipByAuthorRDD = args(1) + "/BookBookRelationshipByAuthor"
-    val result_file_bookBookRelationshipByCLCNameRDD = args(1) + "/BookBookRelationshipByCLCName"
+    val result_file_bookBookRelationshipByCLCIdRDD = args(1) + "/BookBookRelationshipByCLCId"
     val result_file_paperPaperRelationshipByAuthorRDD = args(1) + "/PaperPaperRelationshipByAuthor"
     val result_file_paperPaperRelationshipByFieldRDD = args(1) + "/PaperPaperRelationshipByField"
     val result_file_paperPaperRelationshipByIndexTermRDD = args(1) + "/PaperPaperRelationshipByIndexTerm"
@@ -83,13 +83,7 @@ object Main {
         //转为字符串，以便导入neo4j
         StringUtils.doubleTupleToString(tuple._2)
       })
-    //根据中图分类名，图书与图书关联
-    val bookBookRelationshipByCLCNameRDD = bookCLCNameIdRDD
-      .join(bookCLCNameIdRDD)
-      .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
-      .map(tuple => {
-        StringUtils.doubleTupleToString(tuple._2)
-      })
+
     //根据论文关键词，论文与论文关联
     val paperPaperRelationshipByIndexTermRDD = paperIndexTermIdRDD
       .join(paperIndexTermIdRDD)
@@ -110,6 +104,7 @@ object Main {
         //转为字符串，以便导入neo4j
         StringUtils.doubleTupleToString(tuple._2)
       })
+
     //根据论文领域名称，论文与论文关联
     val paperPaperRelationshipByFieldRDD = paperFieldIdRDD
       .join(paperFieldIdRDD)
@@ -120,12 +115,18 @@ object Main {
         StringUtils.doubleTupleToString(tuple._2)
       })
 
-    bookBookRelationshipByAuthorRDD.take(10).foreach(println)
-
+    //根据中图分类号，图书与图书关联
+    val bookCLCIdIdRDD = stats.GetBookCLCIdIdRDD.work(book_id_CLCId)
+    val bookBookRelationshipByCLCIdRDD = bookCLCIdIdRDD
+      .join(bookCLCIdIdRDD)
+      .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
+      .map(tuple => {
+        StringUtils.doubleTupleToString(tuple._2)
+      })
 
     //保存数据
     bookBookRelationshipByAuthorRDD.saveAsTextFile(result_file_bookBookRelationshipByAuthorRDD)
-    bookBookRelationshipByCLCNameRDD.saveAsTextFile(result_file_bookBookRelationshipByCLCNameRDD)
+    bookBookRelationshipByCLCIdRDD.saveAsTextFile(result_file_bookBookRelationshipByCLCIdRDD)
     paperPaperRelationshipByAuthorRDD.saveAsTextFile(result_file_paperPaperRelationshipByAuthorRDD)
     paperPaperRelationshipByFieldRDD.saveAsTextFile(result_file_paperPaperRelationshipByFieldRDD)
     paperPaperRelationshipByIndexTermRDD.saveAsTextFile(result_file_paperPaperRelationshipByIndexTermRDD)
