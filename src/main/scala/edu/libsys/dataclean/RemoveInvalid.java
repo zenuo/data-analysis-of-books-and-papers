@@ -72,6 +72,7 @@ public class RemoveInvalid {
         return true;
     }
 
+    //是否为汉字
     public static boolean isChineseChar(String string) {
         Pattern pattern = Pattern.compile("[\\u4e00-\\u9fa5]{0,}+");
         return pattern.matcher(string).matches();

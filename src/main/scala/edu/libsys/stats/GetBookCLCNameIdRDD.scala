@@ -1,7 +1,6 @@
 package edu.libsys.stats
 
 import edu.libsys.Main
-import edu.libsys.util.StringUtils
 import org.apache.spark.rdd.RDD
 
 object GetBookCLCNameIdRDD {
@@ -17,8 +16,10 @@ object GetBookCLCNameIdRDD {
       .textFile(book_id_CLCId).map(line => {
       val tokens = line.split(delimiter01)
         .map(_.trim)
-      //类似(H152,1)
-      StringUtils.parseCLCId(tokens(1)) -> tokens(0).toInt
+      //提高匹配度，暂时不使用中图法分类名解析方法，否则匹配量太多，导致质量下降
+      //StringUtils.parseCLCId(tokens(1)) -> tokens(0).toInt
+      //结果类似(H152,1)
+      tokens(1) -> tokens(0).toInt
     })
 
     //bookCLCIdCLCNameTupleList
