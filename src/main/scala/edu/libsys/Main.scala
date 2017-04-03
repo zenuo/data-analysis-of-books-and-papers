@@ -1,8 +1,8 @@
 package edu.libsys
 
 import edu.libsys.stats._
-import edu.libsys.util.Filter
-import org.apache.spark.graphx.{Edge, Graph}
+import edu.libsys.util.{EdgeUtil, Filter}
+import org.apache.spark.graphx.Graph
 import org.apache.spark.sql.SparkSession
 
 object Main {
@@ -44,21 +44,24 @@ object Main {
     val paperBookRelationshipByAuthorRDD = paperAuthorIdRDD
       .join(bookAuthorIdRDD)
       .map(tuple => {
-        Edge(tuple._2._1.toLong, tuple._2._1.toLong, 3)
+        //Edge(tuple._2._1.toLong, tuple._2._1.toLong, 3)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 3)
       })
     //图书与图书在作者上的联系 3
     val bookBookRelationshipByAuthorRDD = bookAuthorIdRDD
       .join(bookAuthorIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 3)
+        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 3)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 3)
       })
     //论文与论文在作者上的联系 3
     val paperPaperRelationshipByAuthorRDD = paperAuthorIdRDD
       .join(paperAuthorIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 3)
+        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 3)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 3)
       })
 
     //图书的中图法分类名与论文的关键词的联系 2
@@ -67,7 +70,8 @@ object Main {
     val paperBookRelationshipByIndexTermAndCLCNameRDD = paperIndexTermIdRDD
       .join(bookCLCNameIdRDD)
       .map(tuple => {
-        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 2)
+        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 2)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 2)
       })
 
     //论文与论文在关键词上的联系 2
@@ -75,7 +79,8 @@ object Main {
       .join(paperIndexTermIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 2)
+        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 2)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 2)
       })
 
     //图书的中图法分类名与论文的领域名称的联系 1
@@ -83,7 +88,8 @@ object Main {
     val paperBookRelationshipByFieldAndCLCNameRDD = paperFieldIdRDD
       .join(bookCLCNameIdRDD)
       .map(tuple => {
-        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
+        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 1)
       })
 
     //论文与论文在领域名称上的联系 1
@@ -91,7 +97,8 @@ object Main {
       .join(paperFieldIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
+        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 1)
       })
 
     //图书与图书在中图法分类号上的联系 1
@@ -100,7 +107,8 @@ object Main {
       .join(bookCLCIdIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
+        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 1)
       })
 
     //获得联系为建图作准备
@@ -152,6 +160,9 @@ object Main {
     //mergedEdgesPaperPaperGraph :46336
     println("mergedEdgesPaperBookGraph :" + mergedEdgesPaperBookGraph.edges.count)
     //mergedEdgesPaperBookGraph :1771
+
+    mergedEdgesBookBookGraph.vertices.take(10).foreach(println)
+    mergedEdgesBookBookGraph.edges.take(10).foreach(println)
 
     //停止
     spark.stop()
