@@ -1,7 +1,8 @@
 package edu.libsys
 
 import edu.libsys.stats._
-import edu.libsys.util.{Filter, StringUtils}
+import edu.libsys.util.Filter
+import org.apache.spark.graphx.{Edge, Graph}
 import org.apache.spark.sql.SparkSession
 
 object Main {
@@ -31,108 +32,126 @@ object Main {
     val book_id_CLCId = args(0) + "/book_id_CLCId.txt"
     val cls_no_name = args(0) + "/cls_no_name.txt"
     val paper_id_paperId = args(0) + "/paper_id_paperId.txt"
-    val paper_paperID_author = args(0) + "/paper_paperID_author.txt"
+    val paper_paperID_author = args(0) + "/paper_paperId_author.txt"
     val paper_paperId_field = args(0) + "/paper_paperId_field.txt"
     val paper_paperId_indexTerm = args(0) + "/paper_paperId_indexTerm.txt"
     //结果数据文件保存路径
-    val result_file_bookBookRelationshipByAuthorRDD = args(1) + "/BookBookRelationshipByAuthor"
-    val result_file_bookBookRelationshipByCLCIdRDD = args(1) + "/BookBookRelationshipByCLCId"
-    val result_file_paperPaperRelationshipByAuthorRDD = args(1) + "/PaperPaperRelationshipByAuthor"
-    val result_file_paperPaperRelationshipByFieldRDD = args(1) + "/PaperPaperRelationshipByField"
-    val result_file_paperPaperRelationshipByIndexTermRDD = args(1) + "/PaperPaperRelationshipByIndexTerm"
-    val result_file_paperBookRelationshipByAuthorRDD = args(1) + "/PaperBookRelationshipByAuthor"
-    val result_file_paperBookRelationshipByFieldAndCLCNameRDD = args(1) + "/PaperBookRelationshipByFieldAndCLCName"
-    val result_file_paperBookRelationshipByIndexTermAndCLCNameRDD = args(1) + "/PaperBookRelationshipByIndexTermAndCLCName"
 
-    //根据作者，论文与图书关联
+
+    //图书与论文在作者上的联系 3
     val bookAuthorIdRDD = GetBookAuthorIdRDD.work(book_id_author).distinct()
-
     val paperAuthorIdRDD = GetPaperAuthorIdRDD.work(paper_id_paperId, paper_paperID_author).distinct()
     val paperBookRelationshipByAuthorRDD = paperAuthorIdRDD
       .join(bookAuthorIdRDD)
       .map(tuple => {
-        //tuple._2
-        //转为字符串，以便导入neo4j
-        StringUtils.doubleTupleToString(tuple._2)
+        Edge(tuple._2._1.toLong, tuple._2._1.toLong, 3)
       })
-    //根据作者，图书与图书关联
+    //图书与图书在作者上的联系 3
     val bookBookRelationshipByAuthorRDD = bookAuthorIdRDD
       .join(bookAuthorIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        //转为字符串，以便导入neo4j
-        StringUtils.doubleTupleToString(tuple._2)
+        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 3)
       })
-    //根据作者，论文与论文关联
+    //论文与论文在作者上的联系 3
     val paperPaperRelationshipByAuthorRDD = paperAuthorIdRDD
       .join(paperAuthorIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        //tuple._2
-        //转为字符串，以便导入neo4j
-        StringUtils.doubleTupleToString(tuple._2)
+        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 3)
       })
 
-    //根据论文关键词和图书中图分类名分析论文与图书关联
+    //图书的中图法分类名与论文的关键词的联系 2
     val bookCLCNameIdRDD = GetBookCLCNameIdRDD.work(book_id_CLCId, cls_no_name).distinct()
     val paperIndexTermIdRDD = GetPaperIndexTermIdRDD.work(paper_id_paperId, paper_paperId_indexTerm).distinct()
     val paperBookRelationshipByIndexTermAndCLCNameRDD = paperIndexTermIdRDD
       .join(bookCLCNameIdRDD)
       .map(tuple => {
-        //tuple._2
-        //转为字符串，以便导入neo4j
-        StringUtils.doubleTupleToString(tuple._2)
+        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 2)
       })
 
-    //根据论文关键词，论文与论文关联
+    //论文与论文在关键词上的联系 2
     val paperPaperRelationshipByIndexTermRDD = paperIndexTermIdRDD
       .join(paperIndexTermIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        //tuple._2
-        //转为字符串，以便导入neo4j
-        StringUtils.doubleTupleToString(tuple._2)
+        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 2)
       })
 
-    //根据论文领域名称和图书中图分类名分析论文与图书关联
+    //图书的中图法分类名与论文的领域名称的联系 1
     val paperFieldIdRDD = GetPaperFieldIdRDD.work(paper_id_paperId, paper_paperId_field).distinct()
     val paperBookRelationshipByFieldAndCLCNameRDD = paperFieldIdRDD
       .join(bookCLCNameIdRDD)
       .map(tuple => {
-        //(Int, Int)
-        //tuple._2
-        //转为字符串，以便导入neo4j
-        StringUtils.doubleTupleToString(tuple._2)
+        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
       })
 
-    //根据论文领域名称，论文与论文关联
+    //论文与论文在领域名称上的联系 1
     val paperPaperRelationshipByFieldRDD = paperFieldIdRDD
       .join(paperFieldIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        //tuple._2
-        //转为字符串，以便导入neo4j
-        StringUtils.doubleTupleToString(tuple._2)
+        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
       })
 
-    //根据中图分类号，图书与图书关联
+    //图书与图书在中图法分类号上的联系 1
     val bookCLCIdIdRDD = stats.GetBookCLCIdIdRDD.work(book_id_CLCId)
     val bookBookRelationshipByCLCIdRDD = bookCLCIdIdRDD
       .join(bookCLCIdIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        StringUtils.doubleTupleToString(tuple._2)
+        Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
       })
 
-    //保存数据
-    bookBookRelationshipByAuthorRDD.saveAsTextFile(result_file_bookBookRelationshipByAuthorRDD)
-    bookBookRelationshipByCLCIdRDD.saveAsTextFile(result_file_bookBookRelationshipByCLCIdRDD)
-    paperPaperRelationshipByAuthorRDD.saveAsTextFile(result_file_paperPaperRelationshipByAuthorRDD)
-    paperPaperRelationshipByFieldRDD.saveAsTextFile(result_file_paperPaperRelationshipByFieldRDD)
-    paperPaperRelationshipByIndexTermRDD.saveAsTextFile(result_file_paperPaperRelationshipByIndexTermRDD)
-    paperBookRelationshipByAuthorRDD.saveAsTextFile(result_file_paperBookRelationshipByAuthorRDD)
-    paperBookRelationshipByFieldAndCLCNameRDD.saveAsTextFile(result_file_paperBookRelationshipByFieldAndCLCNameRDD)
-    paperBookRelationshipByIndexTermAndCLCNameRDD.saveAsTextFile(result_file_paperBookRelationshipByIndexTermAndCLCNameRDD)
+    //获得联系为建图作准备
+    val bookBookRelationship = bookBookRelationshipByAuthorRDD
+      .union(bookBookRelationshipByCLCIdRDD)
+    val paperPaperRelationship = paperPaperRelationshipByAuthorRDD
+      .union(paperPaperRelationshipByFieldRDD)
+      .union(paperPaperRelationshipByIndexTermRDD)
+    val paperBookRelationship = paperBookRelationshipByAuthorRDD
+      .union(paperBookRelationshipByFieldAndCLCNameRDD)
+      .union(paperBookRelationshipByIndexTermAndCLCNameRDD)
+
+    //获得顶点为建图作准备
+    //图书
+    val bookVertices = GetBookVertices.work(book_id_author)
+    //论文
+    val paperVertices = GetPaperVertices.work(paper_id_paperId)
+
+    //建图
+    //图书与图书的联系
+    val bookBookGraph = Graph(bookVertices, bookBookRelationship)
+
+    //论文与论文的联系
+    val paperPaperGraph = Graph(paperVertices, paperPaperRelationship)
+
+    //论文与图书的联系
+    val paperBookGraph = Graph(bookVertices.union(paperVertices), paperBookRelationship)
+
+    //按各联系权重合并重复边
+    //合并重复边后的图书与图书的联系
+    val mergedEdgesBookBookGraph: Graph[Int, Int] = bookBookGraph.groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
+
+    //合并重复边后的论文与论文的联系
+    val mergedEdgesPaperPaperGraph: Graph[Int, Int] = paperPaperGraph.groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
+
+    //合并重复边后的论文与图书的联系
+    val mergedEdgesPaperBookGraph: Graph[Int, Int] = paperBookGraph.groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
+
+    println("bookBookGraph: " + bookBookGraph.edges.count)
+    //bookBookGraph: 547226
+    println("paperPaperGraph: " + paperPaperGraph.edges.count)
+    //paperPaperGraph: 46472
+    println("paperBookGraph: " + paperBookGraph.edges.count)
+    //paperBookGraph: 1771
+
+    println("mergedEdgesBookBookGraph :" + mergedEdgesBookBookGraph.edges.count)
+    //mergedEdgesBookBookGraph :547226
+    println("mergedEdgesPaperPaperGraph :" + mergedEdgesPaperPaperGraph.edges.count)
+    //mergedEdgesPaperPaperGraph :46336
+    println("mergedEdgesPaperBookGraph :" + mergedEdgesPaperBookGraph.edges.count)
+    //mergedEdgesPaperBookGraph :1771
 
     //停止
     spark.stop()
