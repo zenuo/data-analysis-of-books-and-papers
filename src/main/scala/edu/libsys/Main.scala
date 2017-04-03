@@ -2,7 +2,8 @@ package edu.libsys
 
 import edu.libsys.stats._
 import edu.libsys.util.{EdgeUtil, Filter}
-import org.apache.spark.graphx.Graph
+import org.apache.spark.graphx.{Graph, VertexRDD}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 object Main {
@@ -36,7 +37,8 @@ object Main {
     val paper_paperId_field = args(0) + "/paper_paperId_field.txt"
     val paper_paperId_indexTerm = args(0) + "/paper_paperId_indexTerm.txt"
     //结果数据文件保存路径
-
+    val verticesResultPath = args(1) + "/vertices"
+    val edgeResultPath = args(1) + "/edges"
 
     //图书与论文在作者上的联系 3
     val bookAuthorIdRDD = GetBookAuthorIdRDD.work(book_id_author).distinct()
@@ -44,7 +46,6 @@ object Main {
     val paperBookRelationshipByAuthorRDD = paperAuthorIdRDD
       .join(bookAuthorIdRDD)
       .map(tuple => {
-        //Edge(tuple._2._1.toLong, tuple._2._1.toLong, 3)
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 3)
       })
     //图书与图书在作者上的联系 3
@@ -52,7 +53,6 @@ object Main {
       .join(bookAuthorIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 3)
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 3)
       })
     //论文与论文在作者上的联系 3
@@ -60,7 +60,6 @@ object Main {
       .join(paperAuthorIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 3)
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 3)
       })
 
@@ -70,7 +69,6 @@ object Main {
     val paperBookRelationshipByIndexTermAndCLCNameRDD = paperIndexTermIdRDD
       .join(bookCLCNameIdRDD)
       .map(tuple => {
-        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 2)
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 2)
       })
 
@@ -79,7 +77,6 @@ object Main {
       .join(paperIndexTermIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 2)
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 2)
       })
 
@@ -88,7 +85,6 @@ object Main {
     val paperBookRelationshipByFieldAndCLCNameRDD = paperFieldIdRDD
       .join(bookCLCNameIdRDD)
       .map(tuple => {
-        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 1)
       })
 
@@ -97,7 +93,6 @@ object Main {
       .join(paperFieldIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 1)
       })
 
@@ -107,17 +102,16 @@ object Main {
       .join(bookCLCIdIdRDD)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        //Edge(tuple._2._1.toLong, tuple._2._2.toLong, 1)
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 1)
       })
 
-    //获得联系为建图作准备
-    val bookBookRelationship = bookBookRelationshipByAuthorRDD
+    //获得所有联系
+    val relationship = bookBookRelationshipByAuthorRDD
       .union(bookBookRelationshipByCLCIdRDD)
-    val paperPaperRelationship = paperPaperRelationshipByAuthorRDD
+      .union(paperPaperRelationshipByAuthorRDD)
       .union(paperPaperRelationshipByFieldRDD)
       .union(paperPaperRelationshipByIndexTermRDD)
-    val paperBookRelationship = paperBookRelationshipByAuthorRDD
+      .union(paperBookRelationshipByAuthorRDD)
       .union(paperBookRelationshipByFieldAndCLCNameRDD)
       .union(paperBookRelationshipByIndexTermAndCLCNameRDD)
 
@@ -126,43 +120,48 @@ object Main {
     val bookVertices = GetBookVertices.work(book_id_author)
     //论文
     val paperVertices = GetPaperVertices.work(paper_id_paperId)
+    //获得顶点
+    val vertices = bookVertices
+      .union(paperVertices)
 
     //建图
-    //图书与图书的联系
-    val bookBookGraph = Graph(bookVertices, bookBookRelationship)
-
-    //论文与论文的联系
-    val paperPaperGraph = Graph(paperVertices, paperPaperRelationship)
-
-    //论文与图书的联系
-    val paperBookGraph = Graph(bookVertices.union(paperVertices), paperBookRelationship)
+    val graph: Graph[Int, Int] = Graph(vertices, relationship)
+    //graph vertices: 40141
+    //graph edges: 595469
 
     //按各联系权重合并重复边
-    //合并重复边后的图书与图书的联系
-    val mergedEdgesBookBookGraph: Graph[Int, Int] = bookBookGraph.groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
+    val mergedEdgesGraph: Graph[Int, Int] = graph.groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
+    mergedEdgesGraph.cache()
 
-    //合并重复边后的论文与论文的联系
-    val mergedEdgesPaperPaperGraph: Graph[Int, Int] = paperPaperGraph.groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
+    //计算各个顶点的边的权重之和，将和作为顶点的属性，即重要性
+    //注，本RDD不包括所有的顶点
+    //RDD[(Int, Int)]
+    val partOfVerticesWithWeight: VertexRDD[Int] = mergedEdgesGraph.aggregateMessages[Int](
+      triplet => {
+        //发送边的权重给dst顶点
+        triplet.sendToDst(triplet.attr)
+      },
+      //相加
+      (a, b) => a + b
+    )
 
-    //合并重复边后的论文与图书的联系
-    val mergedEdgesPaperBookGraph: Graph[Int, Int] = paperBookGraph.groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
+    //获得含有属性的所有顶点
+    //RDD[(Int, Int)]
+    val verticesWithWeight: VertexRDD[Int] = graph.outerJoinVertices(partOfVerticesWithWeight)((vertexId, attr, weight) => weight.getOrElse(0)).vertices
 
-    println("bookBookGraph: " + bookBookGraph.edges.count)
-    //bookBookGraph: 547226
-    println("paperPaperGraph: " + paperPaperGraph.edges.count)
-    //paperPaperGraph: 46472
-    println("paperBookGraph: " + paperBookGraph.edges.count)
-    //paperBookGraph: 1771
+    //字符串RDD，准备输出
+    val verticesStringRDD: RDD[String] = verticesWithWeight.map(vertex => {
+      vertex._1.toString + "," + vertex._2.toString
+    })
 
-    println("mergedEdgesBookBookGraph :" + mergedEdgesBookBookGraph.edges.count)
-    //mergedEdgesBookBookGraph :547226
-    println("mergedEdgesPaperPaperGraph :" + mergedEdgesPaperPaperGraph.edges.count)
-    //mergedEdgesPaperPaperGraph :46336
-    println("mergedEdgesPaperBookGraph :" + mergedEdgesPaperBookGraph.edges.count)
-    //mergedEdgesPaperBookGraph :1771
+    val edgesStringRDD: RDD[String] = mergedEdgesGraph.edges.map(edge => {
+      edge.srcId.toString + "," + edge.dstId.toString + "," + edge.attr
+    })
 
-    mergedEdgesBookBookGraph.vertices.take(10).foreach(println)
-    mergedEdgesBookBookGraph.edges.take(10).foreach(println)
+    //verticesStringRDD.saveAsTextFile(verticesResultPath)
+    //edgesStringRDD.saveAsTextFile(edgeResultPath)
+
+    println(mergedEdgesGraph.edges.count())
 
     //停止
     spark.stop()

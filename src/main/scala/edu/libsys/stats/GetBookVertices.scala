@@ -1,6 +1,6 @@
 package edu.libsys.stats
 
-import edu.libsys.util.Test
+import edu.libsys.Main
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
 
@@ -9,7 +9,7 @@ object GetBookVertices {
     //分割符
     val delimiter01 = "#"
     //返回RDD
-    Test.spark.sparkContext.textFile(book_id_author).map(line => {
+    Main.spark.sparkContext.textFile(book_id_author).map(line => {
       val tokens = line.replace(",", "")
         .split(delimiter01)
         .map(_.trim)
