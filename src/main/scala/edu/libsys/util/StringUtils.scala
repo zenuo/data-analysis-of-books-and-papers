@@ -1,15 +1,12 @@
 package edu.libsys.util
 
 object StringUtils {
-
-  //从“O411.1-44”中匹配“O411”
-  def parseCLCId(string: String): String = {
-    //正则
-    val pattern = "([A-Z])\\w+".r
-    pattern.findFirstIn(string).getOrElse("")
-  }
-
-  //删除一些多余字符
+  /**
+    * 删除一些多余字符
+    *
+    * @param token 需要处理的字符串
+    * @return String
+    */
   def parseBookAuthor(token: String): String = {
     val word01 = "本书"
     val word02 = "编写"
@@ -41,10 +38,5 @@ object StringUtils {
       .replaceAll(word13, "")
       .replaceAll(word14, "")
       .replaceAll(word15, "")
-  }
-
-  def doubleTupleToString(tuple: (Int, Int)): String = {
-    //"\"" + tuple._1.toString + "\",\"" + tuple._2.toString + "\""
-    tuple._1.toString + "," + tuple._2.toString
   }
 }

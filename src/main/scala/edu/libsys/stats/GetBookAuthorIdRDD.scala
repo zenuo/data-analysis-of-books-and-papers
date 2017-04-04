@@ -5,7 +5,12 @@ import edu.libsys.util.StringUtils
 import org.apache.spark.rdd.RDD
 
 object GetBookAuthorIdRDD {
-
+  /**
+    * 获得BookAuthorIdRDD
+    *
+    * @param book_id_author “book_id_author”文件路径
+    * @return
+    */
   def work(book_id_author: String): RDD[(String, Int)] = {
     //分割符
     val delimiter01 = "#"

@@ -5,7 +5,13 @@ import org.apache.spark.rdd.RDD
 
 object GetBookCLCNameIdRDD {
 
-  //获得图书id与中图分类名的元组
+  /**
+    * 获得图书id与中图分类名的元组
+    *
+    * @param book_id_CLCId “book_id_CLCId”文件路径
+    * @param cls_no_name   “cls_no_name”文件路径
+    * @return RDD[(String, Int)]
+    */
   def work(book_id_CLCId: String, cls_no_name: String): RDD[(String, Int)] = {
 
     //分割符
