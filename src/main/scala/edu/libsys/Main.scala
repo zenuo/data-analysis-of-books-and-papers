@@ -1,7 +1,9 @@
 package edu.libsys
 
+import edu.libsys.conf.Conf
 import edu.libsys.stats._
 import edu.libsys.util.{EdgeUtil, Filter, VertexUtil}
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.graphx.{Edge, Graph, VertexId, VertexRDD}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
@@ -21,12 +23,16 @@ object Main {
     * @param args 控制台参数
     */
   def main(args: Array[String]): Unit = {
+    //屏蔽不必要的日志输出
+    Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
+
     //判断文件参数是否正确
     if (args.length != 2) {
       println("-------------------------------ERROR-------------------------------")
       println("Valid program arguments:")
       println("1.PATH_TO_SOURCE_DATA_DIRECTORY")
       println("2.PATH_TO_RESULT_DATA_DIRECTORY")
+      println("Usage:\n/usr/local/spark/bin/spark-submit --class edu.libsys.Main --master local --executor-memory 52G --total-executor-cores 6 --conf spark.executor.heartbeatInterval=10000000 --conf spark.network.timeout=10000000 /home/spark/book-stats-1.0.jar /home/spark/data /home/spark/result")
       println("please try again, exit now.")
       println("-------------------------------------------------------------------")
       spark.stop()
@@ -53,68 +59,68 @@ object Main {
     val bookAuthorIdRDD: RDD[(String, Int)] = GetBookAuthorIdRDD.work(book_id_author).distinct()
     val paperAuthorIdRDD: RDD[(String, Int)] = GetPaperAuthorIdRDD.work(paper_id_paperId, paper_paperID_author).distinct()
     val paperBookRelationshipByAuthorRDD: RDD[Edge[Int]] = paperAuthorIdRDD
-      .join(bookAuthorIdRDD)
+      .join(bookAuthorIdRDD, Conf.numTasks)
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 3)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfAuthor)
       })
     //图书与图书在作者上的联系 3
     val bookBookRelationshipByAuthorRDD: RDD[Edge[Int]] = bookAuthorIdRDD
-      .join(bookAuthorIdRDD)
+      .join(bookAuthorIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 3)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfAuthor)
       })
     //论文与论文在作者上的联系 3
     val paperPaperRelationshipByAuthorRDD: RDD[Edge[Int]] = paperAuthorIdRDD
-      .join(paperAuthorIdRDD)
+      .join(paperAuthorIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 3)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfAuthor)
       })
 
     //图书的中图法分类名与论文的关键词的联系 2
     val bookCLCNameIdRDD: RDD[(String, Int)] = GetBookCLCNameIdRDD.work(book_id_CLCId, cls_no_name).distinct()
     val paperIndexTermIdRDD: RDD[(String, Int)] = GetPaperIndexTermIdRDD.work(paper_id_paperId, paper_paperId_indexTerm).distinct()
     val paperBookRelationshipByIndexTermAndCLCNameRDD: RDD[Edge[Int]] = paperIndexTermIdRDD
-      .join(bookCLCNameIdRDD)
+      .join(bookCLCNameIdRDD, Conf.numTasks)
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 2)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfIndexTerm)
       })
 
     //论文与论文在关键词上的联系 2
     val paperPaperRelationshipByIndexTermRDD: RDD[Edge[Int]] = paperIndexTermIdRDD
-      .join(paperIndexTermIdRDD)
+      .join(paperIndexTermIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 2)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfIndexTerm)
       })
 
     //图书的中图法分类名与论文的领域名称的联系 1
     val paperFieldIdRDD: RDD[(String, Int)] = GetPaperFieldIdRDD.work(paper_id_paperId, paper_paperId_field).distinct()
     val paperBookRelationshipByFieldAndCLCNameRDD: RDD[Edge[Int]] = paperFieldIdRDD
-      .join(bookCLCNameIdRDD)
+      .join(bookCLCNameIdRDD, Conf.numTasks)
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 1)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfCLCName)
       })
 
     //论文与论文在领域名称上的联系 1
     val paperPaperRelationshipByFieldRDD: RDD[Edge[Int]] = paperFieldIdRDD
-      .join(paperFieldIdRDD)
+      .join(paperFieldIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 1)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfField)
       })
 
     //图书与图书在中图法分类号上的联系 1
     val bookCLCIdIdRDD: RDD[(String, Int)] = stats.GetBookCLCIdIdRDD.work(book_id_CLCId)
     val bookBookRelationshipByCLCIdRDD: RDD[Edge[Int]] = bookCLCIdIdRDD
-      .join(bookCLCIdIdRDD)
+      .join(bookCLCIdIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, 1)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfCLCName)
       })
 
-    //获得所有联系
+    //获得所有联系并缓存
     val relationship: RDD[Edge[Int]] = bookBookRelationshipByAuthorRDD
       .union(bookBookRelationshipByCLCIdRDD)
       .union(paperPaperRelationshipByAuthorRDD)
@@ -160,8 +166,6 @@ object Main {
     val verticesWithWeight: VertexRDD[Int] = graph
       .outerJoinVertices(partOfVerticesWithWeight)((_, _, weight) => weight.getOrElse(0))
       .vertices
-
-    println(vertices.first().getClass)
 
     //字符串RDD，准备保存
     //图书
