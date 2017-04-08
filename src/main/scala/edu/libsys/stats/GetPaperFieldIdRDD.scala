@@ -1,7 +1,7 @@
 package edu.libsys.stats
 
-import edu.libsys.Main
 import edu.libsys.conf.Conf
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
 object GetPaperFieldIdRDD {
@@ -12,13 +12,12 @@ object GetPaperFieldIdRDD {
     * @param paper_paperId_field “paper_paperId_field”文件路径
     * @return RDD[(String, Int)]
     */
-  def work(paper_id_paperId: String, paper_paperId_field: String): RDD[(String, Int)] = {
+  def work(paper_id_paperId: String, paper_paperId_field: String, sc: SparkContext): RDD[(String, Int)] = {
     //分割符
     val delimiter01 = ","
 
     //paper_id_paperId
-    val paperIdPaperIDTupleList = Main.spark.sparkContext
-      .textFile(paper_id_paperId)
+    val paperIdPaperIDTupleList = sc.textFile(paper_id_paperId)
       .map(line => {
         val tokens = line.split(delimiter01)
           .map(_.trim)
@@ -28,8 +27,7 @@ object GetPaperFieldIdRDD {
       })
 
     //paper_paperId_field
-    val paperPaperIdFieldTupleList = Main.spark.sparkContext
-      .textFile(paper_paperId_field)
+    val paperPaperIdFieldTupleList = sc.textFile(paper_paperId_field)
       .map(line => {
         val tokens = line.split(delimiter01)
           .map(_.trim)
@@ -39,7 +37,7 @@ object GetPaperFieldIdRDD {
 
     //返回RDD
     paperPaperIdFieldTupleList
-      .join(paperIdPaperIDTupleList)
+      .join(paperIdPaperIDTupleList, Conf.numTasks)
       .map(tuple => {
         //tuple._2类似(铁路,112)
         tuple._2

@@ -1,7 +1,7 @@
 package edu.libsys.stats
 
-import edu.libsys.Main
 import edu.libsys.conf.Conf
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
 object GetPaperAuthorIdRDD {
@@ -13,12 +13,12 @@ object GetPaperAuthorIdRDD {
     * @param paper_paperID_author “paper_paperID_author”文件路径
     * @return RDD[(String, Int)]
     */
-  def work(paper_id_paperId: String, paper_paperID_author: String): RDD[(String, Int)] = {
+  def work(paper_id_paperId: String, paper_paperID_author: String, sc: SparkContext): RDD[(String, Int)] = {
     //分割符
     val delimiter01 = ","
 
     //paper_id_paperId
-    val paperIdPaperIDTupleList = Main.spark.sparkContext
+    val paperIdPaperIDTupleList = sc
       .textFile(paper_id_paperId)
       .map(line => {
         val tokens = line.split(delimiter01)
@@ -29,7 +29,7 @@ object GetPaperAuthorIdRDD {
       })
 
     //paper_paperID_author
-    val paperAuthorPaperIDTupleList = Main.spark.sparkContext
+    val paperAuthorPaperIDTupleList = sc
       .textFile(paper_paperID_author)
       .map(line => {
         val tokens = line.split(delimiter01)
@@ -40,7 +40,7 @@ object GetPaperAuthorIdRDD {
 
     //返回RDD
     paperAuthorPaperIDTupleList
-      .join(paperIdPaperIDTupleList)
+      .join(paperIdPaperIDTupleList, Conf.numTasks)
       .map(tuple => {
         //tuple类似(BGDH200609003,(杨竣辉,144810))
         // tuple._2类似(杨竣辉,144810)

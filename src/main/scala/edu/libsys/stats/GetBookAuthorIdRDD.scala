@@ -1,7 +1,7 @@
 package edu.libsys.stats
 
-import edu.libsys.Main
 import edu.libsys.util.StringUtils
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
 object GetBookAuthorIdRDD {
@@ -11,12 +11,11 @@ object GetBookAuthorIdRDD {
     * @param book_id_author “book_id_author”文件路径
     * @return
     */
-  def work(book_id_author: String): RDD[(String, Int)] = {
+  def work(book_id_author: String, sc: SparkContext): RDD[(String, Int)] = {
     //分割符
     val delimiter01 = "#"
     //返回RDD
-    Main.spark.sparkContext
-      .textFile(book_id_author)
+    sc.textFile(book_id_author)
       .map(line => {
         val tokens = line.split(delimiter01)
           .map(_.trim)

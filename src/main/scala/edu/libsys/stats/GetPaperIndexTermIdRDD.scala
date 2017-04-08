@@ -1,7 +1,7 @@
 package edu.libsys.stats
 
-import edu.libsys.Main
 import edu.libsys.conf.Conf
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
 object GetPaperIndexTermIdRDD {
@@ -12,12 +12,12 @@ object GetPaperIndexTermIdRDD {
     * @param paper_paperId_indexTerm “paper_paperId_indexTerm”文件路径
     * @return RDD[(String, Int)]
     */
-  def work(paper_id_paperId: String, paper_paperId_indexTerm: String): RDD[(String, Int)] = {
+  def work(paper_id_paperId: String, paper_paperId_indexTerm: String, sc: SparkContext): RDD[(String, Int)] = {
     //分割符
     val delimiter01 = ","
 
     //paperIdPaperIDTupleList
-    val paperIdPaperIDTupleList = Main.spark.sparkContext
+    val paperIdPaperIDTupleList = sc
       .textFile(paper_id_paperId)
       .map(line => {
         val tokens = line.split(delimiter01)
@@ -28,7 +28,7 @@ object GetPaperIndexTermIdRDD {
       })
 
     //paperIdPaperIDTupleList
-    val paperPaperIdIndexTermTupleList = Main.spark.sparkContext
+    val paperPaperIdIndexTermTupleList = sc
       .textFile(paper_paperId_indexTerm)
       .map(line => {
         val tokens = line.split(delimiter01)
@@ -39,7 +39,7 @@ object GetPaperIndexTermIdRDD {
 
     //返回RDD
     paperPaperIdIndexTermTupleList
-      .join(paperIdPaperIDTupleList)
+      .join(paperIdPaperIDTupleList, Conf.numTasks)
       .map(tuple => {
         //tuple._2类似(和谐铁路,122)
         tuple._2

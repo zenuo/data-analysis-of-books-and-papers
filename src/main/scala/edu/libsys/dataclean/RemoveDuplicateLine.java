@@ -13,8 +13,8 @@ public class RemoveDuplicateLine {
         BloomFilter<String> bloomFilter = BloomFilter.create(stringFunnel, expectedInsertions);
 
         //config files
-        String oldFileName = "/home/spark/Project/data/txt/id_included.txt";
-        String newFileName = "/home/spark/Project/data/txt/new-id_included.txt";
+        String oldFileName = "/home/spark/lack-books";
+        String newFileName = "/home/spark/lack-books-new";
 
         try {
             //traversal file

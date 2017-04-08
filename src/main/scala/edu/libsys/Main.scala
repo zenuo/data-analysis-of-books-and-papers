@@ -4,19 +4,12 @@ import edu.libsys.conf.Conf
 import edu.libsys.stats._
 import edu.libsys.util.{EdgeUtil, Filter, VertexUtil}
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.SparkContext
 import org.apache.spark.graphx.{Edge, Graph, VertexId, VertexRDD}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 object Main {
-  /**
-    * spark会话
-    */
-  val spark: SparkSession = SparkSession
-    .builder()
-    .appName("MainStats")
-    .getOrCreate()
-
   /**
     * 主方法
     *
@@ -35,9 +28,18 @@ object Main {
       println("Usage:\n/usr/local/spark/bin/spark-submit --class edu.libsys.Main --master local --executor-memory 52G --total-executor-cores 6 --conf spark.executor.heartbeatInterval=10000000 --conf spark.network.timeout=10000000 /home/spark/book-stats-1.0.jar /home/spark/data /home/spark/result")
       println("please try again, exit now.")
       println("-------------------------------------------------------------------")
-      spark.stop()
       sys.exit(1)
     }
+
+    /**
+      * spark会话
+      */
+    val spark: SparkSession = SparkSession
+      .builder()
+      .appName("MainStats")
+      .getOrCreate()
+
+    val sc: SparkContext = spark.sparkContext
 
     //文件路径
     //来源数据文件路径
@@ -56,8 +58,8 @@ object Main {
     val bookPaperRelationshipsResultPath: String = args(1) + "/bookPaperRelationships"
 
     //图书与论文在作者上的联系 3
-    val bookAuthorIdRDD: RDD[(String, Int)] = GetBookAuthorIdRDD.work(book_id_author).distinct()
-    val paperAuthorIdRDD: RDD[(String, Int)] = GetPaperAuthorIdRDD.work(paper_id_paperId, paper_paperID_author).distinct()
+    val bookAuthorIdRDD: RDD[(String, Int)] = GetBookAuthorIdRDD.work(book_id_author, sc).distinct()
+    val paperAuthorIdRDD: RDD[(String, Int)] = GetPaperAuthorIdRDD.work(paper_id_paperId, paper_paperID_author, sc).distinct()
     val paperBookRelationshipByAuthorRDD: RDD[Edge[Int]] = paperAuthorIdRDD
       .join(bookAuthorIdRDD, Conf.numTasks)
       .map(tuple => {
@@ -79,8 +81,8 @@ object Main {
       })
 
     //图书的中图法分类名与论文的关键词的联系 2
-    val bookCLCNameIdRDD: RDD[(String, Int)] = GetBookCLCNameIdRDD.work(book_id_CLCId, cls_no_name).distinct()
-    val paperIndexTermIdRDD: RDD[(String, Int)] = GetPaperIndexTermIdRDD.work(paper_id_paperId, paper_paperId_indexTerm).distinct()
+    val bookCLCNameIdRDD: RDD[(String, Int)] = GetBookCLCNameIdRDD.work(book_id_CLCId, cls_no_name, sc).distinct()
+    val paperIndexTermIdRDD: RDD[(String, Int)] = GetPaperIndexTermIdRDD.work(paper_id_paperId, paper_paperId_indexTerm, sc).distinct()
     val paperBookRelationshipByIndexTermAndCLCNameRDD: RDD[Edge[Int]] = paperIndexTermIdRDD
       .join(bookCLCNameIdRDD, Conf.numTasks)
       .map(tuple => {
@@ -96,7 +98,7 @@ object Main {
       })
 
     //图书的中图法分类名与论文的领域名称的联系 1
-    val paperFieldIdRDD: RDD[(String, Int)] = GetPaperFieldIdRDD.work(paper_id_paperId, paper_paperId_field).distinct()
+    val paperFieldIdRDD: RDD[(String, Int)] = GetPaperFieldIdRDD.work(paper_id_paperId, paper_paperId_field, sc).distinct()
     val paperBookRelationshipByFieldAndCLCNameRDD: RDD[Edge[Int]] = paperFieldIdRDD
       .join(bookCLCNameIdRDD, Conf.numTasks)
       .map(tuple => {
@@ -112,7 +114,7 @@ object Main {
       })
 
     //图书与图书在中图法分类号上的联系 1
-    val bookCLCIdIdRDD: RDD[(String, Int)] = stats.GetBookCLCIdIdRDD.work(book_id_CLCId)
+    val bookCLCIdIdRDD: RDD[(String, Int)] = stats.GetBookCLCIdIdRDD.work(book_id_CLCId, sc)
     val bookBookRelationshipByCLCIdRDD: RDD[Edge[Int]] = bookCLCIdIdRDD
       .join(bookCLCIdIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
@@ -121,34 +123,36 @@ object Main {
       })
 
     //获得所有联系并缓存
-    val relationship: RDD[Edge[Int]] = bookBookRelationshipByAuthorRDD
-      .union(bookBookRelationshipByCLCIdRDD)
+    val edges: RDD[Edge[Int]] = bookBookRelationshipByAuthorRDD
+      //.union(bookBookRelationshipByCLCIdRDD)
       .union(paperPaperRelationshipByAuthorRDD)
-      .union(paperPaperRelationshipByFieldRDD)
+      //.union(paperPaperRelationshipByFieldRDD)
       .union(paperPaperRelationshipByIndexTermRDD)
       .union(paperBookRelationshipByAuthorRDD)
       .union(paperBookRelationshipByFieldAndCLCNameRDD)
       .union(paperBookRelationshipByIndexTermAndCLCNameRDD)
+      .cache()
 
     //获得顶点为建图作准备
     //图书
-    val bookVertices: RDD[(VertexId, Int)] = GetBookVertices.work(book_id_author)
+    val bookVertices: RDD[(VertexId, Int)] = GetBookVertices.work(book_id_author, sc)
     //论文
-    val paperVertices: RDD[(VertexId, Int)] = GetPaperVertices.work(paper_id_paperId)
+    val paperVertices: RDD[(VertexId, Int)] = GetPaperVertices.work(paper_id_paperId, sc)
     //获得顶点
     val vertices: RDD[(VertexId, Int)] = bookVertices
       .union(paperVertices)
+      .cache()
 
     //建图
-    val graph: Graph[Int, Int] = Graph(vertices, relationship)
+    val graph: Graph[Int, Int] = Graph(vertices, edges)
 
     //按各联系权重合并重复边
     val mergedEdgesGraph: Graph[Int, Int] = graph
       .groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
+      .cache()
     //缓存
-    mergedEdgesGraph.cache()
 
-    //计算各个顶点的边的权重之和，将和作为顶点的属性，即重要性
+    //计算各个顶点的边的权重之和
     //注，本RDD不包括所有的顶点
     //RDD[(Int, Int)]
     val partOfVerticesWithWeight: VertexRDD[Int] = mergedEdgesGraph
@@ -161,11 +165,12 @@ object Main {
       (a, b) => a + b
     )
 
-    //获得含有属性的所有顶点
-    //RDD[(Int, Int)]
-    val verticesWithWeight: VertexRDD[Int] = graph
-      .outerJoinVertices(partOfVerticesWithWeight)((_, _, weight) => weight.getOrElse(0))
-      .vertices
+    //获得含有权重的所有顶点
+    //VertexRDD[Int]
+    val verticesWithWeight: RDD[(VertexId, Int)] = vertices
+      .leftOuterJoin(partOfVerticesWithWeight).map(tuple => {
+      (tuple._1, tuple._2._2.getOrElse(0))
+    })
 
     //字符串RDD，准备保存
     //图书
@@ -197,6 +202,9 @@ object Main {
     paperPaperRelationships.saveAsTextFile(paperPaperRelationshipsResultPath)
     bookPaperRelationships.saveAsTextFile(bookPaperRelationshipsResultPath)
 
+    println("source vertices count" + vertices.count())
+    println("verticesWithWeight count" + verticesWithWeight.count())
+    println("after vertices count" + (books.count() + papers.count()))
     //停止
     spark.stop()
   }
