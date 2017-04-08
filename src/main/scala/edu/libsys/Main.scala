@@ -202,9 +202,6 @@ object Main {
     paperPaperRelationships.saveAsTextFile(paperPaperRelationshipsResultPath)
     bookPaperRelationships.saveAsTextFile(bookPaperRelationshipsResultPath)
 
-    println("source vertices count" + vertices.count())
-    println("verticesWithWeight count" + verticesWithWeight.count())
-    println("after vertices count" + (books.count() + papers.count()))
     //停止
     spark.stop()
   }

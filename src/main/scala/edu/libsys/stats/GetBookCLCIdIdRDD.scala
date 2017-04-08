@@ -11,10 +11,8 @@ object GetBookCLCIdIdRDD {
     * @return : RDD[(String, Int)]
     */
   def work(book_id_CLCId: String, sc: SparkContext): RDD[(String, Int)] = {
-
     //分割符
     val delimiter01 = ","
-
     //返回RDD
     sc.textFile(book_id_CLCId).map(line => {
       val tokens = line.split(delimiter01)
