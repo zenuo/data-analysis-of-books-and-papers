@@ -22,116 +22,141 @@
 #### a.图书数据文件：
 ##### 图书ID与作者关联文件（book_id_author.txt）
 ```
-1#作者陈世秀等
-2#主编鲍志伸，陆建平
-3#鲍志伸，陆建平主编
-4#薛毅编著
-5#邓洪波编著
-6#薛庆主编
-7#主编崔山田等
-8#曹军生等编著
-9#主编张玉平
-10#主编冯建奇等
+8473#王珏, 周志华, 周傲英
+539627#周志华，杨强
+126547#苏新宁
+307285#苏新宁
+143863#孙建军
+153824#潘云鹤
+1152846#潘云鹤
+376852#钱培德
 ```
  
 ##### 图书ID与中图法分类号关联文件（book_id_CLCId.txt）
 ```
-1,H152.3
-2,H194.5
-3,H194.5
-4,O224
-5,G649.299
-6,TP39-44
-7,R1
-8,TP311.138SQ
-9,TN01-33
-10,H31
+8473,TP181
+539627,TP181
+126547,G252.7
+307285,TP311.13
+143863,C934
+153824,TP391.41
+1152846,G254.31
+376852,TP39
 ```
  
 ##### 中图法分类号与中图法分类名关联文件（cls_no_name.txt）
 ```
-S325,品种的整理与保存
-S325.1,室内保存
-S325.2,田间保存
-S326,种质资源（品种资源）的开发与利用
-S329,品种志、品种目录
-S330,作物遗传育种
-S330.2,种子生理、生化
-S330.3,种子生态
-S331,优良品质的育种
-S332,抗逆品种的育种
+TP181,自动推理、机器学习
+G252.7,文献检索
+TP311.13,数据库理论与系统
+C934,决策学
+TP391.41,图像识别及其装置
+G254.31,文献著录
+TP39,计算机的应用
 ```
  
 #### b.论文数据文件：
 ##### d.论文ID与论文系统唯一标识关联文件（paper_id_paperId.txt）
 ```
-1,10001-1011132221.nh
-2,10001-1011132230
-3,10001-1011132232.nh
-4,10001-1011132236.nh
-5,10001-1011132307.nh
-6,10001-1011284507
-7,10001-1012027136.nh
-8,10001-1012027140
-9,10001-1012027149.nh
-10,10001-1012343710.nh
+48368,10284-1016003545.nh
+269170,JSGG200101018
+322286,Periodical/jsjxb200201001
+321446,Periodical/jsjgc200304017
+408136,XDTQ200804021
+48271,10284-1014451209.nh
+332739,QBKX200406022
+332945,QBLL200802031
+48221,10284-1013190779.nh
+125472,80090-1016003258.nh
+218375,GJMW200204012
+48070,10284-1011126640.nh
+48075,10284-1011126665
+257875,JEXK199603009
+271796,JSJX200002017
+57614,10335-2004076111.nh
+56280,10335-1011052036
 ```
  
 ##### e.论文系统唯一标识与论文作者关联文件（paper_paperId_author.txt）
 ```
-TGZG200701002,刘志军
-10511-1012349726.nh,孙自俭
-10511-1012349726.nh,朱英
-10651-1014167683.nh,向开祥
-10651-1014167683.nh,赵吉林
-10456-1013119679.nh,李永超
-10456-1013119679.nh,郭庆
-TDJJ200801005,吴克俭
-TGZG200701001,刘志军
-JSJW201001110320,张力行
+10284-1016003545.nh,周志华
+JSGG200101018,周志华
+Periodical/jsjxb200201001,周志华
+Periodical/jsjgc200304017,周志华
+XDTQ200804021,苏新宁
+10284-1014451209.nh,苏新宁
+QBKX200406022,苏新宁
+QBLL200802031,苏新宁
+10284-1013190779.nh,孙建军
+80090-1016003258.nh,孙建军
+GJMW200204012,孙建军
+10284-1011126640.nh,孙建军
+10284-1011126665,孙建军
+JEXK199603009,潘云鹤
+JSJX200002017,潘云鹤
+10335-2004076111.nh,潘云鹤
+10335-1011052036,潘云鹤
 ```
  
 ##### f.论文系统唯一标识与论文领域名称关联文件（paper_paperId_field.txt）
 ```
-TGZG200701002,铁路运输
-TGZG200701002,交通运输经济
-10511-1012349726.nh,中国近现代史
-10511-1012349726.nh,铁路运输
-10511-1012349726.nh,交通运输经济
-10651-1014167683.nh,铁路运输
-10651-1014167683.nh,交通运输经济
-10456-1013119679.nh,公路与水路运输
-10456-1013119679.nh,交通运输经济
-10456-1013119679.nh,铁路运输
+10284-1016003545.nh,自动化技术
+JSGG200101018,自动化技术
+XDTQ200804021,图书情报与数字图书馆
+10284-1014451209.nh,计算机硬件技术
+QBKX200406022,行政学及国家行政管理
+QBKX200406022,政治学
+QBLL200802031,图书情报与数字图书馆
+10284-1013190779.nh,互联网技术
+80090-1016003258.nh,计算机软件及计算机应用
+GJMW200204012,民商法
+10284-1011126640.nh,图书情报与数字图书馆
+10284-1011126665,图书情报与数字图书馆
+JEXK199603009,自动化技术
+JSJX200002017,电信技术
+10335-2004076111.nh,计算机软件及计算机应用
+10335-1011052036,电信技术
+10335-1011052036,互联网技术
 ```
  
 ##### g.论文系统唯一标识与论文关键词关联文件（paper_paperId_indexTerm.txt）
 ```
-TGZG200701002,铁路
-TGZG200701002,和谐铁路
-TGZG200701002,交通运输
-TGZG200701002,发展
-TGZG200701002,形势
-10511-1012349726.nh,铁路工人
-10511-1012349726.nh,国有铁路
-10511-1012349726.nh,交通部
-10511-1012349726.nh,铁道部
-10651-1014167683.nh,罗定铁路
+10284-1016003545.nh,机器学习
+10284-1016003545.nh,凸松弛
+JSGG200101018,支持向量机
+Periodical/jsjxb200201001,神经网络
+Periodical/jsjgc200304017,网络存储
+XDTQ200804021,现代图书情报技术
+XDTQ200804021,期刊评价
+10284-1014451209.nh,绿色桌面
+QBKX200406022,电子政务
+QBLL200802031,隐马尔可夫模型
+10284-1011126640.nh,网络引文
+10284-1011126640.nh,引文分析
+10284-1013190779.nh,中国科技论文在线
+GJMW200204012,著作权
+GJMW200204012,责任
+10284-1011126640.nh,网络引文
+10284-1011126665,引文分析
+JEXK199603009,分维度量
+JSJX200002017,多Agent系统
+10335-2004076111.nh,面向对象逆向工程
+10335-2004076111.nh,OO软件度量
+10335-1011052036,移动互联网
 ```
 
 ### 3）数据离线计算
 #### （1）第一阶段
 ##### 目的：
-将7份文件加载到内存中，生成7类RDD；
+**图书部分**：建立作者与图书ID、中图法分类名与图书ID两种对应关系；
+
+**论文部分**：建立作者与论文ID、领域名称与论文ID、关键词与论文ID三种对应关系；
 
 ##### 实现：
 **图书部分**：
-加载book_id_author.txt到内存中，将每行数据用“#”分割，形成长度为2的数组（如{“1”, “陈世秀”}），使用spark的map函数利用刚才的数组生成格式为(图书ID,作者)的二元元组（如(1, “陈世秀”)），代码如下：
+加载book_id_author.txt到内存中，将每行数据用“#”分割，形成长度为2的数组（如{“126547”, “苏新宁”}），使用spark的map函数利用刚才的数组生成格式为(图书ID,作者)的二元元组（如(1, “陈世秀”)），代码如下：
 ```
-//edu/libsys/stats/GetBookAuthorIdRDD.scala
-//分割符
 val delimiter01 = "#"
-//返回RDD
 sc.textFile(book_id_author)
   .map(line => {
     val tokens = line.split(delimiter01)
@@ -140,100 +165,104 @@ sc.textFile(book_id_author)
   })
 ```
  
-整个文件生成一个格式为(作者,图书ID)的二元元组集合，在Spark中称为RDD(Resilient Distributed Dataset，弹性分布式数据集)；
-同理，根据book_id_CLCId.txt文件生成格式为(中图法分类号,图书ID)的二元元组集合、根据cls_no_name.txt文件生成格式为(中图法分类号,中图法分类名)的二元元组集合；
-如图：
+整个文件生成一个格式为(作者,图书ID)的二元元组集合，命名为bookAuthorIdRDD，在Spark中称为RDD(Resilient Distributed Dataset，弹性分布式数据集)；
 
-![](http://i1.piimg.com/567571/107ca7c295b754c1.png)
+同理，根据book_id_CLCId.txt文件生成格式为(中图法分类号,图书ID)的二元元组集合，命名为bookIdCLCIdTupleList；
 
-**论文部分**：
-与上同理，根据paper_id_paperId.txt文件生成格式为(论文系统唯一标识,论文ID)的二元元组集合、根据paper_paperID_author.txt文件生成格式为(论文系统唯一标识,作者)的二元元组集合、根据paper_paperId_field.txt文件生成格式为(论文系统唯一标识,领域名称)的二元元组集合、根据paper_paperId_indexTerm.txt文件生成格式为(论文系统唯一标识,关键词)的二元元组集合.
-如图：
+根据cls_no_name.txt文件生成格式为(中图法分类号,中图法分类名)的二元元组集合，命名为bookCLCIdCLCNameTupleList；
+示意图如下：
 
-![](http://i1.piimg.com/567571/a653a7991bc959af.png)
+![](http://i1.piimg.com/567571/9e881433e8c790a7.png)
 
-至此，第一阶段完成；
-
-#### （2）第二阶段：
-##### 目的：
-**图书部分**：建立作者与图书ID、中图法分类名与图书ID两种对应关系；
-**论文部分**：建立作者与论文ID、领域名称与论文ID、关键词与论文ID三种对应关系；
-##### 实现：
-**图书部分**：
 作者与图书ID：
 在上阶段已完成，即bookAuthorIdRDD
 中图法分类名与图书ID：
-由bookCLCIdCLCNameTupleList与bookIdCLCIdTupleList做join运算，即生成格式为(中图法分类号,(中图法分类名,图书ID))的二元元组（其中一元为嵌套的元组）的集合，我们将嵌套元组提取出来生成新的元组(map运算)，达到目的，即是bookCLCNameIdRDD，代码如图：
+由bookCLCIdCLCNameTupleList与bookIdCLCIdTupleList做join运算，即生成格式为(中图法分类号,(中图法分类名,图书ID))的二元元组（其中一元为嵌套的元组）的集合，我们将嵌套元组提取出来生成新的元组(map运算)，明明为bookCLCNameIdRDD，代码如图：
 ```
-//返回RDD
 bookCLCIdCLCNameTupleList
   .join(bookIdCLCIdTupleList, Conf.numTasks)
   .map(tuple => {
-    //tuple._2类似(品种的整理与保存,122)
     tuple._2
   })
 ```
 示意图如下：
 
-![](http://i4.buimg.com/567571/7552635f710226fc.png)
+![](http://i1.piimg.com/567571/955f88c9db51baf9.png)
+
+此部分得到如下两个RDD：
+
+![](http://i4.buimg.com/524586/ab23bb6e2c51912b.png)
+
+**论文部分**：
+
+为与图书id区别，论文id在处理过程中作加一亿处理；
+
+与上同理，根据paper_id_paperId.txt文件生成格式为(论文系统唯一标识,论文ID)的二元元组集合，命名为paperIdPaperIDTupleList；
+
+根据paper_paperID_author.txt文件生成格式为(论文系统唯一标识,作者)的二元元组集合，命名为paperAuthorPaperIDTupleList；
+
+根据paper_paperId_field.txt文件生成格式为(论文系统唯一标识,领域名称)的二元元组集合，命名为paperPaperIdFieldTupleList；
+
+根据paper_paperId_indexTerm.txt文件生成格式为(论文系统唯一标识,关键词)的二元元组集合.命名为paperPaperIdIndexTermTupleList；
+
+示意图如下：
+
+![](http://i4.buimg.com/567571/c2015d3bea9385e9.png)
 
 论文部分：
 作者与论文ID：
 由paperAuthorPaperIDTupleList与paperIdPaperIDTupleList做join运算，即生成格式为(论文系统唯一标识,(作者与论文ID))的二元元组（其中一元为嵌套的元组）的集合，我们将嵌套元组提取出来生成新的元组(map运算)，达到目的，即是paperAuthorIdRDD，代码如图：
 ```
-//返回RDD
 paperAuthorPaperIDTupleList
   .join(paperIdPaperIDTupleList, Conf.numTasks)
   .map(tuple => {
-    //tuple类似(BGDH200609003,(杨竣辉,144810))
-    // tuple._2类似(杨竣辉,144810)
     tuple._2
   })
 ```
 示意图如下：
 
-![](http://i1.piimg.com/567571/d7e6caca4662ed5d.png)
+![](http://i4.buimg.com/567571/b0f003b3a4baa1a7.png)
 
 领域名称与论文ID：
+
 由paperPaperIdFieldTupleList与paperIdPaperIDTupleList做join运算，即生成格式为(论文系统唯一标识,(领域名称与论文ID))的二元元组（其中一元为嵌套的元组）的集合，我们将嵌套元组提取出来生成新的元组(map运算)，达到目的，即是PaperFieldIdRDD，代码如图：
 ```
-//返回RDD
 paperPaperIdFieldTupleList
   .join(paperIdPaperIDTupleList, Conf.numTasks)
   .map(tuple => {
-    //tuple._2类似(铁路,112)
     tuple._2
   })
 ```
 示意图如下：
 
-![](http://i2.muimg.com/567571/3bb0c77c4f568de0.png)
+![](http://i4.buimg.com/567571/bf89f676746dfc1d.png)
 
 关键词与论文ID：
 由paperPaperIdIndexTermTupleList与paperIdPaperIDTupleList做join运算，即生成格式为(论文系统唯一标识,(关键词与论文ID))的二元元组（其中一元为嵌套的元组）的集合，我们将嵌套元组提取出来生成新的元组(map运算)，达到目的，即是paperIndexTermIdRDD，代码如图：
 ```
-//返回RDD
 paperPaperIdIndexTermTupleList
   .join(paperIdPaperIDTupleList, Conf.numTasks)
   .map(tuple => {
-    //tuple._2类似(和谐铁路,122)
     tuple._2
   })
 ```
 示意图如下：
 
-![](http://i1.piimg.com/567571/bedc2be3f1cf3d99.png)
+![](http://i4.buimg.com/567571/bf89f676746dfc1d.png)
 
 至此，本阶段目的达成，如图：
 
-![](http://i2.muimg.com/567571/0d0de54c8519d610.png)
+![](http://i2.muimg.com/567571/53a5acb91b1e6380.png)
 
-#### （3）第三阶段：
+至此，第一阶段完成；
+
+#### （2）第二阶段
 ##### 目的：
-**图书部分**：根据权重，图书与图书在作者上的联系、图书与图书在中图法分类号上的联系；
-**论文部分**：根据权重，论文与论文在作者上的联系、论文与论文在领域名称上的联系、论文与论文在关键词上的联系；
-图书与论文部分：
-根据权重，图书与论文在作者上的联系、图书的中图法分类名与论文的领域名称的联系、图书的中图法分类名与论文的关键词的联系；
+* 图书部分：根据权重，图书与图书在作者上的联系、图书与图书在中图法分类号上的联系；
+
+* 论文部分：根据权重，论文与论文在作者上的联系、论文与论文在领域名称上的联系、论文与论文在关键词上的联系；
+
+* 图书与论文部分：根据权重，图书与论文在作者上的联系、图书的中图法分类名与论文的领域名称的联系、图书的中图法分类名与论文的关键词的联系；
 
 ##### 实现：
 
@@ -261,14 +290,14 @@ val bookBookRelationshipByAuthorRDD: RDD[Edge[Int]] = bookAuthorIdRDD
 ```
 示意图如下：
 
-![](http://i2.muimg.com/567571/330291dc380de8d8.png)
+![](http://i2.muimg.com/567571/96e3ca463e669b98.png)
 
 图书与图书在中图法分类号上的联系：
 设计权重为1；
-通过bookCLCIdIdRDD与自身做join和map运算实现（排除自身与自身的联系），得到bookBookRelationshipByCLCIdRDD，代码如图：
+通过bookCLCIdCLCNameTupleList与自身做join和map运算实现（排除自身与自身的联系），得到bookBookRelationshipByCLCIdRDD，代码如图：
 ```
-val bookBookRelationshipByCLCIdRDD: RDD[Edge[Int]] = bookCLCIdIdRDD
-  .join(bookCLCIdIdRDD, Conf.numTasks)
+val bookBookRelationshipByCLCIdRDD: RDD[Edge[Int]] = bookCLCIdCLCNameTupleList
+  .join(bookCLCIdCLCNameTupleList, Conf.numTasks)
   .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
   .map(tuple => {
     EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfCLCName)
@@ -276,12 +305,14 @@ val bookBookRelationshipByCLCIdRDD: RDD[Edge[Int]] = bookCLCIdIdRDD
 ```
 示意图如下：
 
-![](http://i4.buimg.com/567571/7e8011cde4b3d94f.png)
+![](http://i1.piimg.com/567571/d017b9e6cd74310f.png)
 
 论文部分：
+
 论文与论文在作者上的联系：
+
 设计权重为3；
-根据paperAuthorIdRDD与自身做join和map运算实现（排除自身与自身的联系），得到bookBookRelationshipByAuthorRDD，代码如图：
+根据paperAuthorIdRDD与自身做join和map运算实现（排除自身与自身的联系），得到paperPaperRelationshipByAuthorRDD，代码如图：
 ```
 val paperPaperRelationshipByAuthorRDD: RDD[Edge[Int]] = paperAuthorIdRDD
   .join(paperAuthorIdRDD, Conf.numTasks)
@@ -292,7 +323,7 @@ val paperPaperRelationshipByAuthorRDD: RDD[Edge[Int]] = paperAuthorIdRDD
 ```
 示意图如下：
 
-![](http://i1.piimg.com/567571/e04b019cc62bfbb9.png)
+![](http://i2.muimg.com/567571/aab7f95a89c2b2b1.png)
 
 论文与论文在领域名称上的联系：
 设计权重为1；
@@ -307,9 +338,10 @@ val paperPaperRelationshipByFieldRDD: RDD[Edge[Int]] = paperFieldIdRDD
 ```
 示意图如下：
 
-![](http://i4.buimg.com/567571/1f9749790d9fd1dc.png)
+![](http://i4.buimg.com/567571/aae4567500ad0de4.png)
 
 论文与论文在关键词上的联系：
+
 设计权重为2；
 根据paperIndexTermIdRDD与自身做join和map运算实现（排除自身与自身的联系），得到paperPaperRelationshipByIndexTermRDD，代码如图：
 ```
@@ -322,7 +354,7 @@ val paperPaperRelationshipByIndexTermRDD: RDD[Edge[Int]] = paperIndexTermIdRDD
 ```
 示意图如下：
 
-![](http://i4.buimg.com/567571/2377b0b7b8daa0d6.png)
+![](http://i4.buimg.com/567571/ce1e4ee405ea104d.png)
 
 图书与论文部分：
 图书与论文在作者上的联系：
@@ -372,7 +404,7 @@ val paperBookRelationshipByIndexTermAndCLCNameRDD: RDD[Edge[Int]] = paperIndexTe
 ![](http://i2.muimg.com/567571/cc4995eb726d6166.png)
 
 
-#### （4）第四阶段：
+#### （3）第三阶段
 ##### 目的：
 将所有图书、论文作为顶点，将上一阶段生成的所有关系作为边，生成一个图；给各种边定义权重，分析指向每个节点的边的权重之和，保存到节点的属性里；
 
@@ -472,7 +504,7 @@ val verticesWithWeight: RDD[(VertexId, Int)] = vertices
 ![](http://i4.buimg.com/524586/2165940ae44b85bf.png)
 
 
-#### （5）第五阶段：
+#### （4）第四阶段
 ##### 目的：
 将图书与图书的联系、论文与论文的联系、论文与图书的联系保存到文件，以便持久化到数据库中；
 

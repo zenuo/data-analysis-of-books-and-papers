@@ -114,9 +114,9 @@ object Main {
       })
 
     //图书与图书在中图法分类号上的联系 1
-    val bookCLCIdIdRDD: RDD[(String, Int)] = stats.GetBookCLCIdIdRDD.work(book_id_CLCId, sc)
-    val bookBookRelationshipByCLCIdRDD: RDD[Edge[Int]] = bookCLCIdIdRDD
-      .join(bookCLCIdIdRDD, Conf.numTasks)
+    val bookCLCIdCLCNameTupleList: RDD[(String, Int)] = stats.GetBookCLCIdIdRDD.work(book_id_CLCId, sc)
+    val bookBookRelationshipByCLCIdRDD: RDD[Edge[Int]] = bookCLCIdCLCNameTupleList
+      .join(bookCLCIdCLCNameTupleList, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfCLCName)
@@ -150,7 +150,6 @@ object Main {
     val mergedEdgesGraph: Graph[Int, Int] = graph
       .groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
       .cache()
-    //缓存
 
     //计算各个顶点的边的权重之和
     //注，本RDD不包括所有的顶点
@@ -158,8 +157,10 @@ object Main {
     val partOfVerticesWithWeight: VertexRDD[Int] = mergedEdgesGraph
       .aggregateMessages[Int](
       triplet => {
-        //发送边的权重给dst顶点
+        //发送边的权重给目标顶点
         triplet.sendToDst(triplet.attr)
+        //发送边的权重给出发顶点
+        triplet.sendToSrc(triplet.attr)
       },
       //相加
       (a, b) => a + b
