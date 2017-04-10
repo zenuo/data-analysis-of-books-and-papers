@@ -170,7 +170,8 @@ sc.textFile(book_id_author)
 同理，根据book_id_CLCId.txt文件生成格式为(中图法分类号,图书ID)的二元元组集合，命名为bookIdCLCIdTupleList；
 
 根据cls_no_name.txt文件生成格式为(中图法分类号,中图法分类名)的二元元组集合，命名为bookCLCIdCLCNameTupleList；
-示意图如下：
+
+示意图如下（因篇幅原因，省略图中数据部分，下同）：
 
 ![](http://i1.piimg.com/567571/9e881433e8c790a7.png)
 
@@ -326,6 +327,7 @@ val paperPaperRelationshipByAuthorRDD: RDD[Edge[Int]] = paperAuthorIdRDD
 ![](http://i2.muimg.com/567571/aab7f95a89c2b2b1.png)
 
 论文与论文在领域名称上的联系：
+
 设计权重为1；
 根据PaperFieldIdRDD与自身做join和map运算实现（排除自身与自身的联系），得到paperPaperRelationshipByFieldRDD，代码如图：
 ```
@@ -338,7 +340,7 @@ val paperPaperRelationshipByFieldRDD: RDD[Edge[Int]] = paperFieldIdRDD
 ```
 示意图如下：
 
-![](http://i4.buimg.com/567571/aae4567500ad0de4.png)
+![](http://i1.piimg.com/524586/f168f42f1e2bdadb.png)
 
 论文与论文在关键词上的联系：
 
@@ -369,7 +371,7 @@ val paperBookRelationshipByAuthorRDD: RDD[Edge[Int]] = paperAuthorIdRDD
 ```
 示意图如下：
 
-![](http://i1.piimg.com/567571/e04b019cc62bfbb9.png)
+![](http://i4.buimg.com/524586/915f83b8a713c3c5.png)
 
 图书的中图法分类名与论文的领域名称的联系：
 由paperFieldIdRDD和bookCLCNameIdRDD做join和map，得到
@@ -383,7 +385,7 @@ val paperBookRelationshipByFieldAndCLCNameRDD: RDD[Edge[Int]] = paperFieldIdRDD
 ```
 示意图如下：
 
-![](http://i1.piimg.com/567571/86d22f1faad75280.png)
+![](http://i4.buimg.com/524586/2053efd99e87b0b9.png)
 
 图书的中图法分类名与论文的关键词的联系：
 由paperIndexTermIdRDD与bookCLCNameIdRDD做join和map，得到
@@ -397,19 +399,24 @@ val paperBookRelationshipByIndexTermAndCLCNameRDD: RDD[Edge[Int]] = paperIndexTe
 ```
 示意图如下：
 
-![](http://i4.buimg.com/567571/294ad468688f4a48.png)
+![](http://i4.buimg.com/524586/f8b9f47f192c86da.png)
 
 至此，本阶段目的达成，如图：
 
-![](http://i2.muimg.com/567571/cc4995eb726d6166.png)
+![](http://i4.buimg.com/524586/a2ce7dc61ea312d9.png)
 
 
 #### （3）第三阶段
 ##### 目的：
-将所有图书、论文作为顶点，将上一阶段生成的所有关系作为边，生成一个图；给各种边定义权重，分析指向每个节点的边的权重之和，保存到节点的属性里；
+* 将所有图书、论文作为顶点，将上一阶段生成的所有关系作为边，生成一个图；
+* 给各种边定义权重，分析指向每个节点的边的权重之和，保存到节点的属性里；
 
 ##### 实现：
-从文件加载所有图书、论文，代码：
+从文件加载所有图书、论文，返回格式为(节点ID,边权重之和)的节点，其中每个节点的“边权重之和”初始值为0；
+
+返回所有图书节点的RDD，命名为bookVertices；
+
+返回所有论文节点的RDD，命名为paperVertices；代码如下：
 ```
 //图书
 sc.textFile(book_id_author).map(line => {
@@ -428,22 +435,19 @@ sc.textFile(paper_id_paperId).map(line => {
   (tokens(0).toLong + Conf.paperIdOffset.toLong, 0)
 })
 ```
-将所有图书、论文聚合，代码：
+将bookVertices和paperVertices聚合，生成全部节点的RDD，命名为vertices；
+
+代码如下：
 ```
-//图书
-val bookVertices: RDD[(VertexId, Int)] = GetBookVertices.work(book_id_author, sc)
-//论文
-val paperVertices: RDD[(VertexId, Int)] = GetPaperVertices.work(paper_id_paperId, sc)
-//获得顶点
 val vertices: RDD[(VertexId, Int)] = bookVertices
   .union(paperVertices)
   .cache()
 ```
 示意图如下：
 
-![](http://i2.muimg.com/524586/a8dab3ca52069fe6.png)
+![](http://i1.piimg.com/524586/258596208f183c72.png)
 
-将所有联系聚合，代码如下：
+将第二阶段生成的所有联系RDD聚合，代码如下：
 ```
 val edges: RDD[Edge[Int]] = bookBookRelationshipByAuthorRDD
   .union(bookBookRelationshipByCLCIdRDD)
@@ -457,7 +461,7 @@ val edges: RDD[Edge[Int]] = bookBookRelationshipByAuthorRDD
 ```
 示意图如下：
 
-![](http://i2.muimg.com/567571/197a94adab09f3fe.png)
+![](http://i1.piimg.com/524586/fa6d3201901c2509s.png)
 
 接下来，利用spark的GraphX库，以vertices、edges生成属性图，其中顶点格式为（ID，指向本节点的权重之和），边的格式为（图书ID，论文ID，边的权重）,生成图的代码为：
 ```
@@ -465,10 +469,11 @@ val graph: Graph[Int, Int] = Graph(vertices, edges)
 ```
 示意图如下：
 
-![](http://i1.piimg.com/524586/c9e153395aa34308.png)
+![](https://1tpic.com/images/2017/04/10/13d1fba.png)
 
 此时图建立完毕，我们接下来对图进行分析工作。
-首先合并出发节点和结束节点相同的边，并且将它们的权值相加（目的是减少边数，优化运行速度），代码如下：
+
+首先合并平行边（出发节点和结束节点相同的边），并且将它们的权值相加（目的是减少边数），代码如下：
 ```
 val mergedEdgesGraph: Graph[Int, Int] = graph
   .groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
@@ -476,15 +481,17 @@ val mergedEdgesGraph: Graph[Int, Int] = graph
 ```
 示意图如下：
 
-![](http://i4.buimg.com/524586/553d3a192bdbc70c.png)
+![](https://1tpic.com/images/2017/04/10/14.png)
 
 接下来计算指向节点的边的权重之和，并把和赋值给节点，代码如下：
 ```
 val partOfVerticesWithWeight: VertexRDD[Int] = mergedEdgesGraph
   .aggregateMessages[Int](
   triplet => {
-    //发送边的权重给dst顶点
+    //发送边的权重给目标顶点
     triplet.sendToDst(triplet.attr)
+    //发送边的权重给出发顶点
+    triplet.sendToSrc(triplet.attr)
   },
   //相加
   (a, b) => a + b
@@ -495,23 +502,23 @@ val verticesWithWeight: RDD[(VertexId, Int)] = vertices
   (tuple._1, tuple._2._2.getOrElse(0))
 })
 ```
-示意图如下：
+此阶段数据分析完成，示意图如下：
 
-![](http://i4.buimg.com/524586/2f5b994d6fe7e75e.png)
-
-数据分析完成，利用得到图，示意图如下：
-
-![](http://i4.buimg.com/524586/2165940ae44b85bf.png)
+![](https://1tpic.com/images/2017/04/10/15.png)
 
 
 #### （4）第四阶段
 ##### 目的：
-将图书与图书的联系、论文与论文的联系、论文与图书的联系保存到文件，以便持久化到数据库中；
+* 将图书、论文节点保存到文件；
+* 将图书与图书的联系、论文与论文的联系、图书与论文的联系保存到文件；
 
 ##### 实现：
-从图中获得节点和边，代码如下：
+从图中获得节点，将所有图书节点转为格式为“ID,权重只和,Book”的字符串RDD，命名为books；
+
+将所有论文节点转为格式为“ID,权重之和,Paper”的字符串RDD，命名为papers；
+
+代码如下：
 ```
-//节点
 //图书
 val books: RDD[String] = verticesWithWeight
   .filter(VertexUtil.GetVertexType(_) == 0)
@@ -520,8 +527,17 @@ val books: RDD[String] = verticesWithWeight
 val papers: RDD[String] = verticesWithWeight
   .filter(VertexUtil.GetVertexType(_) == 1)
   .map(VertexUtil.VertexToString(_, 1))
+```
+从图中获得边，将图书与图书的联系转为格式为“出发节点ID,目的节点ID,权重,0”的字符串RDD，命名为bookBookRelationships
 
-//边
+> 注：
+> 1.此处虽提及“出发节点,目的节点”，这是有向边的概念，但是本工程中的边皆为无向边，只是编程实现时用有向边表示；
+> 2.第四个属性为此种关系的标识，目的是与其他三种关系区分，下同）；
+
+将论文与论文的联系转为格式为“出发节点ID,目的节点ID,权重,1”的字符串RDD，命名为paperPaperRelationships；
+
+将图书与论文的联系转为格式为“出发节点ID,目的节点ID,权重,2”的字符串RDD，命名为bookPaperRelationships；
+```
 //图书与图书关联
 val bookBookRelationships: RDD[String] = mergedEdgesGraph.edges
   .filter(EdgeUtil.GetEdgeType(_) == 0)
@@ -535,9 +551,6 @@ val bookPaperRelationships: RDD[String] = mergedEdgesGraph.edges
   .filter(EdgeUtil.GetEdgeType(_) == 2)
   .map(EdgeUtil.EdgeToString(_, 2))
 ```
-示意图如下：
-
-![](http://i2.muimg.com/524586/ec680f78ca84be46s.png)
 
 保存到文件，代码如下：
 ```
@@ -547,32 +560,58 @@ bookBookRelationships.saveAsTextFile(bookBookRelationshipsResultPath)
 paperPaperRelationships.saveAsTextFile(paperPaperRelationshipsResultPath)
 bookPaperRelationships.saveAsTextFile(bookPaperRelationshipsResultPath)
 ```
+得到的文件用于导入Neo4j图数据库中，数据离线计算完成。
 
 ### 2.数据实时服务部分
-#### 1）RESTful API设计
-通过以下的api存取图书（book）、论文（paper）等资源，以及完成反馈的动作。
+#### 1）概述
+> 通过以下的api存取图书（book）、论文（paper）等资源，以及完成反馈的动作。
 
-##### （1）图书部分
+* Jersey：采用JAX-RS标准（Java领域中对REST式的web服务制定的实现标准）的开源框架。此处用来开发对外提供Json数据格式的资源API服务；
+* MariaDB：MariaDB数据库管理系统是MySQL的一个分支。此处用来存储图书、论文资源；
+* Neo4j：由Neo Technology公司开发的图形数据库管理系统。此处用来存储图书与图书、论文与论文、论文与图书的关联信息；
+
+结构示意图如下
+
+![](https://1tpic.com/images/2017/04/10/17898f1.png)
+
+
+
+#### 2）具体实现
+##### （1）概述
+
+
+##### （2）图书与论文
+通过监听“books”、“papers”路径，依据请求中的路径（获取资源的类型，papers或者books）和参数（实体编号id）到MariaDB中查询实体（图书、论文），返回请求需要的资源，示意图如下：
+
+![](https://1tpic.com/images/2017/04/10/18.png)
+
+此部分API列表如下：
+
 |功能|资源地址|示例|
 | --- | --- | --- |
-|添加|POST /books|POST /books|
-|删除|DELETE /books/{id}|DELETE /books/1|
-|更新|PUT /books/{id}|PUT /books/1|
-|获得单个|GET /books/{id}|GET /books/1|
-|获得多个|GET /books/get?page={page}&size={size}|GET /books/get?page=1&size=10|
-|关键词查询|GET /books/search?keyword={keyword}|GET /books/search?keyword=马克思|
+|添加图书|POST /books|POST /books|
+|删除图书|DELETE /books/{id}|DELETE /books/1|
+|更新图书|PUT /books/{id}|PUT /books/1|
+|获得单个图书实体|GET /books/{id}|GET /books/1|
+|获得多个图书实体|GET /books/get?page={page}&size={size}|GET /books/get?page=1&size=10|
+|关键词查询图书实体|GET /books/search?keyword={keyword}|GET /books/search?keyword=马克思|
+|添加论文|POST /papers|POST /papers|
+|删除论文|DELETE /papers/{id}|DELETE /papers/1|
+|更新论文|PUT /papers/{id}|PUT /papers/1|
+|获得单个论文实体|GET /papers/{id}|GET /papers/1|
+|获得多个论文实体|GET /papers/get?page={page}&size={size}|GET /papers/get?page=1&size=10|
+|关键词查询论文|GET /papers/search?keyword={keyword}|GET /papers/search?keyword=马克思|
 
-##### （2）论文部分
-|功能|资源地址|示例|
-| --- | --- | --- |
-|添加|POST /papers|POST /papers|
-|删除|DELETE /papers/{id}|DELETE /papers/1|
-|更新|PUT /papers/{id}|PUT /papers/1|
-|获得单个|GET /papers/{id}|GET /papers/1|
-|获得多个|GET /papers/get?page={page}&size={size}|GET /papers/get?page=1&size=10|
-|关键词查询|GET /papers/search?keyword={keyword}|GET /papers/search?keyword=马克思|
 
-##### （3）推荐部分
+##### （3）推荐
+通过监听“recommend”路径，依据请求中的路径（获取资源的类型，papers或者books）和参数（实体编号id，实体类型type），先到Neo4j中查询与该实体编号id有关联的实体的实体编号id列表（依据实体的权重从大到小排序），然后根据列表到MariaDB中查询实体并返回实体列表；
+
+示意图如下：
+
+![](https://1tpic.com/images/2017/04/10/19.png)
+
+此部分API列表如下：
+
 |功能|资源地址|示例|
 | --- | --- | --- |
 |根据图书ID获取论文推荐|GET /recommend/papers?id={id}&type=book|GET /recommend/papers?id=1&type=book|
@@ -580,21 +619,15 @@ bookPaperRelationships.saveAsTextFile(bookPaperRelationshipsResultPath)
 |根据图书ID获取图书推荐|GET /recommend/books?id={id}&type=book|GET /recommend/books?id=1&type=book|
 |根据论文ID获取图书推荐|GET /recommend/books?id={id}&type=paper|GET /recommend/books?id=1&type=paper|
 
-##### （4）反馈部分
+##### （4）反馈
+通过监听“feedback”路径，依据请求的路径（点赞为like）和参数（实体编号id，实体类型type）增加该实体的权重，示意图如下：
+
+![](https://1tpic.com/images/2017/04/10/20.png)
+
 |功能|资源地址|示例|
 | --- | --- | --- |
 |根据图书ID点赞图书|GET /feedback/like?id={id}&type=book|GET /feedback/like?id=1&type=book|
 |根据论文ID点赞论文|GET /feedback/like?id={id}&type=paper|GET /feedback/like?id=1&type=paper|
-
-#### 2）具体实现
-##### （1）数据源
-* MariaDB：MariaDB数据库管理系统是MySQL的一个分支，主要由开源社群在维护，采用GPL授权许可。此处用来存储图书、论文资源；
-* Neo4j：Neo4j是由Neo Technology.Inc.开发的图形数据库管理系统。此处用来存储图书与图书、论文与论文、论文与图书的关联信息；
-
-##### （2）RESTful API服务
-采用JAX-RS标准（Java领域中对REST式的web服务制定的实现标准）的开源框架Jersey2.25.1开发，对外提供Json数据格式的资源，结构示意图如下：
-
-![](http://i1.piimg.com/524586/bb8880b9c88ed1fe.png)
 
 ## 四、成本分析和可行性分析
 

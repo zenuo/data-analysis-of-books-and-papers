@@ -21,7 +21,7 @@ object GetPaperVertices {
         .split(delimiter01)
         .map(_.trim)
       //为与图书id区别，论文id在处理过程中作加一亿处理
-      //无属性，属性定为0
+      //格式为(节点ID,边权重之和)，其中“边权重之和”初始值为0
       (tokens(0).toLong + Conf.paperIdOffset.toLong, 0)
     })
   }
