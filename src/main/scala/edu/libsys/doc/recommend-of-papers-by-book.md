@@ -269,7 +269,7 @@ paperPaperIdIndexTermTupleList
 
 **关联权重**
 * 图书与图书在作者上的联系 3
-* 图书与图书在中图法分类名上的联系 1
+* 图书与图书在中图法分类号上的联系 1
 * 论文与论文在作者上的联系 3
 * 论文与论文在领域名称上的联系 1
 * 论文与论文在关键词上的联系 2
@@ -469,7 +469,7 @@ val graph: Graph[Int, Int] = Graph(vertices, edges)
 ```
 示意图如下：
 
-![](https://1tpic.com/images/2017/04/10/13d1fba.png)
+![](https://1tpic.com/images/2017/04/11/21.png)
 
 此时图建立完毕，我们接下来对图进行分析工作。
 
@@ -481,7 +481,7 @@ val mergedEdgesGraph: Graph[Int, Int] = graph
 ```
 示意图如下：
 
-![](https://1tpic.com/images/2017/04/10/14.png)
+![](https://1tpic.com/images/2017/04/11/22.png)
 
 接下来计算指向节点的边的权重之和，并把和赋值给节点，代码如下：
 ```
@@ -504,7 +504,7 @@ val verticesWithWeight: RDD[(VertexId, Int)] = vertices
 ```
 此阶段数据分析完成，示意图如下：
 
-![](https://1tpic.com/images/2017/04/10/15.png)
+![](https://1tpic.com/images/2017/04/11/23.png)
 
 
 #### （4）第四阶段

@@ -7,24 +7,44 @@ object Conf {
   val paperIdOffset: Int = 1000000000
 
   /**
-    * 作者权重
+    * 图书与图书在作者上的联系的权重
     */
-  val weightOfAuthor: Int = 3
+  val weightOfBookBookRelationshipByAuthor = 50
 
   /**
-    * 中图法分类号的权重
+    * 图书与图书在中图法分类号上的联系的权重
     */
-  val weightOfCLCName: Int = 1
+  val weightOfBookBookRelationshipByCLCId = 4
 
   /**
-    * 领域名的权重
+    * 论文与论文在作者上的联系的权重
     */
-  val weightOfField: Int = 1
+  val weightOfPaperPaperRelationshipByAuthor = 50
 
   /**
-    * 关键词的权重
+    * 论文与论文在领域名称上的联系的权重
     */
-  val weightOfIndexTerm: Int = 2
+  val weightOfPaperPaperRelationshipByField = 1
+
+  /**
+    * 论文与论文在关键词上的联系的权重
+    */
+  val weightOfPaperPaperRelationshipByIndexTerm = 12
+
+  /**
+    * 图书与论文在作者上的联系的权重
+    */
+  val weightOfPaperBookRelationshipByAuthor = 90
+
+  /**
+    * 图书的中图法分类名与论文的领域名称的联系的权重
+    */
+  val weightOfPaperBookRelationshipByIndexTermAndCLCName = 90
+
+  /**
+    * 图书的中图法分类名与论文的关键词的联系的权重
+    */
+  val weightOfPaperBookRelationshipByFieldAndCLCName = 180
 
   /**
     * 任务数量

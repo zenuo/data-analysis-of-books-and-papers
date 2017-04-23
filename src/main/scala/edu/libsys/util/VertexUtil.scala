@@ -48,6 +48,6 @@ object VertexUtil {
       label = "Paper"
     }
     //返回字符串
-    "%s,%d,%s".format(vertexId, vertex._2, label)
+    s"$vertexId,${vertex._2},$label"
   }
 }
