@@ -190,7 +190,7 @@ object Main {
     //println("*********************************************************************************")
     //获得所有联系并缓存
     val edges: RDD[Edge[Int]] = bookBookRelationshipByAuthor
-      //.union(bookBookRelationshipByCLCId)
+      .union(bookBookRelationshipByCLCId)
       .union(paperPaperRelationshipByAuthor)
       //.union(paperPaperRelationshipByField)
       .union(paperPaperRelationshipByIndexTerm)
@@ -257,13 +257,14 @@ object Main {
     //获得含有权重的所有顶点
     //VertexRDD[Int]
     val verticesWithWeight: RDD[(VertexId, Int)] = vertices
-      .leftOuterJoin(partOfVerticesWithWeight).map(tuple => {
+      .fullOuterJoin(partOfVerticesWithWeight).map(tuple => {
       (tuple._1, tuple._2._2.getOrElse(0))
     })
 
     //获得含有权重的所有顶点
     println("*********************************************************************************")
     val verticesWithWeightCount = verticesWithWeight.count()
+    println("没有权重的所有顶点(vertices)：")
     println("共计：" + verticesCount + "个；")
     //println("前十个：")
     //vertices.take(10).foreach(println)
@@ -272,20 +273,9 @@ object Main {
     //println("前十个：")
     //verticesWithWeight.take(10).foreach(println)
 
-    var max: (Long, Int) = (0L, Int.MinValue)
-    var min: (Long, Int) = (0L, Int.MaxValue)
-
-    verticesWithWeight.foreach(vertex => {
-      if (vertex._2 < min._2) {
-        min = vertex
-      }
-      if (vertex._2 > max._2) {
-        max = vertex
-      }
-    })
-    println("权重最大节点：id: " + max._1 + ", weight: " + max._2)
-    println("权重最小节点：id: " + min._1 + ", weight: " + min._2)
-
+    val weight = verticesWithWeight.map(_._2)
+    println("最大权重：" + weight.max())
+    println("最小权重：" + weight.min())
 
     //字符串RDD，准备保存
     //图书

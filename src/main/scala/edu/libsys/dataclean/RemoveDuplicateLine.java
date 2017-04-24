@@ -8,7 +8,6 @@ public class RemoveDuplicateLine {
     public static void main(String[] args) {
         StringFunnel stringFunnel = new StringFunnel();
         //the capability of BloomFilter
-
         long expectedInsertions = 3264062;
         BloomFilter<String> bloomFilter = BloomFilter.create(stringFunnel, expectedInsertions);
 
@@ -18,7 +17,6 @@ public class RemoveDuplicateLine {
 
         try {
             //traversal file
-
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(oldFileName), "UTF-8"));
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFileName, true), "utf-8"));
             String s;
