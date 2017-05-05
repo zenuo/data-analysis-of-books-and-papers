@@ -190,7 +190,7 @@ object Main {
     //println("*********************************************************************************")
     //获得所有联系并缓存
     val edges: RDD[Edge[Int]] = bookBookRelationshipByAuthor
-      .union(bookBookRelationshipByCLCId)
+      //.union(bookBookRelationshipByCLCId)
       .union(paperPaperRelationshipByAuthor)
       //.union(paperPaperRelationshipByField)
       .union(paperPaperRelationshipByIndexTerm)
