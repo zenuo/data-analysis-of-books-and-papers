@@ -2,10 +2,10 @@ package edu.libsys
 
 import edu.libsys.conf.Conf
 import edu.libsys.stats._
-import edu.libsys.util.{EdgeUtil, Filter, VertexUtil}
+import edu.libsys.util.{EdgeUtil, Filter}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkContext
-import org.apache.spark.graphx.{Edge, Graph, VertexId, VertexRDD}
+import org.apache.spark.graphx.{Edge, Graph, VertexId}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
@@ -58,35 +58,39 @@ object Main {
     val bookPaperRelationshipsResultPath: String = args(1) + "/bookPaperRelationships"
 
     //图书与论文在作者上的联系
-    val bookAuthorIdRDD: RDD[(String, Int)] = GetBookAuthorIdRDD.work(book_id_author, sc).distinct()
-    val paperAuthorIdRDD: RDD[(String, Int)] = GetPaperAuthorIdRDD.work(paper_id_paperId, paper_paperID_author, sc).distinct()
+    val bookAuthorIdRDD: RDD[(String, Int)] =
+      GetBookAuthorIdRDD.work(book_id_author, sc).distinct()
+    val paperAuthorIdRDD: RDD[(String, Int)] =
+      GetPaperAuthorIdRDD.work(paper_id_paperId, paper_paperID_author, sc).distinct()
     val paperBookRelationshipByAuthor: RDD[Edge[Int]] = paperAuthorIdRDD
       .join(bookAuthorIdRDD, Conf.numTasks)
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfPaperBookRelationshipByAuthor)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
       })
     //图书与图书在作者上的联系
     val bookBookRelationshipByAuthor: RDD[Edge[Int]] = bookAuthorIdRDD
       .join(bookAuthorIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfBookBookRelationshipByAuthor)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
       })
     //论文与论文在作者上的联系
     val paperPaperRelationshipByAuthor: RDD[Edge[Int]] = paperAuthorIdRDD
       .join(paperAuthorIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfPaperPaperRelationshipByAuthor)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
       })
 
     //图书的中图法分类名与论文的关键词的联系
-    val bookCLCNameIdRDD: RDD[(String, Int)] = GetBookCLCNameIdRDD.work(book_id_CLCId, cls_no_name, sc).distinct()
-    val paperIndexTermIdRDD: RDD[(String, Int)] = GetPaperIndexTermIdRDD.work(paper_id_paperId, paper_paperId_indexTerm, sc).distinct()
+    val bookCLCNameIdRDD: RDD[(String, Int)] =
+      GetBookCLCNameIdRDD.work(book_id_CLCId, cls_no_name, sc).distinct()
+    val paperIndexTermIdRDD: RDD[(String, Int)] =
+      GetPaperIndexTermIdRDD.work(paper_id_paperId, paper_paperId_indexTerm, sc).distinct()
     val paperBookRelationshipByIndexTermAndCLCName: RDD[Edge[Int]] = paperIndexTermIdRDD
       .join(bookCLCNameIdRDD, Conf.numTasks)
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfPaperBookRelationshipByIndexTermAndCLCName)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
       })
 
     //论文与论文在关键词上的联系
@@ -94,32 +98,36 @@ object Main {
       .join(paperIndexTermIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfPaperPaperRelationshipByIndexTerm)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
       })
 
     //图书的中图法分类名与论文的领域名称的联系
-    val paperFieldIdRDD: RDD[(String, Int)] = GetPaperFieldIdRDD.work(paper_id_paperId, paper_paperId_field, sc).distinct()
-    val paperBookRelationshipByFieldAndCLCName: RDD[Edge[Int]] = paperFieldIdRDD
-      .join(bookCLCNameIdRDD, Conf.numTasks)
-      .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfPaperBookRelationshipByFieldAndCLCName)
-      })
+    val paperFieldIdRDD: RDD[(String, Int)] =
+      GetPaperFieldIdRDD.work(paper_id_paperId, paper_paperId_field, sc).distinct()
+    val paperBookRelationshipByFieldAndCLCName: RDD[Edge[Int]] =
+      paperFieldIdRDD
+        .join(bookCLCNameIdRDD, Conf.numTasks)
+        .map(tuple => {
+          EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
+        })
 
     //论文与论文在领域名称上的联系
-    val paperPaperRelationshipByField: RDD[Edge[Int]] = paperFieldIdRDD
-      .join(paperFieldIdRDD, Conf.numTasks)
-      .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
-      .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfPaperPaperRelationshipByField)
-      })
+    val paperPaperRelationshipByField: RDD[Edge[Int]] =
+      paperFieldIdRDD
+        .join(paperFieldIdRDD, Conf.numTasks)
+        .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
+        .map(tuple => {
+          EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
+        })
 
     //图书与图书在中图法分类号上的联系
-    val bookCLCIdCLCNameTupleList: RDD[(String, Int)] = stats.GetBookCLCIdIdRDD.work(book_id_CLCId, sc)
+    val bookCLCIdCLCNameTupleList: RDD[(String, Int)] =
+      stats.GetBookCLCIdIdRDD.work(book_id_CLCId, sc)
     val bookBookRelationshipByCLCId: RDD[Edge[Int]] = bookCLCIdCLCNameTupleList
       .join(bookCLCIdCLCNameTupleList, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
-        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2, Conf.weightOfBookBookRelationshipByCLCId)
+        EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
       })
     /*
     println("*********************************************************************************")
@@ -187,30 +195,15 @@ object Main {
     paperBookRelationshipByIndexTermAndCLCName.take(10).foreach(println)
     */
 
-    //println("*********************************************************************************")
-    //获得所有联系并缓存
-    val edges: RDD[Edge[Int]] = bookBookRelationshipByAuthor
-      //.union(bookBookRelationshipByCLCId)
-      .union(paperPaperRelationshipByAuthor)
-      //.union(paperPaperRelationshipByField)
-      .union(paperPaperRelationshipByIndexTerm)
-      .union(paperBookRelationshipByAuthor)
-      .union(paperBookRelationshipByFieldAndCLCName)
-      .union(paperBookRelationshipByIndexTermAndCLCName)
-
-    //val edgesCount = edges.count()
-    //println("图的边(edges)：")
-    //println("共计：" + edgesCount + "条；")
-    //println("前十条：")
-    //edges.take(10).foreach(println)
-
     //获得顶点为建图作准备
     //图书
-    val bookVertices: RDD[(VertexId, Int)] = GetBookVertices.work(book_id_author, sc)
+    val bookVertices: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
+    GetBookVertices.work(book_id_author, sc)
     //论文
-    val paperVertices: RDD[(VertexId, Int)] = GetPaperVertices.work(paper_id_paperId, sc)
+    val paperVertices: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
+      GetPaperVertices.work(paper_id_paperId, sc)
     //获得顶点
-    val vertices: RDD[(VertexId, Int)] = bookVertices
+    val vertices: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] = bookVertices
       .union(paperVertices)
 
     //println("*********************************************************************************")
@@ -220,92 +213,145 @@ object Main {
     //println("前十个：")
     //vertices.take(10).foreach(println)
 
+    //建图，并按边的计数合并边
+    val bookBookGraphByAuthor: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      Graph(vertices, bookBookRelationshipByAuthor)
+        .groupEdges(merge = (count1, count2) => count1 + count2)
+    val bookBookGraphByCLCId: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      Graph(vertices, bookBookRelationshipByCLCId)
+        .groupEdges(merge = (count1, count2) => count1 + count2)
+    val paperPaperGraphByAuthor: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      Graph(vertices, paperPaperRelationshipByAuthor)
+        .groupEdges(merge = (count1, count2) => count1 + count2)
+    val paperPaperGraphByField: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      Graph(vertices, paperPaperRelationshipByField)
+        .groupEdges(merge = (count1, count2) => count1 + count2)
+    val paperPaperGraphByIndexTerm: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      Graph(vertices, paperPaperRelationshipByIndexTerm)
+        .groupEdges(merge = (count1, count2) => count1 + count2)
+    val paperBookGraphByAuthor: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      Graph(vertices, paperBookRelationshipByAuthor)
+        .groupEdges(merge = (count1, count2) => count1 + count2)
+    val paperBookGraphByFieldAndCLCName: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      Graph(vertices, paperBookRelationshipByFieldAndCLCName)
+        .groupEdges(merge = (count1, count2) => count1 + count2)
+    val paperBookGraphByIndexTermAndCLCName: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      Graph(vertices, paperBookRelationshipByIndexTermAndCLCName)
+        .groupEdges(merge = (count1, count2) => count1 + count2)
 
-    //建图
-    val graph: Graph[Int, Int] = Graph(vertices, edges)
-
-    //按各联系权重合并平行边
-    val mergedEdgesGraph: Graph[Int, Int] = graph
-      .groupEdges(merge = (edgeWeight01, edgeWeight02) => edgeWeight01 + edgeWeight02)
-      .cache()
-
-    //合并平行边之后的图
-    println("*********************************************************************************")
-    val mergedEdgesGraphEdgeCount = mergedEdgesGraph.edges.count()
-    val mergedEdgesGraphVerticesCount = mergedEdgesGraph.vertices.count()
-    println("合并平行边之后的图(mergedEdgesGraph)：")
-    println("共计：" + mergedEdgesGraphEdgeCount + "条边；")
-    println("共计：" + mergedEdgesGraphVerticesCount + "个顶点；")
-    //println("前十条：")
-    //mergedEdgesGraph.edges.take(10).foreach(println)
-
-    //计算各个顶点的边的权重之和
-    //注，本RDD不包括所有的顶点
-    //RDD[(Int, Int)]
-    val partOfVerticesWithWeight: VertexRDD[Int] = mergedEdgesGraph
+    //计算各个顶点的边计数
+    //注，这些RDD不包括所有该图的的顶点
+    val partOfVerticesWithEdgesCountOfBookBookGraphByAuthor: RDD[(VertexId, Int)] =
+    bookBookGraphByAuthor
       .aggregateMessages[Int](
-      triplet => {
-        //发送边的权重给目标顶点
-        triplet.sendToDst(triplet.attr)
-        //发送边的权重给出发顶点
-        triplet.sendToSrc(triplet.attr)
+      tripletFields => {
+        tripletFields.sendToDst(tripletFields.attr)
+        tripletFields.sendToSrc(tripletFields.attr)
       },
-      //相加
       (a, b) => a + b
     )
+    val partOfVerticesWithEdgesCountOfBookBookGraphByCLCId: RDD[(VertexId, Int)] =
+      bookBookGraphByCLCId
+        .aggregateMessages[Int](
+        tripletFields => {
+          tripletFields.sendToDst(tripletFields.attr)
+          tripletFields.sendToSrc(tripletFields.attr)
+        },
+        (a, b) => a + b
+      )
+    val partOfVerticesWithEdgesCountOfPaperPaperGraphByAuthor: RDD[(VertexId, Int)] =
+      paperPaperGraphByAuthor
+        .aggregateMessages[Int](
+        tripletFields => {
+          tripletFields.sendToDst(tripletFields.attr)
+          tripletFields.sendToSrc(tripletFields.attr)
+        },
+        (a, b) => a + b
+      )
+    val partOfVerticesWithEdgesCountOfPaperPaperGraphByField: RDD[(VertexId, Int)] =
+      paperPaperGraphByField
+        .aggregateMessages[Int](
+        tripletFields => {
+          tripletFields.sendToDst(tripletFields.attr)
+          tripletFields.sendToSrc(tripletFields.attr)
+        },
+        (a, b) => a + b
+      )
+    val partOfVerticesWithEdgesCountOfPaperPaperGraphByIndexTerm: RDD[(VertexId, Int)] =
+      paperPaperGraphByIndexTerm
+        .aggregateMessages[Int](
+        tripletFields => {
+          tripletFields.sendToDst(tripletFields.attr)
+          tripletFields.sendToSrc(tripletFields.attr)
+        },
+        (a, b) => a + b
+      )
+    val partOfVerticesWithEdgesCountOfPaperBookGraphByAuthor: RDD[(VertexId, Int)] =
+      paperBookGraphByAuthor
+        .aggregateMessages[Int](
+        tripletFields => {
+          tripletFields.sendToDst(tripletFields.attr)
+          tripletFields.sendToSrc(tripletFields.attr)
+        },
+        (a, b) => a + b
+      )
+    val partOfVerticesWithEdgesCountOfPaperBookGraphByFieldAndCLCName: RDD[(VertexId, Int)] =
+      paperBookGraphByFieldAndCLCName
+        .aggregateMessages[Int](
+        tripletFields => {
+          tripletFields.sendToDst(tripletFields.attr)
+          tripletFields.sendToSrc(tripletFields.attr)
+        },
+        (a, b) => a + b
+      )
+    val partOfVerticesWithEdgesCountOfPaperBookGraphByIndexTermAndCLCName: RDD[(VertexId, Int)] =
+      paperBookGraphByIndexTermAndCLCName
+        .aggregateMessages[Int](
+        tripletFields => {
+          tripletFields.sendToDst(tripletFields.attr)
+          tripletFields.sendToSrc(tripletFields.attr)
+        },
+        (a, b) => a + b
+      )
 
-    //获得含有权重的所有顶点
-    //VertexRDD[Int]
-    val verticesWithWeight: RDD[(VertexId, Int)] = vertices
-      .fullOuterJoin(partOfVerticesWithWeight).map(tuple => {
-      (tuple._1, tuple._2._2.getOrElse(0))
-    })
+    /*
+        //获得含有权重的所有顶点
+        //VertexRDD[Int]
+        val verticesWithWeight: RDD[(VertexId, Int)] = vertices
+          .fullOuterJoin(partOfVerticesWithWeight).map(tuple => {
+          (tuple._1, tuple._2._2.getOrElse(0))
+        })
 
-    //获得含有权重的所有顶点
-    println("*********************************************************************************")
-    val verticesWithWeightCount = verticesWithWeight.count()
-    println("没有权重的所有顶点(vertices)：")
-    println("共计：" + verticesCount + "个；")
-    //println("前十个：")
-    //vertices.take(10).foreach(println)
-    println("获得含有权重的所有顶点(verticesWithWeight)：")
-    println("共计：" + verticesWithWeightCount + "个；")
-    //println("前十个：")
-    //verticesWithWeight.take(10).foreach(println)
+        //获得含有权重的所有顶点
+        println("*********************************************************************************")
+        val verticesWithWeightCount = verticesWithWeight.count()
+        println("没有权重的所有顶点(vertices)：")
+        println("共计：" + verticesCount + "个；")
+        //println("前十个：")
+        //vertices.take(10).foreach(println)
+        println("获得含有权重的所有顶点(verticesWithWeight)：")
+        println("共计：" + verticesWithWeightCount + "个；")
+        //println("前十个：")
+        //verticesWithWeight.take(10).foreach(println)
 
-    val weight = verticesWithWeight.map(_._2)
-    println("最大权重：" + weight.max())
-    println("最小权重：" + weight.min())
+        val weight = verticesWithWeight.map(_._2)
+        println("最大权重：" + weight.max())
+        println("最小权重：" + weight.min())
 
-    //字符串RDD，准备保存
-    //图书
-    val books: RDD[String] = verticesWithWeight
-      .filter(VertexUtil.GetVertexType(_) == 0)
-      .map(VertexUtil.VertexToString(_, 0))
-    //论文
-    val papers: RDD[String] = verticesWithWeight
-      .filter(VertexUtil.GetVertexType(_) == 1)
-      .map(VertexUtil.VertexToString(_, 1))
+        //字符串RDD，准备保存
+        //图书
+        val books: RDD[String] = verticesWithWeight
+          .filter(VertexUtil.GetVertexType(_) == 0)
+          .map(VertexUtil.VertexToString(_, 0))
+        //论文
+        val papers: RDD[String] = verticesWithWeight
+          .filter(VertexUtil.GetVertexType(_) == 1)
+          .map(VertexUtil.VertexToString(_, 1))
 
-    //图书与图书关联
-    val bookBookRelationships: RDD[String] = mergedEdgesGraph.edges
-      .filter(EdgeUtil.GetEdgeType(_) == 0)
-      .map(EdgeUtil.EdgeToString(_, 0))
-    //论文与论文关联
-    val paperPaperRelationships: RDD[String] = mergedEdgesGraph.edges
-      .filter(EdgeUtil.GetEdgeType(_) == 1)
-      .map(EdgeUtil.EdgeToString(_, 1))
-    //图书与关论文联
-    val bookPaperRelationships: RDD[String] = mergedEdgesGraph.edges
-      .filter(EdgeUtil.GetEdgeType(_) == 2)
-      .map(EdgeUtil.EdgeToString(_, 2))
-
-    //保存到文本文件
-    books.saveAsTextFile(booksResultPath)
-    papers.saveAsTextFile(papersResultPath)
-    bookBookRelationships.saveAsTextFile(bookBookRelationshipsResultPath)
-    paperPaperRelationships.saveAsTextFile(paperPaperRelationshipsResultPath)
-    bookPaperRelationships.saveAsTextFile(bookPaperRelationshipsResultPath)
+        //保存到文本文件
+        books.saveAsTextFile(booksResultPath)
+        papers.saveAsTextFile(papersResultPath)
+    */
 
     //停止
     spark.stop()

@@ -9,14 +9,13 @@ object EdgeUtil {
     *
     * @param srcId  起点顶点编号
     * @param dstId  目的顶点编号
-    * @param weight 权重
     * @return Edge[Int]
     */
-  def SortEdge(srcId: Int, dstId: Int, weight: Int): Edge[Int] = {
+  def SortEdge(srcId: Int, dstId: Int): Edge[Int] = {
     if (srcId < dstId) {
-      Edge(srcId.toLong, dstId.toLong, weight)
+      Edge(srcId.toLong, dstId.toLong, 1)
     } else {
-      Edge(dstId.toLong, srcId.toLong, weight)
+      Edge(dstId.toLong, srcId.toLong, 1)
     }
   }
 

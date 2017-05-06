@@ -1,6 +1,9 @@
 package edu.libsys.util
 
-import org.apache.spark.graphx.Edge
+import org.apache.spark.SparkContext
+import org.apache.spark.graphx.Graph
+import org.apache.spark.graphx.util.GraphGenerators
+import org.apache.spark.sql.SparkSession
 
 object Test {
   /**
@@ -9,7 +12,19 @@ object Test {
     * @param args 控制台参数
     */
   def main(args: Array[String]): Unit = {
-    val e: Edge[Int] = Edge(2133131L, 1000000001L, 3)
-    println(EdgeUtil.EdgeToString(e, 2))
+    val spark: SparkSession = SparkSession
+      .builder()
+      .appName("Test")
+      .getOrCreate()
+
+    val sc: SparkContext = spark.sparkContext
+
+    val graph: Graph[Long, Int] =
+      GraphGenerators.logNormalGraph(sc, numVertices = 100)
+
+    graph.vertices.foreach(println)
+
+    sc.stop()
+    spark.stop()
   }
 }
