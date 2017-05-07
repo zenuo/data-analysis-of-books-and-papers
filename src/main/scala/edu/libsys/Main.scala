@@ -2,7 +2,7 @@ package edu.libsys
 
 import edu.libsys.conf.Conf
 import edu.libsys.stats._
-import edu.libsys.util.{EdgeUtil, Filter}
+import edu.libsys.util.{EdgeUtil, Filter, VertexUtil}
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkContext
 import org.apache.spark.graphx.{Edge, Graph, VertexId}
@@ -207,7 +207,7 @@ object Main {
       .union(paperVertices)
 
     //println("*********************************************************************************")
-    val verticesCount = vertices.count()
+    //val verticesCount = vertices.count()
     //println("图的顶点(vertices)：")
     //println("共计：" + verticesCount + "个；")
     //println("前十个：")
@@ -239,121 +239,126 @@ object Main {
       Graph(vertices, paperBookRelationshipByIndexTermAndCLCName)
         .groupEdges(merge = (count1, count2) => count1 + count2)
 
-    //计算各个顶点的边计数
-    //注，这些RDD不包括所有该图的的顶点
-    val partOfVerticesWithEdgesCountOfBookBookGraphByAuthor: RDD[(VertexId, Int)] =
-    bookBookGraphByAuthor
-      .aggregateMessages[Int](
-      tripletFields => {
-        tripletFields.sendToDst(tripletFields.attr)
-        tripletFields.sendToSrc(tripletFields.attr)
-      },
-      (a, b) => a + b
-    )
-    val partOfVerticesWithEdgesCountOfBookBookGraphByCLCId: RDD[(VertexId, Int)] =
+    //计算各个顶点的入度
+    val inDegressOfBookBookGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
+      bookBookGraphByAuthor
+        .inDegrees
+        .map(inDegreeTuple => {
+          (inDegreeTuple._1, (inDegreeTuple._2, 0, 0, 0, 0, 0, 0, 0))
+        })
+    val inDegressOfBookBookGraphByCLCId: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       bookBookGraphByCLCId
-        .aggregateMessages[Int](
-        tripletFields => {
-          tripletFields.sendToDst(tripletFields.attr)
-          tripletFields.sendToSrc(tripletFields.attr)
-        },
-        (a, b) => a + b
-      )
-    val partOfVerticesWithEdgesCountOfPaperPaperGraphByAuthor: RDD[(VertexId, Int)] =
+        .inDegrees
+        .map(inDegreeTuple => {
+          (inDegreeTuple._1, (0, inDegreeTuple._2, 0, 0, 0, 0, 0, 0))
+        })
+    val inDegressOfPaperPaperGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       paperPaperGraphByAuthor
-        .aggregateMessages[Int](
-        tripletFields => {
-          tripletFields.sendToDst(tripletFields.attr)
-          tripletFields.sendToSrc(tripletFields.attr)
-        },
-        (a, b) => a + b
-      )
-    val partOfVerticesWithEdgesCountOfPaperPaperGraphByField: RDD[(VertexId, Int)] =
+        .inDegrees
+        .map(inDegreeTuple => {
+          (inDegreeTuple._1, (0, 0, inDegreeTuple._2, 0, 0, 0, 0, 0))
+        })
+    val inDegressOfPaperPaperGraphByField: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       paperPaperGraphByField
-        .aggregateMessages[Int](
-        tripletFields => {
-          tripletFields.sendToDst(tripletFields.attr)
-          tripletFields.sendToSrc(tripletFields.attr)
-        },
-        (a, b) => a + b
-      )
-    val partOfVerticesWithEdgesCountOfPaperPaperGraphByIndexTerm: RDD[(VertexId, Int)] =
+        .inDegrees
+        .map(inDegreeTuple => {
+          (inDegreeTuple._1, (0, 0, 0, inDegreeTuple._2, 0, 0, 0, 0))
+        })
+    val inDegressOfPaperPaperGraphByIndexTerm: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       paperPaperGraphByIndexTerm
-        .aggregateMessages[Int](
-        tripletFields => {
-          tripletFields.sendToDst(tripletFields.attr)
-          tripletFields.sendToSrc(tripletFields.attr)
-        },
-        (a, b) => a + b
-      )
-    val partOfVerticesWithEdgesCountOfPaperBookGraphByAuthor: RDD[(VertexId, Int)] =
+        .inDegrees
+        .map(inDegreeTuple => {
+          (inDegreeTuple._1, (0, 0, 0, 0, inDegreeTuple._2, 0, 0, 0))
+        })
+    val inDegressOfPaperBookGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       paperBookGraphByAuthor
-        .aggregateMessages[Int](
-        tripletFields => {
-          tripletFields.sendToDst(tripletFields.attr)
-          tripletFields.sendToSrc(tripletFields.attr)
-        },
-        (a, b) => a + b
-      )
-    val partOfVerticesWithEdgesCountOfPaperBookGraphByFieldAndCLCName: RDD[(VertexId, Int)] =
+        .inDegrees
+        .map(inDegreeTuple => {
+          (inDegreeTuple._1, (0, 0, 0, 0, 0, inDegreeTuple._2, 0, 0))
+        })
+    val inDegressOfPaperBookGraphByFieldAndCLCName: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       paperBookGraphByFieldAndCLCName
-        .aggregateMessages[Int](
-        tripletFields => {
-          tripletFields.sendToDst(tripletFields.attr)
-          tripletFields.sendToSrc(tripletFields.attr)
-        },
-        (a, b) => a + b
-      )
-    val partOfVerticesWithEdgesCountOfPaperBookGraphByIndexTermAndCLCName: RDD[(VertexId, Int)] =
+        .inDegrees
+        .map(inDegreeTuple => {
+          (inDegreeTuple._1, (0, 0, 0, 0, 0, 0, inDegreeTuple._2, 0))
+        })
+    val inDegressOfPaperBookGraphByIndexTermAndCLCName: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       paperBookGraphByIndexTermAndCLCName
-        .aggregateMessages[Int](
-        tripletFields => {
-          tripletFields.sendToDst(tripletFields.attr)
-          tripletFields.sendToSrc(tripletFields.attr)
-        },
-        (a, b) => a + b
-      )
-
-    /*
-        //获得含有权重的所有顶点
-        //VertexRDD[Int]
-        val verticesWithWeight: RDD[(VertexId, Int)] = vertices
-          .fullOuterJoin(partOfVerticesWithWeight).map(tuple => {
-          (tuple._1, tuple._2._2.getOrElse(0))
+        .inDegrees
+        .map(inDegreeTuple => {
+          (inDegreeTuple._1, (0, 0, 0, 0, 0, 0, 0, inDegreeTuple._2))
         })
 
-        //获得含有权重的所有顶点
-        println("*********************************************************************************")
-        val verticesWithWeightCount = verticesWithWeight.count()
-        println("没有权重的所有顶点(vertices)：")
-        println("共计：" + verticesCount + "个；")
-        //println("前十个：")
-        //vertices.take(10).foreach(println)
-        println("获得含有权重的所有顶点(verticesWithWeight)：")
-        println("共计：" + verticesWithWeightCount + "个；")
-        //println("前十个：")
-        //verticesWithWeight.take(10).foreach(println)
+    //以所有顶点为顶点集合，建一个边集合为空的图
+    val edges: RDD[Edge[Int]] = sc.parallelize(Seq(), 1)
+    val graph: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] = Graph(vertices, edges)
 
-        val weight = verticesWithWeight.map(_._2)
-        println("最大权重：" + weight.max())
-        println("最小权重：" + weight.min())
+    //收集顶点在“图书与图书在作者上的联系”上的入度
+    val tempGraph01: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      graph.joinVertices(inDegressOfBookBookGraphByAuthor) {
+        (_, all, part) =>
+          (part._1, 0, 0, 0, 0, 0, 0, 0)
+      }
 
-        //字符串RDD，准备保存
-        //图书
-        val books: RDD[String] = verticesWithWeight
-          .filter(VertexUtil.GetVertexType(_) == 0)
-          .map(VertexUtil.VertexToString(_, 0))
-        //论文
-        val papers: RDD[String] = verticesWithWeight
-          .filter(VertexUtil.GetVertexType(_) == 1)
-          .map(VertexUtil.VertexToString(_, 1))
+    val tempGraph02: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      tempGraph01.joinVertices(inDegressOfBookBookGraphByCLCId) {
+        (vertexId, part, all) =>
+          (all._1, part._2, 0, 0, 0, 0, 0, 0)
+      }
 
-        //保存到文本文件
-        books.saveAsTextFile(booksResultPath)
-        papers.saveAsTextFile(papersResultPath)
-    */
+    val tempGraph03: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      tempGraph02.joinVertices(inDegressOfPaperPaperGraphByAuthor) {
+        (_, all, part) =>
+          (all._1, all._2, part._3, 0, 0, 0, 0, 0)
+      }
+
+    val tempGraph04: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      tempGraph03.joinVertices(inDegressOfPaperPaperGraphByField) {
+        (_, all, part) =>
+          (all._1, all._2, all._3, part._4, 0, 0, 0, 0)
+      }
+
+    val tempGraph05: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      tempGraph04.joinVertices(inDegressOfPaperPaperGraphByIndexTerm) {
+        (_, all, part) =>
+          (all._1, all._2, all._3, all._4, part._5, 0, 0, 0)
+      }
+    val tempGraph06: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      tempGraph05.joinVertices(inDegressOfPaperBookGraphByAuthor) {
+        (_, all, part) =>
+          (all._1, all._2, all._3, all._4, all._5, part._6, 0, 0)
+      }
+    val tempGraph07: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      tempGraph06.joinVertices(inDegressOfPaperBookGraphByFieldAndCLCName) {
+        (_, all, part) =>
+          (all._1, all._2, all._3, all._4, all._5, all._6, part._7, 0)
+      }
+    val tempGraph08: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
+      tempGraph07.joinVertices(inDegressOfPaperBookGraphByIndexTermAndCLCName) {
+        (_, all, part) =>
+          (all._1, all._2, all._3, all._4, all._5, all._6, all._7, part._8)
+      }
+
+    //tempGraph08.vertices.filter(v => v._2._1 != 0 || v._2._7 != 0).take(100).foreach(println)
+
+    //图书的节点
+    val books: RDD[String] = tempGraph08.vertices
+      .filter(VertexUtil.GetVertexType(_) == 0)
+      .map(VertexUtil.VertexToString(_, 0))
+    //论文节点
+    val papers: RDD[String] = tempGraph08.vertices
+      .filter(VertexUtil.GetVertexType(_) == 1)
+      .map(VertexUtil.VertexToString(_, 1))
+
+    books.take(10).foreach(println)
+    papers.take(10).foreach(println)
+
+    //保存到文本文件
+    books.saveAsTextFile(booksResultPath)
+    papers.saveAsTextFile(papersResultPath)
 
     //停止
+    sc.stop()
     spark.stop()
   }
 }

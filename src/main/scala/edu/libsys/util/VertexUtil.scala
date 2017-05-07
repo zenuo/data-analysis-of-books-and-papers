@@ -11,7 +11,7 @@ object VertexUtil {
     * @param vertex 需要判断类型的顶点
     * @return Int
     */
-  def GetVertexType(vertex: (Long, Int)): Int = {
+  def GetVertexType(vertex: (Long, (Int, Int, Int, Int, Int, Int, Int, Int))): Int = {
     //类型
     var vertexType = -1
     if (vertex._1 < Conf.paperIdOffset) {
@@ -33,21 +33,19 @@ object VertexUtil {
     * @param vertexType 需要格式化成字符串的顶点的类型
     * @return String
     */
-  def VertexToString(vertex: (Long, Int), vertexType: Int): String = {
-    //编号
-    var vertexId = ""
-    //标识
-    var label = ""
+  def VertexToString(vertex: (Long, (Int, Int, Int, Int, Int, Int, Int, Int)), vertexType: Int): String = {
+    //字符串
+    var string = ""
     if (vertexType == 0) {
       //图书
-      vertexId = vertex._1.toString
-      label = "Book"
-    } else {
+      //id:ID(B-ID),:LABEL,bba:int,bbcid:int,bpa:int,bcnpf:int,bcnpi:int
+      string = s"${vertex._1},${vertex._2._1},${vertex._2._2},${vertex._2._6},${vertex._2._7},${vertex._2._8},B"
+    } else if (vertexType == 1) {
       //论文
-      vertexId = (vertex._1 - Conf.paperIdOffset).toString
-      label = "Paper"
+      //id:ID(P-ID),:LABEL,ppa:int,ppf:int,ppi:int,bpa:int,bcnpf:int,bcnpi:int
+      string = s"${vertex._1 - Conf.paperIdOffset},${vertex._2._3},${vertex._2._4},${vertex._2._5},${vertex._2._6},${vertex._2._7},${vertex._2._8},P"
     }
     //返回字符串
-    s"$vertexId,${vertex._2},$label"
+    string
   }
 }
