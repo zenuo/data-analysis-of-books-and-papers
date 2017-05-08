@@ -7,8 +7,8 @@ object EdgeUtil {
   /**
     * 使所有Edge的srcId比dscId小
     *
-    * @param srcId  起点顶点编号
-    * @param dstId  目的顶点编号
+    * @param srcId 起点顶点编号
+    * @param dstId 目的顶点编号
     * @return Edge[Int]
     */
   def SortEdge(srcId: Int, dstId: Int): Edge[Int] = {
@@ -43,7 +43,7 @@ object EdgeUtil {
       dstId = (edge.dstId - Conf.paperIdOffset).toString
     }
     //格式化字符串
-    "%s,%s,%d,%d".format(srcId, dstId, edge.attr, edgeType)
+    s"$srcId,$dstId,$edgeType"
   }
 
   /**

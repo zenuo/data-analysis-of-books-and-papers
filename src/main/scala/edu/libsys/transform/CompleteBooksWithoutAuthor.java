@@ -14,7 +14,7 @@ public class CompleteBooksWithoutAuthor {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        if (args.length < 2) {
+        if (args.length != 2) {
             System.out.println("Useage: java CompleteBooksWithoutAuthor sourceFilePath newFilePath\nNow exit.\n");
             return;
         }

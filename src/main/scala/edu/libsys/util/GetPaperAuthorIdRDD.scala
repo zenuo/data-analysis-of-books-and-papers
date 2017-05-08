@@ -1,4 +1,4 @@
-package edu.libsys.stats
+package edu.libsys.util
 
 import edu.libsys.conf.Conf
 import org.apache.spark.SparkContext

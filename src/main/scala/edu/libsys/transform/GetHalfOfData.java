@@ -8,7 +8,7 @@ import java.io.*;
 public class GetHalfOfData {
 
     public static void main(String[] args) {
-        if (args.length < 2) {
+        if (args.length != 2) {
             System.out.println("Useage: java GetHalfOfData sourceFilePath newFilePath\nNow exit.\n");
             return;
         }
