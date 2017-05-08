@@ -28,6 +28,7 @@ public class BookCLCIdCompletion {
                 int id = getId(line, "#");
                 if (!bloomFilter.mightContain(id)) {
                     lackCLCIdBookBw.write(id + "," + System.nanoTime() + "\n");
+                    lackCLCIdBookBw.flush();
                 }
             }
         } catch (Exception e) {
