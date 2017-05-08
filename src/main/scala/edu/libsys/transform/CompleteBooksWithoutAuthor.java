@@ -1,4 +1,6 @@
-package edu.libsys.dataclean;
+package edu.libsys.transform;
+
+import edu.libsys.util.StringUtil;
 
 import java.io.*;
 
@@ -28,7 +30,7 @@ public class CompleteBooksWithoutAuthor {
             String line;
             while ((line = sourceFile.readLine()) != null) {
                 if ('#' == line.charAt(line.length() - 1)) {
-                    newFile.write(String.format("%s%s\n", line, getRandomString(randomStringLength)));
+                    newFile.write(String.format("%s%s\n", line, StringUtil.getRandomString(randomStringLength)));
                 } else {
                     newFile.write(String.format("%s\n", line));
                 }
@@ -37,21 +39,8 @@ public class CompleteBooksWithoutAuthor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("OK, bye.\n");
     }
 
-    /**
-     * 返回指定长度的随机字符串
-     *
-     * @param length 随机字符串的长度
-     * @return 随机字符串
-     */
-    private static String getRandomString(int length) {
-        final char[] CHAR_ARRAY = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
-        final int CHAR_ARRAY_LENGTH = 62;
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            stringBuilder.append(CHAR_ARRAY[(int) (Math.random() * CHAR_ARRAY_LENGTH)]);
-        }
-        return stringBuilder.toString();
-    }
+
 }

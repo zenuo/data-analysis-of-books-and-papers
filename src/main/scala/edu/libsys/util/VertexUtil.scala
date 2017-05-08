@@ -38,12 +38,49 @@ object VertexUtil {
     var string = ""
     if (vertexType == 0) {
       //图书
-      //id:ID(B-ID),:LABEL,bba:int,bbcid:int,bpa:int,bcnpf:int,bcnpi:int
-      string = s"${vertex._1},${vertex._2._1},${vertex._2._2},${vertex._2._6},${vertex._2._7},${vertex._2._8},B"
+      //计算三个权重
+      val weight1 = vertex._2._1 * Conf.weight1._1 +
+        vertex._2._2 * Conf.weight1._2 +
+        vertex._2._6 * Conf.weight1._6 +
+        vertex._2._7 * Conf.weight1._7 +
+        vertex._2._8 * Conf.weight1._8
+      val weight2 = vertex._2._1 * Conf.weight2._1 +
+        vertex._2._2 * Conf.weight2._2 +
+        vertex._2._6 * Conf.weight2._6 +
+        vertex._2._7 * Conf.weight2._7 +
+        vertex._2._8 * Conf.weight2._8
+      val weight3 = vertex._2._1 * Conf.weight3._1 +
+        vertex._2._2 * Conf.weight3._2 +
+        vertex._2._6 * Conf.weight3._6 +
+        vertex._2._7 * Conf.weight3._7 +
+        vertex._2._8 * Conf.weight3._8
+
+      //id:ID(B-ID),weight1:int,weight2:int,weight3:int,:LABEL
+      string = s"${vertex._1},$weight1,$weight2,$weight3,B"
     } else if (vertexType == 1) {
       //论文
-      //id:ID(P-ID),:LABEL,ppa:int,ppf:int,ppi:int,bpa:int,bcnpf:int,bcnpi:int
-      string = s"${vertex._1 - Conf.paperIdOffset},${vertex._2._3},${vertex._2._4},${vertex._2._5},${vertex._2._6},${vertex._2._7},${vertex._2._8},P"
+      //计算三个权重
+      val weight1 = vertex._2._3 * Conf.weight1._3 +
+        vertex._2._4 * Conf.weight1._4 +
+        vertex._2._5 * Conf.weight1._6 +
+        vertex._2._6 * Conf.weight1._6 +
+        vertex._2._7 * Conf.weight1._7 +
+        vertex._2._8 * Conf.weight1._8
+      val weight2 = vertex._2._3 * Conf.weight2._3 +
+        vertex._2._4 * Conf.weight2._4 +
+        vertex._2._5 * Conf.weight2._6 +
+        vertex._2._6 * Conf.weight2._6 +
+        vertex._2._7 * Conf.weight2._7 +
+        vertex._2._8 * Conf.weight2._8
+      val weight3 = vertex._2._3 * Conf.weight3._3 +
+        vertex._2._4 * Conf.weight3._4 +
+        vertex._2._5 * Conf.weight3._6 +
+        vertex._2._6 * Conf.weight3._6 +
+        vertex._2._7 * Conf.weight3._7 +
+        vertex._2._8 * Conf.weight3._8
+
+      //id:ID(P-ID),weight1:int,weight2:int,weight3:int,:LABEL
+      string = s"${vertex._1 - Conf.paperIdOffset},$weight1,$weight2,$weight3,P"
     }
     //返回字符串
     string

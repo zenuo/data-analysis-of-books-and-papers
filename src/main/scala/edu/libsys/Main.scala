@@ -311,15 +311,15 @@ object Main {
         (_, all, part) =>
           (all._1, all._2, part._3, 0, 0, 0, 0, 0)
       }
-
+    /*
     val tempGraph04: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       tempGraph03.joinVertices(inDegressOfPaperPaperGraphByField) {
         (_, all, part) =>
           (all._1, all._2, all._3, part._4, 0, 0, 0, 0)
       }
-
+    */
     val tempGraph05: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
-      tempGraph04.joinVertices(inDegressOfPaperPaperGraphByIndexTerm) {
+      tempGraph03.joinVertices(inDegressOfPaperPaperGraphByIndexTerm) {
         (_, all, part) =>
           (all._1, all._2, all._3, all._4, part._5, 0, 0, 0)
       }
