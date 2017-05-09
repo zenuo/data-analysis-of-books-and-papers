@@ -111,34 +111,31 @@ object GetPaperInfo {
     val temp01: RDD[(Int, String)] = paperIdRDD
       .leftOuterJoin(reducedPartOfPaperAuthorRDD)
       .map(triple => {
-        //triple._1 -> "\"%s\",".format(triple._2._2.getOrElse("暂无"))
-        triple._1 -> s""""${triple._2._2.getOrElse("暂无")}""""
+        triple._1 -> s"""'${triple._2._2.getOrElse("暂无")}'"""
       })
     //第二步，整合领域名词
     val temp02: RDD[(Int, String)] = temp01
       .leftOuterJoin(reducedPartOfPaperFieldIdRDD)
       .map(triple => {
-        triple._1 -> s"""${triple._2._1},"${triple._2._2.getOrElse("暂无")}""""
+        triple._1 -> s"""${triple._2._1}#'${triple._2._2.getOrElse("暂无")}'"""
       })
     //第三步，整合关键词
     val paperInfoRDD: RDD[(Int, String)] = temp02
       .leftOuterJoin(reducedPartOfPaperIndexTermRDD)
       .map(triple => {
-        triple._1 -> s"""${triple._2._1},"${triple._2._2.getOrElse("暂无")}""""
+        triple._1 -> s"""${triple._2._1}#'${triple._2._2.getOrElse("暂无")}'"""
       })
 
     val paperInfoRDDString: RDD[String] = paperInfoRDD
       .map(tuple => {
-        s"${tuple._1},${tuple._2}"
+        s"${tuple._1}#${tuple._2}"
       })
 
     //println(paperInfoRDDString.count())
     //473432
     //paperInfoRDDString.take(100).foreach(println)
     /*
-    305874,"牛春娟,王晓一,杨绍清","医学教育与医学边缘学科","实践教学法,教学改革,医学心理学"
-    185544,"方世南","中国政治与国际政治","科学精神,理论创新,马克思主义"
-    357444,"陈红卫","工业经济,矿业工程","矿产资源,张文亮,阶段性成果,工作会,国土资源,安全生产法律,审批制度,专项治理,网式"
+
      */
     paperInfoRDDString.saveAsTextFile(resultPath)
 

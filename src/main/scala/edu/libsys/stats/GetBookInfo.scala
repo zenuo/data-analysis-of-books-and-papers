@@ -84,7 +84,7 @@ object GetBookInfo {
     val bookIdCLCNameStringRDD: RDD[String] = bookIdCLCNameRDD
       .map(
         tuple => {
-          s"""${tuple._1},"${tuple._2}""""
+          s"""${tuple._1},'${tuple._2}'"""
         }
       )
 
