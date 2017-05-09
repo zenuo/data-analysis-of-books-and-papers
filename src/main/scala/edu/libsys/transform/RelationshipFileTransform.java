@@ -7,11 +7,13 @@ public class RelationshipFileTransform {
      * 将原来的关联数据转换为新的关联数据
      * 样本:
      * 9,51402,100,0
+     * 转为:
+     * 9,51402,0
      *
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        if (args.length < 2) {
+        if (args.length != 2) {
             System.out.println("Useage: java RelationshipFileTransform sourseFilePath newFilePath\nNow exit.");
             return;
         }

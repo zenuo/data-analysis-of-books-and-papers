@@ -17,7 +17,7 @@ object GetPaperIndexTermIdRDD {
     val delimiter01 = ","
 
     //paperIdPaperIDTupleList
-    val paperIdPaperIDTupleList = sc
+    val paperIdPaperIDTupleList: RDD[(String, Int)] = sc
       .textFile(paper_id_paperId)
       .map(line => {
         val tokens = line.split(delimiter01)
@@ -28,7 +28,7 @@ object GetPaperIndexTermIdRDD {
       })
 
     //paperIdPaperIDTupleList
-    val paperPaperIdIndexTermTupleList = sc
+    val paperPaperIdIndexTermTupleList: RDD[(String, String)] = sc
       .textFile(paper_paperId_indexTerm)
       .map(line => {
         val tokens = line.split(delimiter01)

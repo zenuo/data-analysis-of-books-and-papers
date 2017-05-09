@@ -18,7 +18,7 @@ object GetPaperAuthorIdRDD {
     val delimiter01 = ","
 
     //paper_id_paperId
-    val paperIdPaperIDTupleList = sc
+    val paperIdPaperIDTupleList: RDD[(String, Int)] = sc
       .textFile(paper_id_paperId)
       .map(line => {
         val tokens = line.split(delimiter01)
@@ -29,7 +29,7 @@ object GetPaperAuthorIdRDD {
       })
 
     //paper_paperID_author
-    val paperAuthorPaperIDTupleList = sc
+    val paperAuthorPaperIDTupleList: RDD[(String, String)] = sc
       .textFile(paper_paperID_author)
       .map(line => {
         val tokens = line.split(delimiter01)

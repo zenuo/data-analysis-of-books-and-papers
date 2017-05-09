@@ -5,6 +5,7 @@ import edu.libsys.util.StringUtil;
 
 import java.io.*;
 
+
 /**
  * 将没有中图法分类号的图书的中图法分类号用随机字符串填充
  */
@@ -15,9 +16,9 @@ public class CompleteBooksWithoutBookCLCId {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        String bookAuthorNameFilePath = "/home/spark/Project/data/txt/spark/full/book_id_author.txt";
-        String bookCLCIdFilePath = "/home/spark/Project/data/txt/spark/full/book_id_CLCId.txt";
-        String lackCLCIdBookFilePath = "/home/spark/Project/data/txt/spark/full/book_id_CLCId.txt-lack";
+        String bookAuthorNameFilePath = "/home/yuanzhen/project/data/txt/spark/full/book_id_author.txt";
+        String bookCLCIdFilePath = "/home/yuanzhen/project/data/txt/spark/full/book_id_CLCId.txt";
+        String lackCLCIdBookFilePath = "/home/yuanzhen/project/data/txt/spark/full/book_id_CLCId.txt-lack";
 
         IntegerFunnel integerFunnel = new IntegerFunnel();
         long expectedInsertions = 2500000;
@@ -32,13 +33,13 @@ public class CompleteBooksWithoutBookCLCId {
             String line;
 
             while ((line = bookCLCIdBr.readLine()) != null) {
-                bloomFilter.put(getId(line, ","));
+                bloomFilter.put(StringUtil.getId(line, ","));
             }
 
             while ((line = bookAuthorNameBr.readLine()) != null) {
-                int id = getId(line, "#");
+                int id = StringUtil.getId(line, "#");
                 if (!bloomFilter.mightContain(id)) {
-                    lackCLCIdBookBw.write(id + "," + StringUtil.getRandomString(randomStringLength) + "\n");
+                    lackCLCIdBookBw.write(String.format("%d,%s\n", id, StringUtil.getRandomString(randomStringLength)));
                     lackCLCIdBookBw.flush();
                 }
             }
@@ -48,15 +49,5 @@ public class CompleteBooksWithoutBookCLCId {
         System.out.println("OK, bye.\n");
     }
 
-    /**
-     * 从字符串获取Id
-     *
-     * @param line      字符串
-     * @param delimiter 分割符
-     * @return Id
-     */
-    private static int getId(String line, String delimiter) {
-        String[] tokens = line.split(delimiter);
-        return Integer.valueOf(tokens[0]);
-    }
+
 }

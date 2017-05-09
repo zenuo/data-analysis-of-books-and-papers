@@ -5,7 +5,7 @@ import org.apache.spark.graphx.{Edge, Graph, VertexId}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
-object VertexJoin {
+object VertexJoinTest {
   /**
     * 测试类主方法
     *

@@ -120,10 +120,11 @@ object Main {
         })
 
     //图书与图书在中图法分类号上的联系
-    val bookCLCIdCLCNameTupleList: RDD[(String, Int)] =
+    val bookCLCIdIdRDD: RDD[(String, Int)] =
       GetBookCLCIdIdRDD.work(book_id_CLCId, sc)
-    val bookBookRelationshipByCLCId: RDD[Edge[Int]] = bookCLCIdCLCNameTupleList
-      .join(bookCLCIdCLCNameTupleList, Conf.numTasks)
+
+    val bookBookRelationshipByCLCId: RDD[Edge[Int]] = bookCLCIdIdRDD
+      .join(bookCLCIdIdRDD, Conf.numTasks)
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
@@ -340,8 +341,8 @@ object Main {
           (all._1, all._2, all._3, all._4, all._5, all._6, all._7, part._8)
       }
 
-    /*
-    //图书的节点
+
+    //图书节点
     val books: RDD[String] = tempGraph08.vertices
       .filter(VertexUtil.GetVertexType(_) == 0)
       .map(VertexUtil.VertexToString(_, 0))
@@ -349,7 +350,7 @@ object Main {
     val papers: RDD[String] = tempGraph08.vertices
       .filter(VertexUtil.GetVertexType(_) == 1)
       .map(VertexUtil.VertexToString(_, 1))
-    */
+
     //图书与图书关联
     val bookBookRelationships = bookBookGraphByAuthor.edges
       .union(bookBookGraphByCLCId.edges)
@@ -368,8 +369,8 @@ object Main {
       .map(EdgeUtil.EdgeToString(_, 2))
 
     //保存到文本文件
-    //books.saveAsTextFile(booksResultPath)
-    //papers.saveAsTextFile(papersResultPath)
+    books.saveAsTextFile(booksResultPath)
+    papers.saveAsTextFile(papersResultPath)
     bookBookRelationships.saveAsTextFile(bookBookRelationshipsResultPath)
     paperPaperRelationships.saveAsTextFile(paperPaperRelationshipsResultPath)
     bookPaperRelationships.saveAsTextFile(bookPaperRelationshipsResultPath)

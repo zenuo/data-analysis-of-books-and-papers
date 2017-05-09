@@ -19,4 +19,16 @@ public class StringUtil {
         }
         return stringBuilder.toString();
     }
+
+    /**
+     * 从字符串获取Id
+     *
+     * @param line      字符串
+     * @param delimiter 分割符
+     * @return Id
+     */
+    public static int getId(String line, String delimiter) {
+        String[] tokens = line.split(delimiter);
+        return Integer.valueOf(tokens[0]);
+    }
 }
