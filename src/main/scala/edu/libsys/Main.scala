@@ -90,7 +90,7 @@ object Main {
       .join(bookCLCNameIdRDD, Conf.numTasks)
       .map(tuple => {
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
-      })
+      }).repartition(Conf.numPartitions)
 
     //论文与论文在关键词上的联系
     val paperPaperRelationshipByIndexTerm: RDD[Edge[Int]] = paperIndexTermIdRDD
@@ -98,7 +98,7 @@ object Main {
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
-      })
+      }).repartition(Conf.numPartitions)
 
     //图书的中图法分类名与论文的领域名称的联系
     val paperFieldIdRDD: RDD[(String, Int)] =
@@ -117,7 +117,7 @@ object Main {
         .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
         .map(tuple => {
           EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
-        })
+        }).repartition(Conf.numPartitions)
 
     //图书与图书在中图法分类号上的联系
     val bookCLCIdIdRDD: RDD[(String, Int)] =
@@ -128,7 +128,7 @@ object Main {
       .filter(tuple => !Filter.isDoubleTupleLeftEqualsRight(tuple._2))
       .map(tuple => {
         EdgeUtil.SortEdge(tuple._2._1, tuple._2._2)
-      })
+      }).repartition(Conf.numPartitions)
     /*
     println("*********************************************************************************")
     //图书与图书在作者上的联系
@@ -246,50 +246,58 @@ object Main {
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (inDegreeTuple._2, 0, 0, 0, 0, 0, 0, 0))
         })
+        .repartition(Conf.numPartitions)
     val inDegreesOfBookBookGraphByCLCId: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       bookBookGraphByCLCId
         .inDegrees
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, inDegreeTuple._2, 0, 0, 0, 0, 0, 0))
         })
+        .repartition(Conf.numPartitions)
     val inDegreesOfPaperPaperGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       paperPaperGraphByAuthor
         .inDegrees
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, inDegreeTuple._2, 0, 0, 0, 0, 0))
         })
-    /*
+        .repartition(Conf.numPartitions)
+
     val inDegreesOfPaperPaperGraphByField: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       paperPaperGraphByField
         .inDegrees
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, 0, inDegreeTuple._2, 0, 0, 0, 0))
         })
-    */
+        .repartition(Conf.numPartitions)
+
     val inDegreesOfPaperPaperGraphByIndexTerm: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       paperPaperGraphByIndexTerm
         .inDegrees
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, 0, 0, inDegreeTuple._2, 0, 0, 0))
         })
+        .repartition(Conf.numPartitions)
     val inDegreesOfPaperBookGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       bookPaperGraphByAuthor
         .inDegrees
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, 0, 0, 0, inDegreeTuple._2, 0, 0))
         })
+        .repartition(Conf.numPartitions)
     val inDegreesOfPaperBookGraphByFieldAndCLCName: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       bookPaperGraphByFieldAndCLCName
         .inDegrees
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, 0, 0, 0, 0, inDegreeTuple._2, 0))
         })
+        .repartition(Conf.numPartitions)
     val inDegreesOfPaperBookGraphByIndexTermAndCLCName: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       bookPaperGraphByIndexTermAndCLCName
         .inDegrees
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, 0, 0, 0, 0, 0, inDegreeTuple._2))
         })
+        .repartition(Conf.numPartitions)
 
     //以所有顶点为顶点集合，建一个边集合为空的图
     val edges: RDD[Edge[Int]] = sc.parallelize(Seq(), 1)
@@ -313,15 +321,15 @@ object Main {
         (_, all, part) =>
           (all._1, all._2, part._3, 0, 0, 0, 0, 0)
       }
-    /*
+
     val tempGraph04: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       tempGraph03.joinVertices(inDegreesOfPaperPaperGraphByField) {
         (_, all, part) =>
           (all._1, all._2, all._3, part._4, 0, 0, 0, 0)
       }
-    */
+
     val tempGraph05: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
-      tempGraph03.joinVertices(inDegreesOfPaperPaperGraphByIndexTerm) {
+      tempGraph04.joinVertices(inDegreesOfPaperPaperGraphByIndexTerm) {
         (_, all, part) =>
           (all._1, all._2, all._3, all._4, part._5, 0, 0, 0)
       }
@@ -341,32 +349,36 @@ object Main {
           (all._1, all._2, all._3, all._4, all._5, all._6, all._7, part._8)
       }
 
-
     //图书节点
     val books: RDD[String] = tempGraph08.vertices
       .filter(VertexUtil.GetVertexType(_) == 0)
       .map(VertexUtil.VertexToString(_, 0))
+      .repartition(Conf.numPartitions)
     //论文节点
     val papers: RDD[String] = tempGraph08.vertices
       .filter(VertexUtil.GetVertexType(_) == 1)
       .map(VertexUtil.VertexToString(_, 1))
+      .repartition(Conf.numPartitions)
 
     //图书与图书关联
-    val bookBookRelationships = bookBookGraphByAuthor.edges
+    val bookBookRelationships: RDD[String] = bookBookGraphByAuthor.edges
       .union(bookBookGraphByCLCId.edges)
       .filter(EdgeUtil.GetEdgeType(_) == 0)
       .map(EdgeUtil.EdgeToString(_, 0))
+      .repartition(Conf.numPartitions)
     //文与论文关联
-    val paperPaperRelationships = paperPaperGraphByAuthor.edges
+    val paperPaperRelationships: RDD[String] = paperPaperGraphByAuthor.edges
       .union(paperPaperGraphByIndexTerm.edges)
       .filter(EdgeUtil.GetEdgeType(_) == 1)
       .map(EdgeUtil.EdgeToString(_, 1))
+      .repartition(Conf.numPartitions)
     //图书与论文关联
-    val bookPaperRelationships = bookPaperGraphByAuthor.edges
+    val bookPaperRelationships: RDD[String] = bookPaperGraphByAuthor.edges
       .union(bookPaperGraphByFieldAndCLCName.edges)
       .union(bookPaperGraphByIndexTermAndCLCName.edges)
       .filter(EdgeUtil.GetEdgeType(_) == 2)
       .map(EdgeUtil.EdgeToString(_, 2))
+      .repartition(Conf.numPartitions)
 
     //保存到文本文件
     books.saveAsTextFile(booksResultPath)

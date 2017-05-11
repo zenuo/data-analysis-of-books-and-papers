@@ -12,6 +12,11 @@ object Conf {
   val numTasks: Int = 6
 
   /**
+    * 分区数量
+    */
+  val numPartitions: Int = 20
+
+  /**
     * 精确性权重
     */
   val weight1: (Int, Int, Int, Int, Int, Int, Int, Int) = (120, 4, 360, 1, 12, 1200, 90, 180)

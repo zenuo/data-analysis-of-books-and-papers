@@ -9,15 +9,15 @@ import java.io.*;
 public class GenerateUpdateSql {
 
     private static final int AMOUNT_OF_RECORDS = 473432;
-    private static final int COLUMN_INDEX = 1;
-    private static final int RECORD_PER_ROW_SQL = 10000;
-    private static final String COLUMN_DELIMITER = "#";
+    private static final int COLUMN_INDEX = 3;
+    private static final int RECORD_PER_ROW_SQL = 5000;
+    private static final String COLUMN_DELIMITER = "#@";
     private static final String INDEX_NAME = "id";
-    private static final String COLUMN_NAME = "author";
+    private static final String COLUMN_NAME = "indexTerm";
     private static final String DATABASE_NAME = "LIBSYS";
     private static final String TABLE_NAME = "PAPER";
-    private static final String SOURCE_FILE_PATH = "/home/yuanzhen/project/data/txt/paperInfo.txt";
-    private static final String SQL_FILE_PATH = "/home/yuanzhen/paperInfo-author.sql";
+    private static final String SOURCE_FILE_PATH = "/home/yuanzhen/paper.txt";
+    private static final String SQL_FILE_PATH = "/home/yuanzhen/paperInfo-indexTerm.sql";
 
     /**
      * 主方法
@@ -39,6 +39,9 @@ public class GenerateUpdateSql {
             int amountOfLeftRecords = AMOUNT_OF_RECORDS;
             while ((line = sourceFileBR.readLine()) != null) {
                 String[] tokens = line.split(COLUMN_DELIMITER);
+
+                if (tokens.length != 4) throw new AssertionError("数组长度出错");
+
                 indexArray01[index] = tokens[0];
                 valueArray01[index] = tokens[COLUMN_INDEX];
 
@@ -61,6 +64,9 @@ public class GenerateUpdateSql {
 
             while ((line = sourceFileBR.readLine()) != null) {
                 String[] tokens = line.split(COLUMN_DELIMITER);
+
+                if (tokens.length != 4) throw new AssertionError("数组长度出错");
+
                 indexArray02[index] = tokens[0];
                 valueArray02[index] = tokens[COLUMN_INDEX];
                 index++;

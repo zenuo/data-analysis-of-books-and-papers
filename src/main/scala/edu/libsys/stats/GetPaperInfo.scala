@@ -117,26 +117,20 @@ object GetPaperInfo {
     val temp02: RDD[(Int, String)] = temp01
       .leftOuterJoin(reducedPartOfPaperFieldIdRDD)
       .map(triple => {
-        triple._1 -> s"""${triple._2._1}#'${triple._2._2.getOrElse("暂无")}'"""
+        triple._1 -> s"""${triple._2._1}#@'${triple._2._2.getOrElse("暂无")}'"""
       })
     //第三步，整合关键词
     val paperInfoRDD: RDD[(Int, String)] = temp02
       .leftOuterJoin(reducedPartOfPaperIndexTermRDD)
       .map(triple => {
-        triple._1 -> s"""${triple._2._1}#'${triple._2._2.getOrElse("暂无")}'"""
+        triple._1 -> s"""${triple._2._1}#@'${triple._2._2.getOrElse("暂无")}'"""
       })
 
     val paperInfoRDDString: RDD[String] = paperInfoRDD
       .map(tuple => {
-        s"${tuple._1}#${tuple._2}"
+        s"${tuple._1}#@${tuple._2}"
       })
 
-    //println(paperInfoRDDString.count())
-    //473432
-    //paperInfoRDDString.take(100).foreach(println)
-    /*
-
-     */
     paperInfoRDDString.saveAsTextFile(resultPath)
 
     sc.stop()
