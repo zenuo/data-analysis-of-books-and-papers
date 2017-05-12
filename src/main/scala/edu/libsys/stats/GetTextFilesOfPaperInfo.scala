@@ -6,7 +6,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
-object GetPaperInfo {
+object GetTextFilesOfPaperInfo {
   /**
     * 获得论文ID与作者、领域名称、关键词的对关系
     *

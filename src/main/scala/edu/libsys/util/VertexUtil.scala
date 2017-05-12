@@ -2,16 +2,19 @@ package edu.libsys.util
 
 import edu.libsys.conf.Conf
 
+/**
+  * 节点工具列
+  */
 object VertexUtil {
   /**
-    * 根据顶点判定顶点类型
+    * 根据节点判定节点类型
     * 图书0
     * 论文1
     *
-    * @param vertex 需要判断类型的顶点
-    * @return Int
+    * @param vertex 需要判断类型的节点
+    * @return 类型
     */
-  def GetVertexType(vertex: (Long, (Int, Int, Int, Int, Int, Int, Int, Int))): Int = {
+  def getVertexType(vertex: (Long, (Int, Int, Int, Int, Int, Int, Int, Int))): Int = {
     //类型
     var vertexType = -1
     if (vertex._1 < Conf.paperIdOffset) {
@@ -27,13 +30,13 @@ object VertexUtil {
 
 
   /**
-    * 根据顶点类型格式化字符串
+    * 根据节点类型格式化字符串
     *
-    * @param vertex     需要格式化成字符串的顶点
-    * @param vertexType 需要格式化成字符串的顶点的类型
-    * @return String
+    * @param vertex     需要格式化成字符串的节点
+    * @param vertexType 需要格式化成字符串的节点的类型
+    * @return 格式化后的字符串
     */
-  def VertexToString(vertex: (Long, (Int, Int, Int, Int, Int, Int, Int, Int)), vertexType: Int): String = {
+  def vertexToString(vertex: (Long, (Int, Int, Int, Int, Int, Int, Int, Int)), vertexType: Int): String = {
     //字符串
     var string = ""
     if (vertexType == 0) {
@@ -61,20 +64,20 @@ object VertexUtil {
       //论文
       //计算三个权重
       val weight1 = vertex._2._3 * Conf.weight1._3 +
-        vertex._2._4 * Conf.weight1._4 +
-        vertex._2._5 * Conf.weight1._6 +
+        //vertex._2._4 * Conf.weight1._4 +
+        vertex._2._5 * Conf.weight1._5 +
         vertex._2._6 * Conf.weight1._6 +
         vertex._2._7 * Conf.weight1._7 +
         vertex._2._8 * Conf.weight1._8
       val weight2 = vertex._2._3 * Conf.weight2._3 +
-        vertex._2._4 * Conf.weight2._4 +
-        vertex._2._5 * Conf.weight2._6 +
+        //vertex._2._4 * Conf.weight2._4 +
+        vertex._2._5 * Conf.weight2._5 +
         vertex._2._6 * Conf.weight2._6 +
         vertex._2._7 * Conf.weight2._7 +
         vertex._2._8 * Conf.weight2._8
       val weight3 = vertex._2._3 * Conf.weight3._3 +
-        vertex._2._4 * Conf.weight3._4 +
-        vertex._2._5 * Conf.weight3._6 +
+        //qvertex._2._4 * Conf.weight3._4 +
+        vertex._2._5 * Conf.weight3._5 +
         vertex._2._6 * Conf.weight3._6 +
         vertex._2._7 * Conf.weight3._7 +
         vertex._2._8 * Conf.weight3._8

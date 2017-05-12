@@ -3,6 +3,9 @@ package edu.libsys.util
 import edu.libsys.conf.Conf
 import org.apache.spark.graphx.Edge
 
+/**
+  * 边的工具类
+  */
 object EdgeUtil {
   /**
     * 使所有Edge的srcId比dscId小
@@ -26,7 +29,7 @@ object EdgeUtil {
     * @param edgeType 需要格式化成字符串的边的类型
     * @return String
     */
-  def EdgeToString(edge: Edge[Int], edgeType: Int): String = {
+  def edgeToString(edge: Edge[Int], edgeType: Int): String = {
     var srcId: String = ""
     var dstId: String = ""
     if (edgeType == 0) {
@@ -56,7 +59,7 @@ object EdgeUtil {
     * @param edge 需要确定类型的边
     * @return Int
     */
-  def GetEdgeType(edge: Edge[Int]): Int = {
+  def getEdgeType(edge: Edge[Int]): Int = {
     //注：本程序所有的edge的srcId小于dstId
 
     //类型
@@ -75,5 +78,21 @@ object EdgeUtil {
     }
     //返回类型
     typeResult
+  }
+
+  /**
+    * 字符串转为边
+    *
+    * @param string 需要转为边的字符串
+    * @return 边
+    */
+  def stringToEdge(string: String): Edge[Int] = {
+    //去除多余的字符并分割
+    val tokens: Seq[String] = string.replace("Edge(", "").replace(")", "").split(",")
+    val long01: Long = tokens.head.toLong
+    val long02: Long = tokens(1).toLong
+    val int01: Int = tokens(2).toInt
+    //返回边
+    Edge(long01, long02, int01)
   }
 }

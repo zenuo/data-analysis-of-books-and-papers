@@ -9,7 +9,7 @@ import org.apache.spark.sql.SparkSession
 /**
   * 获得图书ID、中图法分类名对应关系
   */
-object GetBookInfo {
+object GetTextFilesOfBookInfo {
   def main(args: Array[String]): Unit = {
     //屏蔽不必要的日志输出
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
