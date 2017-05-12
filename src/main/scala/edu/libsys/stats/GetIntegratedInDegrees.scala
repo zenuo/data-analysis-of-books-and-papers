@@ -44,7 +44,7 @@ object GetIntegratedInDegrees {
     val graph: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] = Graph(vertices, emptyEdges)
 
     val inDegreesOfBookBookGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
-      sc.objectFile(args(1) + "/inDegreesOfBookBookGraphByAuthor.obj")
+      sc.objectFile(args(0) + "/inDegreesOfBookBookGraphByAuthor.obj")
     val tempGraph01: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       graph.joinVertices(inDegreesOfBookBookGraphByAuthor) {
         (_, _, indegrees) =>
