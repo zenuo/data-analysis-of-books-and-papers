@@ -1,6 +1,5 @@
 package edu.libsys.stats
 
-import edu.libsys.conf.Conf
 import edu.libsys.util.EdgeUtil
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkContext
@@ -22,7 +21,7 @@ object GetInDegreesAndRelationship {
       println("Valid program arguments:")
       println("1.PATH_TO_OBJECT_DATA_DIRECTORY")
       println("2.PATH_TO_RESULT_DATA_DIRECTORY")
-      println("Usage:\n/usr/local/spark/bin/spark-submit --class edu/libsys/stats/GetInDegreesAndRelationship.scala --master local --executor-memory 52G --total-executor-cores 6 --conf spark.executor.heartbeatInterval=10000000 --conf spark.network.timeout=10000000 /home/spark/book-stats-1.0.jar /home/spark/data/graph/obj /home/spark/result")
+      println("Usage:\n/usr/local/spark/bin/spark-submit --class edu.libsys.stats.GetInDegreesAndRelationship --master local --executor-memory 52G --total-executor-cores 6 --conf spark.executor.heartbeatInterval=10000000 --conf spark.network.timeout=10000000 /home/spark/book-stats-1.0.jar /home/spark/data/graph/txt /home/spark/result")
       println("please try again, exit now.")
       println("-------------------------------------------------------------------")
       return
@@ -40,12 +39,15 @@ object GetInDegreesAndRelationship {
 
     val sc: SparkContext = spark.sparkContext
 
-
     //获得顶点
-    val vertices: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] = sc.objectFile(args(0) + "/vertices.obj")
+    val vertices: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
+      sc.objectFile(args(0) + "/vertices.obj")
+        .cache()
 
     //计算各个顶点的入度
-    val edgeOfBookBookGraphByAuthor: RDD[Edge[Int]] = sc.objectFile(args(0) + "/edgesOfBookBookGraphByAuthor.obj")
+    val edgeOfBookBookGraphByAuthor: RDD[Edge[Int]] =
+      sc.textFile(args(0) + "/edgesOfBookBookGraphByAuthor.txt")
+        .map(EdgeUtil.stringToEdge)
     val bookBookGraphByAuthor: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, edgeOfBookBookGraphByAuthor)
     val inDegreesOfBookBookGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
@@ -54,10 +56,15 @@ object GetInDegreesAndRelationship {
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (inDegreeTuple._2, 0, 0, 0, 0, 0, 0, 0))
         })
-        .repartition(Conf.numPartitions)
+    inDegreesOfBookBookGraphByAuthor.saveAsTextFile(args(1) + "/inDegreesOfBookBookGraphByAuthor_txt")
+    inDegreesOfBookBookGraphByAuthor.saveAsObjectFile(args(1) + "/inDegreesOfBookBookGraphByAuthor_obj")
+    //去除缓存
+    bookBookGraphByAuthor.unpersist()
 
-    val edgesOfBookBookGraphByCLCId: RDD[Edge[Int]] = sc.textFile("/home/spark/data/graph/txt/edgesOfBookBookGraphByCLCId.txt-new")
-      .map(EdgeUtil.stringToEdge)
+
+    val edgesOfBookBookGraphByCLCId: RDD[Edge[Int]] =
+      sc.textFile(args(0) + "/edgesOfBookBookGraphByCLCId.txt-new")
+        .map(EdgeUtil.stringToEdge)
     val bookBookGraphByCLCId: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, edgesOfBookBookGraphByCLCId)
     val inDegreesOfBookBookGraphByCLCId: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
@@ -66,9 +73,13 @@ object GetInDegreesAndRelationship {
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, inDegreeTuple._2, 0, 0, 0, 0, 0, 0))
         })
-        .repartition(Conf.numPartitions)
+    inDegreesOfBookBookGraphByCLCId.saveAsTextFile(args(1) + "/inDegreesOfBookBookGraphByCLCId_txt")
+    inDegreesOfBookBookGraphByCLCId.saveAsObjectFile(args(1) + "/inDegreesOfBookBookGraphByCLCId_obj")
+    bookBookGraphByCLCId.unpersist()
 
-    val edgesOfPaperPaperGraphByAuthor: RDD[Edge[Int]] = sc.objectFile(args(0) + "/edgesOfPaperPaperGraphByAuthor.obj")
+    val edgesOfPaperPaperGraphByAuthor: RDD[Edge[Int]] =
+      sc.textFile(args(0) + "/edgesOfPaperPaperGraphByAuthor.txt")
+        .map(EdgeUtil.stringToEdge)
     val paperPaperGraphByAuthor: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, edgesOfPaperPaperGraphByAuthor)
     val inDegreesOfPaperPaperGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
@@ -77,9 +88,13 @@ object GetInDegreesAndRelationship {
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, inDegreeTuple._2, 0, 0, 0, 0, 0))
         })
-        .repartition(Conf.numPartitions)
+    inDegreesOfPaperPaperGraphByAuthor.saveAsTextFile(args(1) + "/inDegreesOfPaperPaperGraphByAuthor_txt")
+    inDegreesOfPaperPaperGraphByAuthor.saveAsObjectFile(args(1) + "/inDegreesOfPaperPaperGraphByAuthor_obj")
+    paperPaperGraphByAuthor.unpersist()
 
-    val edgesOfPaperPaperGraphByIndexTerm: RDD[Edge[Int]] = sc.objectFile(args(0) + "/edgesOfPaperPaperGraphByIndexTerm.obj")
+    val edgesOfPaperPaperGraphByIndexTerm: RDD[Edge[Int]] =
+      sc.textFile(args(0) + "/edgesOfPaperPaperGraphByIndexTerm.txt")
+        .map(EdgeUtil.stringToEdge)
     val paperPaperGraphByIndexTerm: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, edgesOfPaperPaperGraphByIndexTerm)
     val inDegreesOfPaperPaperGraphByIndexTerm: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
@@ -88,20 +103,28 @@ object GetInDegreesAndRelationship {
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, 0, 0, inDegreeTuple._2, 0, 0, 0))
         })
-        .repartition(Conf.numPartitions)
+    inDegreesOfPaperPaperGraphByIndexTerm.saveAsTextFile(args(1) + "/inDegreesOfPaperPaperGraphByIndexTerm_txt")
+    inDegreesOfPaperPaperGraphByIndexTerm.saveAsObjectFile(args(1) + "/inDegreesOfPaperPaperGraphByIndexTerm_obj")
+    paperPaperGraphByIndexTerm.unpersist()
 
-    val edgesOfBookPaperGraphByAuthor: RDD[Edge[Int]] = sc.objectFile(args(0) + "/edgesOfBookPaperGraphByAuthor.obj")
+    val edgesOfBookPaperGraphByAuthor: RDD[Edge[Int]] =
+      sc.textFile(args(0) + "/edgesOfBookPaperGraphByAuthor.txt")
+        .map(EdgeUtil.stringToEdge)
     val bookPaperGraphByAuthor: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, edgesOfBookPaperGraphByAuthor)
-    val inDegreesOfPaperBookGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
+    val inDegreesOfBookPaperGraphByAuthor: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
       bookPaperGraphByAuthor
         .inDegrees
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, 0, 0, 0, inDegreeTuple._2, 0, 0))
         })
-        .repartition(Conf.numPartitions)
+    inDegreesOfBookPaperGraphByAuthor.saveAsTextFile(args(1) + "/inDegreesOfBookPaperGraphByAuthor_txt")
+    inDegreesOfBookPaperGraphByAuthor.saveAsObjectFile(args(1) + "/inDegreesOfBookPaperGraphByAuthor_obj")
+    bookPaperGraphByAuthor.unpersist()
 
-    val edgesOfBookPaperGraphByFieldAndCLCName: RDD[Edge[Int]] = sc.objectFile(args(0) + "/edgesOfBookPaperGraphByFieldAndCLCName.obj")
+    val edgesOfBookPaperGraphByFieldAndCLCName: RDD[Edge[Int]] =
+      sc.textFile(args(0) + "/edgesOfBookPaperGraphByFieldAndCLCName.txt")
+        .map(EdgeUtil.stringToEdge)
     val bookPaperGraphByFieldAndCLCName: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, edgesOfBookPaperGraphByFieldAndCLCName)
     val inDegreesOfBookPaperGraphByFieldAndCLCName: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
@@ -110,9 +133,13 @@ object GetInDegreesAndRelationship {
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, 0, 0, 0, 0, inDegreeTuple._2, 0))
         })
-        .repartition(Conf.numPartitions)
+    inDegreesOfBookPaperGraphByFieldAndCLCName.saveAsTextFile(args(1) + "/inDegreesOfBookPaperGraphByFieldAndCLCName_txt")
+    inDegreesOfBookPaperGraphByFieldAndCLCName.saveAsObjectFile(args(1) + "/inDegreesOfBookPaperGraphByFieldAndCLCName_obj")
+    bookPaperGraphByFieldAndCLCName.unpersist()
 
-    val edgesOfBookPaperGraphByIndexTermAndCLCName: RDD[Edge[Int]] = sc.objectFile(args(0) + "/edgesOfBookPaperGraphByIndexTermAndCLCName.obj")
+    val edgesOfBookPaperGraphByIndexTermAndCLCName: RDD[Edge[Int]] =
+      sc.textFile(args(0) + "/edgesOfBookPaperGraphByIndexTermAndCLCName.txt")
+        .map(EdgeUtil.stringToEdge)
     val bookPaperGraphByIndexTermAndCLCName: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, edgesOfBookPaperGraphByIndexTermAndCLCName)
     val inDegreesOfBookPaperGraphByIndexTermAndCLCName: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] =
@@ -121,8 +148,11 @@ object GetInDegreesAndRelationship {
         .map(inDegreeTuple => {
           (inDegreeTuple._1, (0, 0, 0, 0, 0, 0, 0, inDegreeTuple._2))
         })
-        .repartition(Conf.numPartitions)
+    inDegreesOfBookPaperGraphByIndexTermAndCLCName.saveAsTextFile(args(1) + "/inDegreesOfBookPaperGraphByIndexTermAndCLCName_txt")
+    inDegreesOfBookPaperGraphByIndexTermAndCLCName.saveAsObjectFile(args(1) + "/inDegreesOfBookPaperGraphByIndexTermAndCLCName_obj")
+    bookPaperGraphByIndexTermAndCLCName.unpersist()
 
+    /*
     //图书与图书关联
     val bookBookRelationships: RDD[String] = bookBookGraphByAuthor.edges
       .union(bookBookGraphByCLCId.edges)
@@ -143,62 +173,7 @@ object GetInDegreesAndRelationship {
     bookBookRelationships.saveAsTextFile(args(1) + "/bookBookRelationships")
     paperPaperRelationships.saveAsTextFile(args(1) + "/paperPaperRelationships")
     bookPaperRelationships.saveAsTextFile(args(1) + "/bookPaperRelationships")
-
-    //去除缓存
-    bookBookGraphByAuthor.unpersist()
-    bookBookGraphByCLCId.unpersist()
-    paperPaperGraphByAuthor.unpersist()
-    paperPaperGraphByIndexTerm.unpersist()
-    bookPaperGraphByAuthor.unpersist()
-    bookPaperGraphByFieldAndCLCName.unpersist()
-    bookPaperGraphByIndexTermAndCLCName.unpersist()
-
-    //以所有顶点为顶点集合，建一个边集合为空的图
-    val emptyEdges: RDD[Edge[Int]] = sc.parallelize(Seq(), 1)
-    val graph: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] = Graph(vertices, emptyEdges)
-
-    //收集顶点在“图书与图书在作者上的联系”上的入度
-    val tempGraph01: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
-      graph.joinVertices(inDegreesOfBookBookGraphByAuthor) {
-        (_, all, part) =>
-          (part._1, 0, 0, 0, 0, 0, 0, 0)
-      }
-
-    val tempGraph02: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
-      tempGraph01.joinVertices(inDegreesOfBookBookGraphByCLCId) {
-        (_, part, all) =>
-          (all._1, part._2, 0, 0, 0, 0, 0, 0)
-      }
-
-    val tempGraph03: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
-      tempGraph02.joinVertices(inDegreesOfPaperPaperGraphByAuthor) {
-        (_, all, part) =>
-          (all._1, all._2, part._3, 0, 0, 0, 0, 0)
-      }
-
-    val tempGraph05: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
-      tempGraph03.joinVertices(inDegreesOfPaperPaperGraphByIndexTerm) {
-        (_, all, part) =>
-          (all._1, all._2, all._3, all._4, part._5, 0, 0, 0)
-      }
-    val tempGraph06: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
-      tempGraph05.joinVertices(inDegreesOfPaperBookGraphByAuthor) {
-        (_, all, part) =>
-          (all._1, all._2, all._3, all._4, all._5, part._6, 0, 0)
-      }
-    val tempGraph07: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
-      tempGraph06.joinVertices(inDegreesOfBookPaperGraphByFieldAndCLCName) {
-        (_, all, part) =>
-          (all._1, all._2, all._3, all._4, all._5, all._6, part._7, 0)
-      }
-    val tempGraph08: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
-      tempGraph07.joinVertices(inDegreesOfBookPaperGraphByIndexTermAndCLCName) {
-        (_, all, part) =>
-          (all._1, all._2, all._3, all._4, all._5, all._6, all._7, part._8)
-      }
-
-    tempGraph08.vertices.saveAsObjectFile(args(1) + "/obj")
-    tempGraph08.vertices.saveAsTextFile(args(1) + "/txt")
+    */
 
     sc.stop()
     spark.stop()

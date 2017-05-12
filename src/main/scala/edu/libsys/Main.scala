@@ -4,6 +4,7 @@ import edu.libsys.conf.Conf
 import edu.libsys.util._
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkContext
+import org.apache.spark.graphx.VertexId
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
@@ -47,7 +48,7 @@ object Main {
     val papersResultPath: String = args(1) + "/papers"
 
     //加载入度文件
-    val inDegreesRDD = sc.objectFile(args.head)
+    val inDegreesRDD: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] = sc.objectFile(args(0))
     //图书节点
     val books: RDD[String] = inDegreesRDD
       .filter(VertexUtil.getVertexType(_) == 0)
