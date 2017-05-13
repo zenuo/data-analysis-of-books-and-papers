@@ -88,11 +88,15 @@ object EdgeUtil {
     */
   def stringToEdge(string: String): Edge[Int] = {
     //去除多余的字符并分割
-    val tokens: Seq[String] = string.replace("Edge(", "").replace(")", "").split(",")
+    val tokens: Array[String] = string.replace("Edge(", "").replace(")", "").split(",")
     val long01: Long = tokens.head.toLong
     val long02: Long = tokens(1).toLong
     val int01: Int = tokens(2).toInt
     //返回边
-    Edge(long01, long02, int01)
+    if (long01 < long02) {
+      Edge(long01, long02, int01)
+    } else {
+      Edge(long02, long01, int01)
+    }
   }
 }

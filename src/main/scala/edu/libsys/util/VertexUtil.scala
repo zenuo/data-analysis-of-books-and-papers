@@ -6,6 +6,7 @@ import edu.libsys.conf.Conf
   * 节点工具列
   */
 object VertexUtil {
+
   /**
     * 根据节点判定节点类型
     * 图书0
@@ -87,5 +88,10 @@ object VertexUtil {
     }
     //返回字符串
     string
+  }
+
+  def stringToVertex(string: String): (Long, (Int, Int, Int, Int, Int, Int, Int, Int)) = {
+    val tokens: Array[Int] = string.replace("(", "").replace(")", "").split(",").map(_.toInt)
+    (tokens(0).toLong, (tokens(1), tokens(2), tokens(3), tokens(4), tokens(5), tokens(6), tokens(7), tokens(8)))
   }
 }

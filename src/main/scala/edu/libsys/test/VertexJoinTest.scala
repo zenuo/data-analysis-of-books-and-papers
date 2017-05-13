@@ -31,9 +31,9 @@ object VertexJoinTest {
 
     val users2: RDD[(VertexId, (Int, Int, Int, Int, Int, Int))] = sc.parallelize(Seq((1L, (11, 0, 0, 0, 0, 0)), (2L, (12, 0, 0, 0, 0, 0)), (3L, (13, 0, 0, 0, 0, 0))), 1)
 
-    val graph3 = graph.joinVertices(graph2.vertices) { (vid, all, part) => (part._1, part._1, 0, 0, 0, 0) }
+    val graph3 = graph.joinVertices(graph2.vertices) { (_, _, part) => (part._1, part._1, 0, 0, 0, 0) }
 
-    val graph4 = graph.joinVertices(graph3.vertices) { (vid, all, part) => (part._1, part._1, part._1, 0, 0, 0) }
+    val graph4 = graph.joinVertices(graph3.vertices) { (_, _, part) => (part._1, part._1, part._1, 0, 0, 0) }
 
     /*val edgeCount =
       graph.aggregateMessages[(Int, Int, Int, Int, Int, Int)](
