@@ -7,47 +7,27 @@ object Conf {
   val paperIdOffset: Int = 1000000000
 
   /**
-    * 图书与图书在作者上的联系的权重
-    */
-  val weightOfBookBookRelationshipByAuthor = 50
-
-  /**
-    * 图书与图书在中图法分类号上的联系的权重
-    */
-  val weightOfBookBookRelationshipByCLCId = 4
-
-  /**
-    * 论文与论文在作者上的联系的权重
-    */
-  val weightOfPaperPaperRelationshipByAuthor = 50
-
-  /**
-    * 论文与论文在领域名称上的联系的权重
-    */
-  val weightOfPaperPaperRelationshipByField = 1
-
-  /**
-    * 论文与论文在关键词上的联系的权重
-    */
-  val weightOfPaperPaperRelationshipByIndexTerm = 12
-
-  /**
-    * 图书与论文在作者上的联系的权重
-    */
-  val weightOfPaperBookRelationshipByAuthor = 90
-
-  /**
-    * 图书的中图法分类名与论文的领域名称的联系的权重
-    */
-  val weightOfPaperBookRelationshipByIndexTermAndCLCName = 90
-
-  /**
-    * 图书的中图法分类名与论文的关键词的联系的权重
-    */
-  val weightOfPaperBookRelationshipByFieldAndCLCName = 180
-
-  /**
     * 任务数量
     */
   val numTasks: Int = 6
+
+  /**
+    * 分区数量
+    */
+  val numPartitions: Int = 2
+
+  /**
+    * 精确性权重
+    */
+  val weight1: (Int, Int, Int, Int, Int, Int, Int, Int) = (30, 1, 90, 0, 3, 280, 20, 50)
+
+  /**
+    * 折中权重
+    */
+  val weight2: (Int, Int, Int, Int, Int, Int, Int, Int) = (20, 2, 60, 0, 6, 200, 40, 100)
+
+  /**
+    * 多样性权重
+    */
+  val weight3: (Int, Int, Int, Int, Int, Int, Int, Int) = (20, 10, 60, 0, 30, 200, 200, 200)
 }

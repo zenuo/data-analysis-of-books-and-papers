@@ -1,4 +1,4 @@
-package edu.libsys.dataclean;
+package edu.libsys.transform;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;

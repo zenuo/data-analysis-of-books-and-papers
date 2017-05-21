@@ -1,23 +1,23 @@
-package edu.libsys.stats
+package edu.libsys.util
 
 import edu.libsys.conf.Conf
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 
-object GetPaperIndexTermIdRDD {
+object GetPaperFieldIdRDD {
   /**
-    * 获得论文关键词与论文id对应
+    * 获得论文领域与论文id对应
     *
-    * @param paper_id_paperId        “paper_id_paperId”文件路径
-    * @param paper_paperId_indexTerm “paper_paperId_indexTerm”文件路径
+    * @param paper_id_paperId    “paper_id_paperId”文件路径
+    * @param paper_paperId_field “paper_paperId_field”文件路径
     * @return RDD[(String, Int)]
     */
-  def work(paper_id_paperId: String, paper_paperId_indexTerm: String, sc: SparkContext): RDD[(String, Int)] = {
+  def work(paper_id_paperId: String, paper_paperId_field: String, sc: SparkContext): RDD[(String, Int)] = {
     //分割符
     val delimiter01 = ","
 
-    //paperIdPaperIDTupleList
-    val paperIdPaperIDTupleList = sc
+    //paper_id_paperId
+    val paperIdPaperIDTupleList: RDD[(String, Int)] = sc
       .textFile(paper_id_paperId)
       .map(line => {
         val tokens = line.split(delimiter01)
@@ -27,21 +27,21 @@ object GetPaperIndexTermIdRDD {
         tokens(1) -> (tokens(0).toInt + Conf.paperIdOffset)
       })
 
-    //paperIdPaperIDTupleList
-    val paperPaperIdIndexTermTupleList = sc
-      .textFile(paper_paperId_indexTerm)
+    //paper_paperId_field
+    val paperPaperIdFieldTupleList: RDD[(String, String)] = sc
+      .textFile(paper_paperId_field)
       .map(line => {
         val tokens = line.split(delimiter01)
           .map(_.trim)
-        //类似(TGZG200701002,和谐铁路)
+        //类似(TGZG200701002,铁路)
         tokens(0) -> tokens(1)
       })
 
     //返回RDD
-    paperPaperIdIndexTermTupleList
+    paperPaperIdFieldTupleList
       .join(paperIdPaperIDTupleList, Conf.numTasks)
       .map(tuple => {
-        //tuple._2类似(和谐铁路,122)
+        //tuple._2类似(铁路,112)
         tuple._2
       })
   }

@@ -1,6 +1,27 @@
 package edu.libsys.util
 
-object StringUtils {
+import org.apache.spark.SparkContext
+import org.apache.spark.rdd.RDD
+
+object GetBookAuthorIdRDD {
+  /**
+    * 获得BookAuthorIdRDD
+    *
+    * @param book_id_author “book_id_author”文件路径
+    * @return
+    */
+  def work(book_id_author: String, sc: SparkContext): RDD[(String, Int)] = {
+    //分割符
+    val delimiter01 = "#"
+    //返回RDD
+    sc.textFile(book_id_author)
+      .map(line => {
+        val tokens = line.split(delimiter01)
+          .map(_.trim)
+        parseBookAuthor(tokens(1)) -> tokens(0).toInt
+      })
+  }
+
   /**
     * 删除一些多余字符
     *

@@ -1,4 +1,4 @@
-package edu.libsys.stats
+package edu.libsys.util
 
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD

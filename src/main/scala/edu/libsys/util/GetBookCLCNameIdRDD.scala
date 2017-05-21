@@ -1,4 +1,4 @@
-package edu.libsys.stats
+package edu.libsys.util
 
 import edu.libsys.conf.Conf
 import org.apache.spark.SparkContext
@@ -19,7 +19,7 @@ object GetBookCLCNameIdRDD {
     val delimiter01 = ","
 
     //bookIdCLCIdTupleList
-    val bookIdCLCIdTupleList = sc.textFile(book_id_CLCId).map(line => {
+    val bookIdCLCIdTupleList: RDD[(String, Int)] = sc.textFile(book_id_CLCId).map(line => {
       val tokens = line.split(delimiter01)
         .map(_.trim)
       //提高匹配度，暂时不使用中图法分类名解析方法，否则匹配量太多，导致质量下降
@@ -28,7 +28,7 @@ object GetBookCLCNameIdRDD {
     })
 
     //bookCLCIdCLCNameTupleList
-    val bookCLCIdCLCNameTupleList = sc.textFile(cls_no_name).map(line => {
+    val bookCLCIdCLCNameTupleList: RDD[(String, String)] = sc.textFile(cls_no_name).map(line => {
       val tokens = line.split(delimiter01)
         .map(_.trim)
       //类似(S325,品种的整理与保存)
