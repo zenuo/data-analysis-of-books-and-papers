@@ -9,7 +9,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 /**
-  * 单独计算paperPaperGraphByField
+  * 因为论文与论文在领域名词的关联数量很多，所以在此单独计算，但是本项目最终没有用本关联数据，故本文件可不看。
   */
 object GetTextFileOfPaperPaperGraphByField {
   def main(args: Array[String]): Unit = {

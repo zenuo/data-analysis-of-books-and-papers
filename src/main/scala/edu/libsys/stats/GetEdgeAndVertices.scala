@@ -9,13 +9,15 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 /**
-  * 获得七个图的顶点与边的对象文件
+  * 第一步骤
+  * 根据“图书、论文源数据”，获得“七个图的顶点的二进制文件与边的文本文件”。
+  * 在更新权重后，此步骤不需要重新执行。
   */
-object GetObjectFilesOfGraph {
+object GetEdgeAndVertices {
   /**
     * 主方法
     *
-    * @param args 控制台参数
+    * @param args 命令行参数
     */
   def main(args: Array[String]): Unit = {
     //屏蔽不必要的日志输出
@@ -27,7 +29,7 @@ object GetObjectFilesOfGraph {
       println("Valid program arguments:")
       println("1.PATH_TO_SOURCE_DATA_DIRECTORY")
       println("2.PATH_TO_RESULT_DATA_DIRECTORY")
-      println("Usage:\n/usr/local/spark/bin/spark-submit --class edu.libsys.stats.GetObjectFilesOfGraph --master local --executor-memory 52G --total-executor-cores 6 --conf spark.executor.heartbeatInterval=10000000 --conf spark.network.timeout=10000000 /home/spark/book-stats-1.0.jar /home/spark/data /home/spark/result")
+      println("Usage:\n/usr/local/spark/bin/spark-submit --class edu.libsys.stats.GetObjectFilesOfGraph --master local --executor-memory 52G --total-executor-cores 6 --conf spark.executor.heartbeatInterval=10000000 --conf spark.network.timeout=10000000 /home/spark/book-stats-1.0.jar 图书、论文源数据 结果存放路径")
       println("please try again, exit now.")
       println("-------------------------------------------------------------------")
       return
@@ -38,7 +40,7 @@ object GetObjectFilesOfGraph {
       */
     val spark: SparkSession = SparkSession
       .builder()
-      .appName("GetObjectFilesOfGraph")
+      .appName("GetTextFilesOfGraph")
       .getOrCreate()
     //use the Kryo library to serialize objects
     spark.conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
@@ -131,52 +133,52 @@ object GetObjectFilesOfGraph {
     //获得顶点
     val vertices: RDD[(VertexId, (Int, Int, Int, Int, Int, Int, Int, Int))] = bookVertices
       .union(paperVertices)
-    //vertices.saveAsObjectFile(args(1) + "/vertices")
+    vertices.saveAsObjectFile(args(1) + "/vertices")
 
     //建图，并按边的计数合并边
 
     val bookBookGraphByAuthor: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, bookBookRelationshipByAuthor)
         .groupEdges(merge = (count1, count2) => count1 + count2)
-    bookBookGraphByAuthor.edges.saveAsObjectFile(args(1) + "/edgesOfBookBookGraphByAuthor")
+    bookBookGraphByAuthor.edges.saveAsTextFile(args(1) + "/edgesOfBookBookGraphByAuthor")
     //Uncaches both vertices and edges of this graph.
     bookBookGraphByAuthor.unpersist()
 
     val bookBookGraphByCLCId: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, bookBookRelationshipByCLCId)
         .groupEdges(merge = (count1, count2) => count1 + count2)
-    bookBookGraphByCLCId.edges.saveAsObjectFile(args(1) + "/edgesOfBookBookGraphByCLCId")
+    bookBookGraphByCLCId.edges.saveAsTextFile(args(1) + "/edgesOfBookBookGraphByCLCId")
     bookBookGraphByCLCId.unpersist()
 
     val paperPaperGraphByAuthor: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, paperPaperRelationshipByAuthor)
         .groupEdges(merge = (count1, count2) => count1 + count2)
-    paperPaperGraphByAuthor.edges.saveAsObjectFile(args(1) + "/edgesOfPaperPaperGraphByAuthor")
+    paperPaperGraphByAuthor.edges.saveAsTextFile(args(1) + "/edgesOfPaperPaperGraphByAuthor")
     paperPaperGraphByAuthor.unpersist()
 
 
     val paperPaperGraphByIndexTerm: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, paperPaperRelationshipByIndexTerm)
         .groupEdges(merge = (count1, count2) => count1 + count2)
-    paperPaperGraphByIndexTerm.edges.saveAsObjectFile(args(1) + "/edgesOfPaperPaperGraphByIndexTerm")
+    paperPaperGraphByIndexTerm.edges.saveAsTextFile(args(1) + "/edgesOfPaperPaperGraphByIndexTerm")
     paperPaperGraphByIndexTerm.unpersist()
 
     val bookPaperGraphByAuthor: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, paperBookRelationshipByAuthor)
         .groupEdges(merge = (count1, count2) => count1 + count2)
-    bookPaperGraphByAuthor.edges.saveAsObjectFile(args(1) + "/edgesOfBookPaperGraphByAuthor")
+    bookPaperGraphByAuthor.edges.saveAsTextFile(args(1) + "/edgesOfBookPaperGraphByAuthor")
     paperPaperGraphByIndexTerm.unpersist()
 
     val bookPaperGraphByFieldAndCLCName: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, paperBookRelationshipByFieldAndCLCName)
         .groupEdges(merge = (count1, count2) => count1 + count2)
-    bookPaperGraphByFieldAndCLCName.edges.saveAsObjectFile(args(1) + "/edgesOfBookPaperGraphByFieldAndCLCName")
+    bookPaperGraphByFieldAndCLCName.edges.saveAsTextFile(args(1) + "/edgesOfBookPaperGraphByFieldAndCLCName")
     bookPaperGraphByFieldAndCLCName.unpersist()
 
     val bookPaperGraphByIndexTermAndCLCName: Graph[(Int, Int, Int, Int, Int, Int, Int, Int), Int] =
       Graph(vertices, paperBookRelationshipByIndexTermAndCLCName)
         .groupEdges(merge = (count1, count2) => count1 + count2)
-    bookPaperGraphByIndexTermAndCLCName.edges.saveAsObjectFile(args(1) + "/edgesOfBookPaperGraphByIndexTermAndCLCName")
+    bookPaperGraphByIndexTermAndCLCName.edges.saveAsTextFile(args(1) + "/edgesOfBookPaperGraphByIndexTermAndCLCName")
 
     sc.stop()
     spark.stop()

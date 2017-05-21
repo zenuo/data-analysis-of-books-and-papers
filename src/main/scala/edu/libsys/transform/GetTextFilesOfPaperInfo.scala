@@ -1,4 +1,4 @@
-package edu.libsys.stats
+package edu.libsys.transform
 
 import edu.libsys.conf.Conf
 import org.apache.log4j.{Level, Logger}
@@ -8,6 +8,7 @@ import org.apache.spark.sql.SparkSession
 
 object GetTextFilesOfPaperInfo {
   /**
+    * 为了在RESTful服务中提供论文的“领域名称、关键词”信息，此处输出ID与领域名称、关键词对应文本文件。
     * 获得论文ID与作者、领域名称、关键词的对关系
     *
     * @param args 命令行参数

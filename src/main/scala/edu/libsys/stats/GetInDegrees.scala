@@ -7,9 +7,16 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 /**
-  * Created by yuanzhen on 17-5-13.
+  * 第三步骤
+  * 根据“节点、边文件”计算出“每个节点的入度”，并保存为文本文件。
+  * 在更新权重后，此步骤不需要重新执行。
   */
 object GetInDegrees {
+  /**
+    * 主方法
+    *
+    * @param args 命令行参数
+    */
   def main(args: Array[String]): Unit = {
     val spark: SparkSession = SparkSession
       .builder()
@@ -20,7 +27,7 @@ object GetInDegrees {
 
     val sc: SparkContext = spark.sparkContext
 
-    val sourcePath: String = "/home/spark/data/graph/txt/"
+    val sourcePath: String = "/home/spark/data/graph/edges/"
     val resultPath: String = "/home/spark/data/result/"
 
     val vertices: RDD[(VertexId, Int)] =
@@ -29,6 +36,7 @@ object GetInDegrees {
 
     val bbaGraph: Graph[Int, Int] = Graph(vertices,
       sc.textFile(sourcePath + "edgesOfBookBookGraphByAuthor.txt").map(EdgeUtil.stringToEdge))
+    //使用fullOuterJoin，确保无入度的节点也在结果中
     val indOfbba: RDD[(VertexId, Int)] = vertices
       .fullOuterJoin(bbaGraph.inDegrees)
       .map(tuple => {

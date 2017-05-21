@@ -8,9 +8,11 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 /**
-  * Created by yuanzhen on 17-5-13.
+  * 第二步骤
+  * 根据边文件导出图书、论文关联CSV文件，便于导入图数据库Neo4j中。
+  * 在更新权重后，此步骤不需要重新执行。
   */
-object GetRelationshipCSV {
+object GetRelationship {
   def main(args: Array[String]): Unit = {
     /**
       * spark会话
@@ -39,7 +41,6 @@ object GetRelationshipCSV {
 
     val ppa: RDD[Edge[Int]] = sc.textFile(sourcePath + "edgesOfPaperPaperGraphByAuthor.txt").map(EdgeUtil.stringToEdge)
     val ppi: RDD[Edge[Int]] = sc.textFile(sourcePath + "edgesOfPaperPaperGraphByIndexTerm.txt").map(EdgeUtil.stringToEdge)
-    //此处出现过逻辑错误
     ppa.union(ppi)
       .filter(t => {
         t.srcId > Conf.paperIdOffset
@@ -52,7 +53,8 @@ object GetRelationshipCSV {
     val bpa: RDD[Edge[Int]] = sc.textFile(sourcePath + "edgesOfBookPaperGraphByAuthor.txt").map(EdgeUtil.stringToEdge)
     val bcnpf: RDD[Edge[Int]] = sc.textFile(sourcePath + "edgesOfBookPaperGraphByFieldAndCLCName.txt").map(EdgeUtil.stringToEdge)
     val bcnpi: RDD[Edge[Int]] = sc.textFile(sourcePath + "edgesOfBookPaperGraphByIndexTermAndCLCName.txt").map(EdgeUtil.stringToEdge)
-    bpa.union(bcnpf).union(bcnpi)
+    bpa.union(bcnpf)
+      .union(bcnpi)
       .filter(t => {
         t.srcId < Conf.paperIdOffset && t.dstId > Conf.paperIdOffset
       })
@@ -64,6 +66,5 @@ object GetRelationshipCSV {
 
     sc.stop()
     spark.stop()
-
   }
 }

@@ -6,7 +6,9 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 /**
-  * 整合入度
+  * 第四步骤
+  * 根据“入度文件”和“edu.libsys.conf.Conf类中配置的权重”，计算“每个节点的三种权重”，保存成文本文件。
+  * 在更新权重后，此步骤需要重新执行。
   */
 object Main {
   /**
@@ -35,6 +37,7 @@ object Main {
       sc.textFile("/home/spark/data/txt/all.txt")
         .map(_.toInt -> (0, 0, 0))
 
+    //读取入度文本文件
     val indOfbba: RDD[(Int, Int)] = sc.textFile(sourcePath + "indOfbba.txt").map(stringToTuple)
     val indOfbbcid: RDD[(Int, Int)] = sc.textFile(sourcePath + "indOfbbcid.txt").map(stringToTuple)
     val indOfppa: RDD[(Int, Int)] = sc.textFile(sourcePath + "indOfppa.txt").map(stringToTuple)
@@ -133,7 +136,8 @@ object Main {
         tuple._1 -> tuple._2 * Conf.weight3._8
       })
 
-    //聚合权重1
+    //分权重类型整合成3个权重RDD
+    //整合精确性权重
     val weight01: RDD[(Int, Int)] = weight01Ofbba
       .union(weight01Ofbbcid)
       .union(weight01Ofppa)
@@ -142,7 +146,7 @@ object Main {
       .union(weight01Ofbcnpf)
       .union(weight01Ofbcnpi)
       .reduceByKey(_ + _)
-    //聚合权重2
+    //整合折中权重
     val weight02: RDD[(Int, Int)] = weight02Ofbba
       .union(weight02Ofbbcid)
       .union(weight02Ofppa)
@@ -151,7 +155,7 @@ object Main {
       .union(weight02Ofbcnpf)
       .union(weight02Ofbcnpi)
       .reduceByKey(_ + _)
-    //聚合权重3
+    //整合多样性权重
     val weight03: RDD[(Int, Int)] = weight03Ofbba
       .union(weight03Ofbbcid)
       .union(weight03Ofppa)
@@ -161,19 +165,17 @@ object Main {
       .union(weight03Ofbcnpi)
       .reduceByKey(_ + _)
 
-    //聚合三种权重
+    //将3个权重RDD根据ID整合到一个权重RDD
     val tempWeight01: RDD[(Int, (Int, Int, Int))] = empty
       .join(weight01)
       .map { t =>
         t._1 -> (t._2._2, 0, 0)
       }
-
     val tempWeight02: RDD[(Int, (Int, Int, Int))] = tempWeight01
       .join(weight02)
       .map(t => {
         t._1 -> (t._2._1._1, t._2._2, 0)
       })
-
     val weight: RDD[(Int, (Int, Int, Int))] = tempWeight02
       .join(weight03)
       .map(t => {

@@ -1,4 +1,4 @@
-package edu.libsys.stats
+package edu.libsys.transform
 
 import edu.libsys.conf.Conf
 import org.apache.log4j.{Level, Logger}
@@ -7,6 +7,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 /**
+  * 为了在RESTful服务中提供图书的“中图法分类名”信息，此处输出ID与中图法分类名对应文本文件。
   * 获得图书ID、中图法分类名对应关系
   */
 object GetTextFilesOfBookInfo {
