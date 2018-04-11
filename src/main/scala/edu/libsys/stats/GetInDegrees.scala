@@ -27,7 +27,7 @@ object GetInDegrees {
 
     val sc: SparkContext = spark.sparkContext
 
-    val sourcePath: String = "/home/spark/data/graph/edges/"
+    val sourcePath: String = "/home/spark/data/graph/edges/txt/"
     val resultPath: String = "/home/spark/data/result/"
 
     val vertices: RDD[(VertexId, Int)] =
