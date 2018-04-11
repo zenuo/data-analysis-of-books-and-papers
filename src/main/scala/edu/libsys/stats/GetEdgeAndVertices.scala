@@ -29,7 +29,7 @@ object GetEdgeAndVertices {
       println("Valid program arguments:")
       println("1.PATH_TO_SOURCE_DATA_DIRECTORY")
       println("2.PATH_TO_RESULT_DATA_DIRECTORY")
-      println("Usage:\n/usr/local/spark/bin/spark-submit --class edu.libsys.stats.GetObjectFilesOfGraph --master local --executor-memory 52G --total-executor-cores 6 --conf spark.executor.heartbeatInterval=10000000 --conf spark.network.timeout=10000000 /home/spark/book-stats-1.0.jar 图书、论文源数据 结果存放路径")
+      println("Usage:\n/usr/local/spark/bin/spark-submit --class edu.libsys.stats.GetEdgeAndVertices --master local --executor-memory 52G --total-executor-cores 6 --conf spark.executor.heartbeatInterval=10000000 --conf spark.network.timeout=10000000 /home/spark/book-stats-1.0.jar 图书、论文源数据 结果存放路径")
       println("please try again, exit now.")
       println("-------------------------------------------------------------------")
       return
@@ -40,7 +40,7 @@ object GetEdgeAndVertices {
       */
     val spark: SparkSession = SparkSession
       .builder()
-      .appName("GetTextFilesOfGraph")
+      .appName("GetEdgeAndVertices")
       .getOrCreate()
     //use the Kryo library to serialize objects
     spark.conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
