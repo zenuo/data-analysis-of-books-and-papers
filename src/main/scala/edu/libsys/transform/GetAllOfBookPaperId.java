@@ -6,9 +6,9 @@ public class GetAllOfBookPaperId {
     private static final int offset = 1000000000;
 
     public static void main(String[] args) {
-        String bookFull = "/home/yuanzhen/project/data/txt/spark/full/book_id.txt";
-        String paperFull = "/home/yuanzhen/project/data/txt/spark/full/paper_id_paperId.txt";
-        String newFilePath = "/home/yuanzhen/project/data/txt/spark/full/all.txt";
+        String bookFull = "/home/spark/data/txt/book_id.txt";
+        String paperFull = "/home/spark/data/txt/paper_id_paperId.txt";
+        String newFilePath = "/home/spark/data/txt/all.txt";
         try {
             BufferedReader bookFullBr = new BufferedReader(new InputStreamReader(new FileInputStream(bookFull), "UTF-8"));
             BufferedReader paperFullBr = new BufferedReader(new InputStreamReader(new FileInputStream(paperFull), "UTF-8"));
